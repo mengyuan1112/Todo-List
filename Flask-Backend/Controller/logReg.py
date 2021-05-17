@@ -1,7 +1,11 @@
 from flask import Flask, request
+from flask_pymongo import PyMongo
 import re
+from Model.User import User
 
 app = Flask(__name__)
+
+
 regex = '^(\w|\.|\_|\-)+[@](\w|\_|\-|\.)+[.]\w{2,3}$'  # Regex for check email validation
 
 
@@ -15,6 +19,7 @@ def register():
         return "The password is not satisfied categories"
     if not re.search(regex, data['email']):
         return "The email is not valid"
+    user = User(data['name'], data['password'], data['email'])
     return "pass"
 
 
