@@ -7,11 +7,11 @@ import Login from './Login'
 const Header = () => {
     return (
     <div>
-    <Navbar expand="lg" variant="light" bg="light">
+    <Navbar expand="lg" >
     <Container>
         <Navbar.Brand href="/home">ToDoList</Navbar.Brand>
         <Nav className="justify-content-end">
-        <Nav.Link as={Link} to="/">Home</Nav.Link>
+        <Nav.Link as={Link} to="/home">Home</Nav.Link>
         <Nav.Link href="/about">About Us</Nav.Link>
         <Nav.Link href="/login">Login</Nav.Link>
         <Nav.Link href="/register">Register</Nav.Link>
@@ -20,6 +20,9 @@ const Header = () => {
     </Container>
     </Navbar>
     <Switch>
+        <Route path='/home'>
+            <Home/>
+        </Route>
         <Route path='/register'>
             <Register/>
         </Route>

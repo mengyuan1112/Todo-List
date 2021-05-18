@@ -18,7 +18,7 @@ const Register = () => {
             <Form>
             <Form.Group controlId="formGroupEmail">
                 {/* <Form.Label>Email address</Form.Label> */}
-                <Form.Control size="sm" type="email" placeholder="Enter email" />
+                <Form.Control size="sm" type="email" placeholder="Enter Email" />
             </Form.Group>
             <Form.Group>
                 {/* <Form.Label>Username</Form.Label> */}

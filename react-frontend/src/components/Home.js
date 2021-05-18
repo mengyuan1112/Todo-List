@@ -4,21 +4,16 @@ import PropTypes from 'prop-types'
 import Button from 'react-bootstrap/Button';
 import { BrowserRouter,Link, Route, Switch } from 'react-router-dom'
 import Register from './Register'
+import { Container,Row,Col,Nav,Pagination } from 'react-bootstrap';
 
 const Home = () => {
     return (
-        <header>
-            <h1>Todo List</h1>
-            <BrowserRouter>
-            <Link to="/register"> <Button>Register</Button> </Link>
-
-            <Switch>
-                <Route path="/register">
-                    <Register/>
-                </Route>
-            </Switch>
-            </BrowserRouter>
-        </header>
+        <Container fluid="md">
+            <Row className="justify-content-lg-center">
+                <Col md={{ span: 3, offset: 3 }}> <h1>Welcome </h1></Col>
+                <Col md={{ span: 3, offset: 3 }}> Hi </Col>
+            </Row>
+        </Container>
     )
 }
 
