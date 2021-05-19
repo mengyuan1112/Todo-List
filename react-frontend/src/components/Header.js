@@ -3,24 +3,31 @@ import { Switch, Route, Link } from 'react-router-dom';
 import Home from './Home';
 import Register from './Register';
 import Login from './Login';
+import react ,{useState} from 'react'
 
 const Header = () => {
+    const [expanded, setExpanded] = useState(false);
     return (
     <div>
-    <Navbar expand="xl" className="d-flex justify-content-start">
-        <Navbar.Toggle aria-controls="navbarScroll" />
+    <Navbar expand="xl" className="d-flex justify-content-start" expanded = {expanded}>
+        <Navbar.Toggle onClick={()=>{
+            setExpanded(expanded ? false : "expanded")
+        }} aria-controls="navbarScroll" />
         <Navbar.Brand href="/home">ToDo</Navbar.Brand> 
         <Navbar.Collapse id="navbarScroll">
         <Nav>
-        <Nav.Link as={Link} to="/home">Home</Nav.Link>
-        <Nav.Link href="/about">About Us</Nav.Link>
-        <Nav.Link href="/login">Login</Nav.Link>
-        <Nav.Link href="/register">Register</Nav.Link>
-        <Nav.Link href="/setting">Setting</Nav.Link>
+        <Nav.Link onClick={() => setExpanded(false)} as={Link} to="/home">Home</Nav.Link>
+        <Nav.Link onClick={() => setExpanded(false)} href="/about">About Us</Nav.Link>
+        <Nav.Link onClick={() => setExpanded(false)} href="/login">Login</Nav.Link>
+        <Nav.Link onClick={() => setExpanded(false)} href="/register">Register</Nav.Link>
+        <Nav.Link onClick={() => setExpanded(false)} href="/setting">Setting</Nav.Link>
         </Nav>
         </Navbar.Collapse>
     </Navbar>
     <Switch>
+        <Route exact path='/'>
+            <Home/>
+        </Route>
         <Route path='/home'>
             <Home/>
         </Route>
