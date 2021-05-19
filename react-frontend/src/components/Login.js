@@ -4,7 +4,7 @@ import Main from './Main'
 import Register from './Register'
 import React, { useState } from 'react';
 import Axios from 'axios';
-
+import './Login.css'
 const Login = ({ Login,error }) => {
     const [email,setEmail] = useState('')
     const [password,setPassword] = useState('')
