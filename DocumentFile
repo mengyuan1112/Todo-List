@@ -3,7 +3,7 @@ To-Do List API (up to date)
 Register: JSON {
                 “email”: String
                 “password”: String
-                “nickname”: String
+                “username”: String
 		    }
 Login: JSON {
 		        “email”: String
