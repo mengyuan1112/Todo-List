@@ -1,6 +1,4 @@
 import React from 'react'
-// import Button from './Button'
-import PropTypes from 'prop-types'
 import Button from 'react-bootstrap/Button';
 import { BrowserRouter,Link, Route, Switch } from 'react-router-dom'
 import Register from './Register'
