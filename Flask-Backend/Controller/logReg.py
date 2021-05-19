@@ -1,6 +1,7 @@
 import hashlib
 import os
 import re
+from flask_cors import CORS
 import json
 from datetime import timedelta
 from secrets import token_urlsafe
@@ -8,7 +9,9 @@ from secrets import token_urlsafe
 from flask import Flask, request, jsonify, Response, make_response
 from flask_pymongo import PyMongo
 
+
 app = Flask(__name__)
+cors = CORS(app)
 """
     Database: Mongodb
     host: localhost
@@ -39,10 +42,10 @@ def register():
     salt = os.urandom(32)  # reference: https://nitratine.net/blog/post/how-to-hash-passwords-in-python/
     salt_password = hashlib.pbkdf2_hmac('sha256', data['password'].encode('utf-8'), salt, 100000)
 
-    user_document = {"name": data['name'], "salt_password": salt_password, "email": data['email'],
+    user_document = {"name": data['username'], "salt_password": salt_password, "email": data['email'],
                      "salt": salt, "cookies": None, "self_ticket": [], "public_ticket": []}
     mongo.db.user.insert_one(user_document)
-    return
+    return "pass"
 
 
 def valid_pwd(pwd):
