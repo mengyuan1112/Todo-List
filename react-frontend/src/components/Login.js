@@ -1,6 +1,7 @@
 import { Container,Row,Form,Button,Col } from 'react-bootstrap'
 import { Link,Route,Switch } from 'react-router-dom'
 import Main from './Main'
+import Register from './Register'
 import React, { useState } from 'react';
 import Axios from 'axios';
 
@@ -38,12 +39,19 @@ const Login = ({ Login,error }) => {
             </Form.Group>
             <Link to="/main"><Button onClick={login} variant="success" type="submit" >login</Button></Link>
             </Form>
+            <br/>
+            <p>Need new account? <Link to="/register"><span>Sign up free</span></Link></p>
         </Col>
         </Row>
         <Switch>
         <Route path='/main'>
             <Main/>
         </Route>
+
+        <Route path='/register'>
+            <Register/>
+        </Route>
+
         </Switch>
     </Container>
     )
