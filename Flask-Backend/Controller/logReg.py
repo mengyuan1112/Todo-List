@@ -1,7 +1,12 @@
+import hashlib
+import os
 import re
-from flask import Flask, request
+import json
+from datetime import timedelta
+from secrets import token_urlsafe
+
+from flask import Flask, request, jsonify, Response, make_response
 from flask_pymongo import PyMongo
-import hashlib, os
 
 app = Flask(__name__)
 """
@@ -10,7 +15,7 @@ app = Flask(__name__)
     port: 27017
     database name: Todo_list
     collection name: user
-    DB document [name, salt_password, email, salt, self_ticket, public_ticket]
+    DB document [name, salt_password, email, salt, cookies, self_ticket, public_ticket]
 """
 app.config['MONGO_URI'] = "mongodb://localhost:27017/Todo_list"
 mongo = PyMongo(app)
@@ -32,12 +37,12 @@ def register():
     elif mongo.db.user.find_one({"email": data['email']}) is not None:
         return "The email already existed please sign in or change to another email"
     salt = os.urandom(32)  # reference: https://nitratine.net/blog/post/how-to-hash-passwords-in-python/
-    salt_password = hashlib.pbkdf2_hmac('sha256', data['password'].encode('utf-8'), salt, 100000, 128)
+    salt_password = hashlib.pbkdf2_hmac('sha256', data['password'].encode('utf-8'), salt, 100000)
 
     user_document = {"name": data['name'], "salt_password": salt_password, "email": data['email'],
-                     "salt": salt, "self_ticket": [], "public_ticket": []}
+                     "salt": salt, "cookies": None, "self_ticket": [], "public_ticket": []}
     mongo.db.user.insert_one(user_document)
-    return "pass"
+    return
 
 
 def valid_pwd(pwd):
@@ -69,6 +74,9 @@ def login():
     :return: String with content "pass" and other
     """
     data = request.get_json()
+    user = return_user(request.cookies.get('login'))
+    if user is not None:
+        return "pass"
     password = data['password']
     query = mongo.db.user.find_one({"email": data['email']})
     if query is None:
@@ -77,7 +85,21 @@ def login():
         new_salt_password = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), query['salt'], 100000)
         if new_salt_password != query['salt_password']:
             return "Password is wrong"
+
+    # response_cookie = token_urlsafe(16)
+    # response = make_response()
+    # response.set_cookie(key="login", value=response_cookie, max_age=3600)
+    # response.headers['Content-type'] = "application/json"
+
     return "pass"
+
+
+def return_user(cookie):
+    query = mongo.db.user.find_one({'cookies': cookie})
+    if query is None:
+        return None
+    else:
+        return query
 
 
 if __name__ == "__main__":
