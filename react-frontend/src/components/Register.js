@@ -6,16 +6,27 @@ import Axios from 'axios'
 
 
 const Register = () => {
-    const [emailReg,setEmailReg] = useState('')
-    const [usernameReg,setUsernameReg] = useState('')
-    const [passwordReg,setPasswordReg] = useState('')
-    const [confirmPasswordReg,setConfirmPasswordReg] = useState('')
+    const [emailReg,setEmailReg] = useState('');
+    const [checkError, setCheckError] = useState('');
+    const [usernameReg,setUsernameReg] = useState('');
+    const [passwordReg,setPasswordReg] = useState('');
+    const [confirmPasswordReg,setConfirmPasswordReg] = useState('');
     const registers= () =>{
-        Axios.post('http://localhost:5000/register',{email:emailReg, username:usernameReg, password:passwordReg,confirmPassword:confirmPasswordReg}).then(
+        Axios.post('http://localhost:5000/register',{email:emailReg, username:usernameReg, password:passwordReg}).then(
             (response)=>{
                 console.log(response)
             }
         )
+    }
+    const checkPassword=(e)=>{
+        setCheckError('');
+        setConfirmPasswordReg(e.target.value);
+        if (passwordReg !== e.target.value){
+            setCheckError("Password doesn't match")
+        }
+        else{
+            setCheckError('');
+        }
     }
 
     return(
@@ -28,16 +39,19 @@ const Register = () => {
             <h1>Register</h1>
             <hr></hr>
             <Form>
+
             <Form.Group controlId="formGroupEmail">
                 <Form.Control onChange={(e)=>{
-                    setEmailReg(e.target.value)
+                    setEmailReg(e.target.value);
                 }} size="sm" type="email" placeholder="Enter Email" />
             </Form.Group>
+
             <Form.Group>
                 <Form.Control size="sm" type="text" onChange={(e)=>{
-                    setUsernameReg(e.target.value)
+                    setUsernameReg(e.target.value);
                 }} placeholder="Enter username" />
             </Form.Group>
+
             <Form.Group controlId="formGroupPassword">
                 <Form.Control size="sm" type="password" onChange={(e)=>{
                     setPasswordReg(e.target.value)
@@ -47,13 +61,15 @@ const Register = () => {
                 must not contain spaces, special characters, or emoji.
                 </Form.Text>
             </Form.Group>
+
             <Form.Group controlId="formGroupPasswordConfirm">
-                <Form.Control size="sm" type="password" onChange={(e)=>{
-                    setConfirmPasswordReg(e.target.value)
-                }} placeholder="Confirm Password" />
+                <Form.Control size="sm" type="password" onChange={(e)=>checkPassword(e)} placeholder="Confirm Password" />
+                <Form.Text style={{ color:"red" }}>{checkError}</Form.Text>
             </Form.Group>
+
             <Link to="/login"><Button onClick={registers} variant="success" type="submit" >Register</Button></Link>
             </Form>
+
         </Col>
         </Row>
         <Switch>
