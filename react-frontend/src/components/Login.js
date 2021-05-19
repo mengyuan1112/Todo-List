@@ -5,11 +5,11 @@ import React, { useState } from 'react';
 import Axios from 'axios';
 
 const Login = ({ Login,error }) => {
-    const [username,setUsername] = useState('')
+    const [email,setEmail] = useState('')
     const [password,setPassword] = useState('')
 
     const login= () =>{
-        Axios.post('http://localhost:5000/login',{username:username, password:password}).then(
+        Axios.post('http://localhost:5000/login',{email:email, password:password}).then(
             (response)=>{
                 console.log(response)
             }
@@ -27,13 +27,13 @@ const Login = ({ Login,error }) => {
             <Form>
             <Form.Group>
             <Form.Control size="sm" onChange={(e)=>{
-                    setUsername(e.target.value)
-                }} type="text" placeholder="Username" />
+                    setEmail(e.target.value)
+                }} type="email" placeholder="Enter Email" />
             </Form.Group>
             <Form.Group controlId="formGroupPassword">
                 <Form.Control size="sm" onChange={(e)=>{
                     setPassword(e.target.value)
-                }} type="password" placeholder="Password" />
+                }} type="password" placeholder="Enter Password" />
 
             </Form.Group>
             <Link to="/main"><Button onClick={login} variant="success" type="submit" >login</Button></Link>
