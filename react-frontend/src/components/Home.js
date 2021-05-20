@@ -4,7 +4,7 @@ import { BrowserRouter,Link, Route, Switch } from 'react-router-dom'
 import Register from './Register'
 import { Container,Row,Col,Nav,Pagination,Jumbotron} from 'react-bootstrap';
 import Login from './Login';
-import Background from '../backgroundHomePage.JPG';
+import Background from '../1.png';
 import './Home.css'
 
 const Home = () => {
@@ -19,13 +19,13 @@ const Home = () => {
     var day = myCurrentDate.getDay();
 
     if (date === 1){
-        date+= ' st'
+        date+= 'st'
     }
     else if (date === 2){
-        date += ' nd'
+        date += 'nd'
     }
     else{
-        date += ' th'
+        date += 'th'
     }
 
     
@@ -49,14 +49,12 @@ const Home = () => {
                 <Col style={{
                     backgroundImage:`url(${Background})`,  
                     backgroundPosition: 'center',
-                    backgroundSize: 'cover',
+                    backgroundSize: 'contain',
                     backgroundRepeat: 'no-repeat'}}>
                         <Container>
                             <br/>
-                            <br/>
-                        <br/>
-                        <Col><p className="lead" style={{fontSize:40}} className="d-flex justify-content-end">{monthNames[month]}  {date}</p></Col>
-                        <Col><p className="lead" style={{fontSize:25}} className="d-flex justify-content-end">{dayName[day]}</p></Col>
+                        <Col><p className="lead" style={{fontSize:35, paddingRight:'20px',marginBottom:'5px'}} className="d-flex justify-content-end">{monthNames[month]}  {date}</p></Col>
+                        <Col><p className="lead" style={{fontSize:25, paddingRight:'20px'}} className="d-flex justify-content-end">{dayName[day]}</p></Col>
                         </Container>
                 </Col>
             </Row>
