@@ -77,9 +77,11 @@ def login():
     :return: String with content "pass" and other
     """
     data = request.get_json()
-    user = return_user(request.cookies.get('login'))
-    if user is not None:
-        return "pass"
+    if request.cookies.get('login') is not None:
+        user = return_user(request.cookies.get('login'))
+        if user is not None:
+            print("a return user")
+            return "pass"
     password = data['password']
     query = mongo.db.user.find_one({"email": data['email']})
     if query is None:
@@ -89,12 +91,12 @@ def login():
         if new_salt_password != query['salt_password']:
             return "Password is wrong"
 
-    # response_cookie = token_urlsafe(16)
-    # response = make_response()
-    # response.set_cookie(key="login", value=response_cookie, max_age=3600)
+    response_cookie = token_urlsafe(16)
+    response = make_response()
+    response.set_cookie(key="login", value=response_cookie, max_age=1*60)
     # response.headers['Content-type'] = "application/json"
-
-    return "pass"
+    print("return last")
+    return response
 
 
 def return_user(cookie):
