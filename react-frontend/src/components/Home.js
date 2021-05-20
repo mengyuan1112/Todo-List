@@ -53,8 +53,8 @@ const Home = () => {
                     backgroundRepeat: 'no-repeat'}}>
                         <Container>
                             <br/>
-                        <Col><p className="lead" style={{fontSize:35, paddingRight:'20px',marginBottom:'5px'}} className="d-flex justify-content-end">{monthNames[month]}  {date}</p></Col>
-                        <Col><p className="lead" style={{fontSize:25, paddingRight:'20px'}} className="d-flex justify-content-end">{dayName[day]}</p></Col>
+                        <Col><p className="lead" style={{fontSize:35, paddingRight:'40px',marginBottom:'5px'}} className="d-flex justify-content-end">{monthNames[month]}  {date}</p></Col>
+                        <Col><p className="lead" style={{fontSize:25, paddingRight:'40px'}} className="d-flex justify-content-end">{dayName[day]}</p></Col>
                         </Container>
                 </Col>
             </Row>
