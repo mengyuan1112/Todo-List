@@ -4,7 +4,8 @@ import { BrowserRouter,Link, Route, Switch } from 'react-router-dom'
 import Register from './Register'
 import { Container,Row,Col,Nav,Pagination,Jumbotron} from 'react-bootstrap';
 import Login from './Login';
-import Background from '../1.png';
+import Main from './Main'
+import Background from '../2.png';
 import './Home.css'
 
 const Home = () => {
@@ -35,9 +36,12 @@ const Home = () => {
             <br></br>
             <br></br>
             <br></br>
+            <br></br>
             <Row>
                 <Col> 
                 <h1 className="display-3">Welcome !</h1>
+                <br></br>
+                <br></br>
                 <br></br>
                 <br></br>
                 <br></br>
@@ -53,13 +57,16 @@ const Home = () => {
                     backgroundRepeat: 'no-repeat'}}>
                         <Container>
                             <br/>
-                        <Col><p className="lead" style={{fontSize:35, paddingRight:'20px',marginBottom:'5px'}} className="d-flex justify-content-end">{monthNames[month]}  {date}</p></Col>
-                        <Col><p className="lead" style={{fontSize:25, paddingRight:'20px'}} className="d-flex justify-content-end">{dayName[day]}</p></Col>
+                        <Col><p className="lead" style={{fontSize:40, color:"#696969",paddingRight:'55px',marginBottom:'5px'}} className="d-flex justify-content-end">{monthNames[month]}  {date}</p></Col>
+                        <Col><p className="lead" style={{fontSize:30, color:"#696969",paddingRight:'75px'}} className="d-flex justify-content-end">{dayName[day]}</p></Col>
                         </Container>
                 </Col>
             </Row>
             <Switch>
         <Route path='/login'>
+            <Login/>
+        </Route>
+        <Route path='/main'>
             <Login/>
         </Route>
         </Switch>
