@@ -1,9 +1,17 @@
 
+import { Row, Col, Container } from 'react-bootstrap';
+
 const Main = () => {
     return (
-        <div>
-           <h1>Hi from Main</h1> 
-        </div>
+        <Container fluid="md">
+        <Row>
+          <Col>1 of 1</Col>
+        </Row>
+      </Container>
+        
+        //<div>
+           //<h1>Hi from Main</h1> 
+        //</div>
     )
 }
 
