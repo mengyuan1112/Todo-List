@@ -4,12 +4,12 @@ import Home from './Home';
 import Register from './Register';
 import Login from './Login';
 import Main from './Main';
-import react ,{useState} from 'react'
+import React,{useState} from 'react';
 
-const Header = () => {
+const Header=()=>{
     const [expanded, setExpanded] = useState(false);
     return (
-    <div>
+    <>
     <Navbar expand="xl" className="d-flex justify-content-start" expanded = {expanded}>
         <Navbar.Toggle onClick={()=>{
             setExpanded(expanded ? false : "expanded")
@@ -22,7 +22,6 @@ const Header = () => {
         <Nav.Link onClick={() => setExpanded(false)} href="/login">Login</Nav.Link>
         <Nav.Link onClick={() => setExpanded(false)} href="/register">Register</Nav.Link>
         <Nav.Link onClick={() => setExpanded(false)} href="/setting">Setting</Nav.Link>
-        
         </Nav>
         </Navbar.Collapse>
     </Navbar>
@@ -42,9 +41,8 @@ const Header = () => {
         <Route path='/main'>
             <Main/>
         </Route>
-
     </Switch>
-    </div>
+    </>
     )
 }
 

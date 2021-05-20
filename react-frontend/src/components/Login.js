@@ -1,22 +1,39 @@
-import { Container,Row,Form,Button,Col } from 'react-bootstrap'
-import { Link,Route,Switch } from 'react-router-dom'
-import Main from './Main'
-import Register from './Register'
+import { Container,Row,Form,Button,Col } from 'react-bootstrap';
+import { Link,Route,Switch } from 'react-router-dom';
+import Main from './Main';
+import Register from './Register';
 import React, { useState } from 'react';
 import Axios from 'axios';
-import './Login.css'
-const Login = ({ Login,error }) => {
-    const [email,setEmail] = useState('')
-    const [password,setPassword] = useState('')
+import './Login.css';
+import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props'
+import { ImFacebook2 } from "react-icons/im"
+import GoogleLogin from 'react-google-login';
 
-    const login= () =>{
-        Axios.post('http://localhost:5000/login',{email:email, password:password}).then(
-            (response)=>{
-                console.log(response)
-            }
-        )
+const Login = () => {
+    const [username,setUsername] = useState('');
+    const [password,setPassword] = useState('');
+
+    const onSuccess = (res) =>{
+        console.log('[login Sucess] currentUser: ', res.profileObj)
+    }
+    const onFailure = (res) => {
+        console.log('[login Failed] res: ',res)
     }
 
+    const responseFacebook = (response) => {
+        console.log(response);
+      }
+
+    const componentClicked =() =>{
+        console.log('clicked');
+    }
+
+    const login= () =>{
+        Axios.post('http://localhost:5000/login',{username:username, password:password}).then(
+            (response)=>{
+                console.log(response)}
+        )
+    }
     return (
     <Container fluid="sm">
     <Row className="justify-content-md-center">
@@ -25,11 +42,12 @@ const Login = ({ Login,error }) => {
             <br></br>
             <h1>Login</h1>
             <hr></hr>
+  
             <Form>
             <Form.Group>
             <Form.Control size="sm" onChange={(e)=>{
-                    setEmail(e.target.value)
-                }} type="email" placeholder="Enter Email" />
+                    setUsername(e.target.value)
+                }} type="text" placeholder="Enter username" />
             </Form.Group>
             <Form.Group controlId="formGroupPassword">
                 <Form.Control size="sm" onChange={(e)=>{
@@ -41,6 +59,28 @@ const Login = ({ Login,error }) => {
             </Form>
             <br/>
             <p>Need new account? <Link to="/register"><span>Sign up free</span></Link></p>
+            <br/>
+            <div className = "col-md-6 offset-md-3 text-center">
+                <GoogleLogin 
+                clientId= "551326818999-6bjhvslugav8rj9lsa10j4ur0pcm3mlb.apps.googleusercontent.com"
+                buttonText ="Login"
+                onSuccess = {onSuccess}
+                onFailure = {onFailure}
+                cookiePolicy ={'single_host_origin'}
+                style={{ marginTop: '100px'}}
+                buttonText="Login with Google"
+                isSignedIn ={true}/> 
+                <br></br>
+                <FacebookLogin
+                    appId="2318622718268647"
+                    callback={responseFacebook}
+                    onClick = {componentClicked}
+                    autoload = {true}
+                    render={renderProps => (
+                      <button className="my-facebook-button-class" onClick={renderProps.onClick}>
+                          <span className="facebookIcon"><ImFacebook2/></span>
+                          Login with Facebook</button>)} />
+            </div>
         </Col>
         </Row>
         <Switch>
@@ -51,7 +91,6 @@ const Login = ({ Login,error }) => {
         <Route path='/register'>
             <Register/>
         </Route>
-
         </Switch>
     </Container>
     )

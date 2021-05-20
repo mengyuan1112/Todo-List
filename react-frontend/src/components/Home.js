@@ -68,7 +68,7 @@ const Home = () => {
             <Login/>
         </Route>
         <Route path='/main'>
-            <Login/>
+            <Main/>
         </Route>
         </Switch>
         </Container>

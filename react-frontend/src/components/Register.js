@@ -1,6 +1,6 @@
 import { Container,Row,Form,Button,Col } from 'react-bootstrap'
 import { Link,Route,Switch } from 'react-router-dom'
-import {useState } from 'react'
+import React,{useState } from 'react'
 import Login from './Login'
 import Axios from 'axios'
 
@@ -66,10 +66,8 @@ const Register = () => {
                 <Form.Control size="sm" type="password" onChange={(e)=>checkPassword(e)} placeholder="Confirm Password" />
                 <Form.Text style={{ color:"red" }}>{checkError}</Form.Text>
             </Form.Group>
-
             <Link to="/login"><Button onClick={registers} variant="success" type="submit" >Register</Button></Link>
             </Form>
-
         </Col>
         </Row>
         <Switch>
