@@ -1,5 +1,5 @@
 import { Container,Row,Form,Button,Col } from 'react-bootstrap'
-import { Link,Route,Switch } from 'react-router-dom'
+import { Route,Switch,useHistory } from 'react-router-dom'
 import React,{useState } from 'react'
 import Login from './Login'
 import Axios from 'axios'
@@ -8,15 +8,22 @@ import Axios from 'axios'
 const Register = () => {
     const [emailReg,setEmailReg] = useState('');
     const [checkError, setCheckError] = useState('');
+    const [registerError, setRegisterError] = useState('');
     const [usernameReg,setUsernameReg] = useState('');
     const [passwordReg,setPasswordReg] = useState('');
-    const [confirmPasswordReg,setConfirmPasswordReg] = useState('');
+    const setConfirmPasswordReg = useState('');
+    const history = useHistory();
     const registers= () =>{
         Axios.post('http://localhost:5000/register',{email:emailReg, username:usernameReg, password:passwordReg}).then(
             (response)=>{
                 console.log(response)
-            }
-        )
+                if (response.data === "The password is not satisfied categories"){
+                    setRegisterError("The password is not satisfied categories, please try again.");
+                }
+                else{
+                    history.push("/login");
+                }
+            });
     }
     const checkPassword=(e)=>{
         setCheckError('');
@@ -38,8 +45,8 @@ const Register = () => {
             <br></br>
             <h1>Register</h1>
             <hr></hr>
+            <p>{registerError}</p>
             <Form>
-
             <Form.Group controlId="formGroupEmail">
                 <Form.Control onChange={(e)=>{
                     setEmailReg(e.target.value);
@@ -66,7 +73,7 @@ const Register = () => {
                 <Form.Control size="sm" type="password" onChange={(e)=>checkPassword(e)} placeholder="Confirm Password" />
                 <Form.Text style={{ color:"red" }}>{checkError}</Form.Text>
             </Form.Group>
-            <Link to="/login"><Button onClick={registers} variant="success" type="submit" >Register</Button></Link>
+            <Button onClick={registers} variant="success" type="submit" >Register</Button>
             </Form>
         </Col>
         </Row>

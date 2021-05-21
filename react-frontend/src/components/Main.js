@@ -1,5 +1,4 @@
 
-import { Row, Col, Container,Button } from 'react-bootstrap';
 import React from 'react'
 import Logout from './Logout'
 const Main = ({username}) => {

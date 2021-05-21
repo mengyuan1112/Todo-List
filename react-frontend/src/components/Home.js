@@ -1,12 +1,12 @@
-import React,{ useState } from 'react'
+import React from 'react'
 import Button from 'react-bootstrap/Button';
-import { BrowserRouter,Link, Route, Switch } from 'react-router-dom'
-import Register from './Register'
-import { Container,Row,Col,Nav,Pagination,Jumbotron} from 'react-bootstrap';
+import { Link, Route, Switch } from 'react-router-dom'
+import { Container,Row,Col} from 'react-bootstrap';
 import Login from './Login';
 import Main from './Main'
 import Background from '../2.png';
 import './Home.css'
+
 
 const Home = () => {
     const monthNames = ["January", "February", "March", "April", "May", "June",
@@ -43,20 +43,19 @@ const Home = () => {
                 <br></br>
                 <br></br>
                 <br></br>
-                <br></br>
                 <Col><p className="lead">You still have things to do today</p></Col>
-                <Col><p className="lead">你還沒有計劃</p></Col>
+                {/* <Col><p className="lead">你還沒有計劃</p></Col> */}
                 <Col><Link to="/login" ><Button variant="outline-dark"> start planning</Button></Link></Col>
                 </Col>
                 <Col style={{
                     backgroundImage:`url(${Background})`,  
                     backgroundPosition: 'center',
-                    backgroundSize: 'contain',
+                    backgroundSize: '100% 100%',
                     backgroundRepeat: 'no-repeat'}}>
                         <Container>
                             <br/>
-                        <Col><p className="lead" style={{fontSize:40, color:"#696969",paddingRight:'55px',marginBottom:'5px'}} className="d-flex justify-content-center">{monthNames[month]}  {date}</p></Col>
-                        <Col><p className="lead" style={{fontSize:30, color:"#696969",paddingRight:'55px'}} className="d-flex justify-content-center">{dayName[day]}</p></Col>
+                        <Col><p style={{fontSize:40, color:"#696969",paddingRight:'55px',marginBottom:'5px'}} className="d-flex justify-content-end">{monthNames[month]}  {date}</p></Col>
+                        <Col><p style={{fontSize:30, color:"#696969",paddingRight:'55px'}} className="d-flex justify-content-end">{dayName[day]}</p></Col>
                       
                         </Container>
                 </Col>
