@@ -1,10 +1,13 @@
 
 import { Row, Col, Container,Button } from 'react-bootstrap';
 import React from 'react'
-const Main = () => {
+import Logout from './Logout'
+const Main = ({username}) => {
     return (
-      <h1>Hi</h1>
-        
+      <>
+      <h1>Hi {username}</h1>
+      <Logout/>
+      </>
     )
 }
 

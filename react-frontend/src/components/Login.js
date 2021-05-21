@@ -1,5 +1,5 @@
 import { Container,Row,Form,Button,Col } from 'react-bootstrap';
-import { Link,Route,Switch } from 'react-router-dom';
+import { Link,Route,Switch,useHistory } from 'react-router-dom';
 import Main from './Main';
 import Register from './Register';
 import React, { useState } from 'react';
@@ -12,37 +12,60 @@ import GoogleLogin from 'react-google-login';
 const Login = () => {
     const [username,setUsername] = useState('');
     const [password,setPassword] = useState('');
+    const [isLogin,setIsLogin] = useState(false);
+    const history = useHistory();
 
+    var message = ""
     const onSuccess = (res) =>{
         console.log('[login Sucess] currentUser: ', res.profileObj)
+        setUsername(res.profileObj['googleId'])
+        setIsLogin(true)
+        // response.tokenId
+        history.push("/main")
+        // what should I send to backend? given: email,fimailyName,givenName, googleId,imageURL,name
     }
     const onFailure = (res) => {
         console.log('[login Failed] res: ',res)
+        setIsLogin(false)
+        message = "[login Failed] google/facebook login fail."
+        return alert(message)
     }
 
     const responseFacebook = (response) => {
         console.log(response);
+        setIsLogin(true)
+        //given: acessesToken,id,name,userID;
+        history.push("/main")
       }
 
     const componentClicked =() =>{
-        console.log('clicked');
+        console.log('clicked facebook button');
     }
 
     const login= () =>{
         Axios.post('http://localhost:5000/login',{username:username, password:password}).then(
             (response)=>{
-                console.log(response)}
-        )
+                console.log(response)
+                // if (response.data == 'pass'){
+                //     history.push("/main")
+                // }
+                // else{
+                //     console.log(response.data)
+                // }
+                // I will need to check the response message. If pass. everything good. Else, check error data.
+
+            })
     }
+
     return (
     <Container fluid="sm">
     <Row className="justify-content-md-center">
         <Col xs={5}>
+            {isLogin ? (<Link to="/main"/>) : (<p>{message}</p>)}
             <br></br>
             <br></br>
             <h1>Login</h1>
             <hr></hr>
-  
             <Form>
             <Form.Group>
             <Form.Control size="sm" onChange={(e)=>{
@@ -55,7 +78,7 @@ const Login = () => {
                 }} type="password" placeholder="Enter Password" />
 
             </Form.Group>
-            <Link to="/main"><Button onClick={login} variant="success" type="submit" >login</Button></Link>
+            <Button onClick={login} variant="success" type="submit" >login</Button>
             </Form>
             <br/>
             <p>Need new account? <Link to="/register"><span>Sign up free</span></Link></p>
@@ -75,19 +98,20 @@ const Login = () => {
                     appId="2318622718268647"
                     callback={responseFacebook}
                     onClick = {componentClicked}
-                    autoload = {true}
+                    onFailure = {onFailure}
+                    autoload = {false}
                     render={renderProps => (
                       <button className="my-facebook-button-class" onClick={renderProps.onClick}>
                           <span className="facebookIcon"><ImFacebook2/></span>
                           Login with Facebook</button>)} />
             </div>
+            {/* {isLogin ? (<Link to="/main"/>) : (<p>Login Fail</p>)} */}
         </Col>
         </Row>
         <Switch>
-        <Route path='/main'>
-            <Main/>
+        <Route path="/main">
+            <Main username={username}/>
         </Route>
-
         <Route path='/register'>
             <Register/>
         </Route>
@@ -95,5 +119,6 @@ const Login = () => {
     </Container>
     )
 }
+
 
 export default Login

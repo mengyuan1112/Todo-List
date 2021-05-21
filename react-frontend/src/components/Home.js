@@ -13,12 +13,10 @@ const Home = () => {
     "July", "August", "September", "October", "November", "December"
     ];
     const dayName = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday","Saturday","Sunday"];
-
     var myCurrentDate = new Date();
     var date = myCurrentDate.getDate();
     var month = myCurrentDate.getMonth();
     var day = myCurrentDate.getDay();
-
     if (date === 1){
         date+= 'st'
     }
@@ -32,7 +30,7 @@ const Home = () => {
     
     return (
         <Container fluid="sm">
-            <row><br></br></row>
+            <br></br>
             <br></br>
             <br></br>
             <br></br>
@@ -48,7 +46,7 @@ const Home = () => {
                 <br></br>
                 <Col><p className="lead">You still have things to do today</p></Col>
                 <Col><p className="lead">你還沒有計劃</p></Col>
-                <Col><Button href="/login" variant="outline-dark"> start planning</Button></Col>
+                <Col><Link to="/login" ><Button variant="outline-dark"> start planning</Button></Link></Col>
                 </Col>
                 <Col style={{
                     backgroundImage:`url(${Background})`,  
