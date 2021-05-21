@@ -34,18 +34,18 @@ def register():
     """
     data = request.get_json()
     if not valid_pwd(data['password']):
-        return "The password is not satisfied categories"
+        return jsonify({"result": "The password is not satisfied categories"})
     elif not re.search(regex, data['email']):
-        return "The email is not valid"
+        return jsonify({"result": "The email is not valid"})
     elif mongo.db.user.find_one({"email": data['email']}) is not None:
-        return "The email already existed please sign in or change to another email"
+        return jsonify({"result": "The email already existed please sign in or change to another email"})
     salt = os.urandom(32)  # reference: https://nitratine.net/blog/post/how-to-hash-passwords-in-python/
     salt_password = hashlib.pbkdf2_hmac('sha256', data['password'].encode('utf-8'), salt, 100000)
 
     user_document = {"name": data['username'], "salt_password": salt_password, "email": data['email'],
                      "salt": salt, "cookies": None, "self_ticket": [], "public_ticket": []}
     mongo.db.user.insert_one(user_document)
-    return "pass"
+    return jsonify({"result": "Pass"})
 
 
 def valid_pwd(pwd):
@@ -77,25 +77,25 @@ def login():
     :return: String with content "pass" and other
     """
     data = request.get_json()
+    print("cookies is: " + str(request.cookies.get('login')))
     if request.cookies.get('login') is not None:
         user = return_user(request.cookies.get('login'))
         if user is not None:
-            print("a return user")
-            return "pass"
+            return jsonify({"result": "Pass"})
     password = data['password']
     query = mongo.db.user.find_one({"email": data['email']})
     if query is None:
-        return "The user is not existed"
+        return jsonify({"result": "The user is not existed"})
     elif query['email'] == data['email']:
         new_salt_password = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), query['salt'], 100000)
         if new_salt_password != query['salt_password']:
-            return "Password is wrong"
+            return jsonify({"result":"Password is wrong"})
 
     response_cookie = token_urlsafe(16)
-    response = make_response()
+    response = make_response({"result": "Pass"})
     response.set_cookie(key="login", value=response_cookie, max_age=1*60)
-    # response.headers['Content-type'] = "application/json"
-    print("return last")
+    response.headers['Content-type'] = "application/json"
+
     return response
 
 
