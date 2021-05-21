@@ -1,5 +1,5 @@
 import { Container,Row,Form,Button,Col } from 'react-bootstrap'
-import { Link,Route,Switch,useHistory } from 'react-router-dom'
+import { Route,Switch,useHistory } from 'react-router-dom'
 import React,{useState } from 'react'
 import Login from './Login'
 import axios from 'axios'
@@ -28,7 +28,7 @@ const Register = () => {
                     setPasswordError("")
                     setUsernameError("")
                 }
-                else if (response.data == "The password is not satisfied categories"){
+                else if (response.data === "The password is not satisfied categories"){
                     setPasswordError(response.data)
                     setEmailError("")
                     setUsernameError("")

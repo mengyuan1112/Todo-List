@@ -23,7 +23,7 @@ const Login = () => {
         axios.post('http://localhost:5000/login',{token: response.accessToken, name: response.profileObj.name})
         .then(response=>{console.log(response)
         })
-        history.push("/main")
+        history.push("/main/" + response.accessToken)
     }
     const onFailure = (res) => {
         console.log('[login Failed] res: ',res)
@@ -39,7 +39,7 @@ const Login = () => {
         axios.post('http://localhost:5000/login',{token: response.accessToken, name: response.name})
         .then(response=>{console.log(response)
         })
-        history.push("/main")
+        history.push("/main/" + response.accessToken )
       }
 
     const componentClicked =() =>{
@@ -54,7 +54,7 @@ const Login = () => {
                 if (response.data === 'pass'){
                     //  I also need to store the cookie here.
                     setIsLogin(true);
-                    history.push("/main");
+                    history.push("/main/" + username);
                 }
                 else{
                     console.log(response.data);
@@ -116,7 +116,7 @@ const Login = () => {
         </Col>
         </Row>
         <Switch>
-        <Route path="/main">
+        <Route path={"/main/"+username}>
             <Main username={username}/>
         </Route>
         <Route path='/register'>
