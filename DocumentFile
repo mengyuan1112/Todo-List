@@ -10,5 +10,11 @@ Login: JSON {
 			    “password”: String
 	         }
 
+Login using FB or google:  
+		JSON{
+				"token": String
+				"name" : String 
+			}
+	
 Register/Login Return {result: String} ### "Pass" -> successful, anything else will be specific content
 
