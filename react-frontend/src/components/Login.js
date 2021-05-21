@@ -16,24 +16,29 @@ const Login = () => {
     const [error,setError] = useState('');
     const history = useHistory();
 
-    const onSuccess = (res) =>{
-        console.log('[login Sucess] currentUser: ', res.profileObj)
-        setUsername(res.profileObj['googleId'])
+    const onSuccess = (response) =>{
+        console.log(response)
         setIsLogin(true)
         // response.tokenId
+        axios.post('http://localhost:5000/login',{token: response.accessToken, name: response.profileObj.name})
+        .then(response=>{console.log(response)
+        })
         history.push("/main")
-        // what should I send to backend? given: email,fimailyName,givenName, googleId,imageURL,name
     }
     const onFailure = (res) => {
         console.log('[login Failed] res: ',res)
         setIsLogin(false)
-        setError("[login Failed] google/facebook login fail.")
+        setError("google/facebook login fail")
     }
 
     const responseFacebook = (response) => {
         console.log(response);
         setIsLogin(true)
         //given: acessesToken,id,name,userID;
+        //send the acessToken to backend.
+        axios.post('http://localhost:5000/login',{token: response.accessToken, name: response.name})
+        .then(response=>{console.log(response)
+        })
         history.push("/main")
       }
 
@@ -48,6 +53,7 @@ const Login = () => {
         .then(response=>{console.log(response)
                 if (response.data === 'pass'){
                     //  I also need to store the cookie here.
+                    setIsLogin(true);
                     history.push("/main");
                 }
                 else{
@@ -63,12 +69,11 @@ const Login = () => {
     <Container fluid="sm">
     <Row className="justify-content-md-center">
         <Col xs={5}>
-            {isLogin ? (<Link to="/main"/>) : (<p>{error}</p>)}
             <br></br>
             <br></br>
             <h1>Login</h1>
             <hr></hr>
-
+            {isLogin ? (<Link to="/main"/>) : (<p style={{color:'red'}} >{error}</p>)}
             <Form onSubmit={login}>
             <Form.Group>
             <Form.Control size="sm" onChange={(e)=>{
@@ -108,7 +113,6 @@ const Login = () => {
                           <span className="facebookIcon"><ImFacebook2/></span>
                           Login with Facebook</button>)} />
             </div>
-            {/* {isLogin ? (<Link to="/main"/>) : (<p>Login Fail</p>)} */}
         </Col>
         </Row>
         <Switch>

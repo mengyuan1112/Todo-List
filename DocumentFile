@@ -10,3 +10,10 @@ Login: JSON {
 			    “password”: String
 	         }
 
+Login using FB or google:  
+		JSON{
+				"token": String
+				"name" : String 
+			}
+	
+
