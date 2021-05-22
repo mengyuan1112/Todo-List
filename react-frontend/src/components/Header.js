@@ -5,6 +5,7 @@ import Home from './Home';
 import Register from './Register';
 import Login from './Login';
 import Main from './Main';
+import './Header.css'
 
 // This will create the navbar.
 const Header=()=>{
@@ -32,7 +33,7 @@ const Header=()=>{
             <Home/>
         </Route>
         <Route path='/home'>
-            <Home/>
+            <Home username=""/>
         </Route>
         <Route path='/register'>
             <Register/>

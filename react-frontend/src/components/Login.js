@@ -1,6 +1,6 @@
 import { Container,Row,Form,Button,Col } from 'react-bootstrap';
 import { Link,Route,Switch,useHistory } from 'react-router-dom';
-import Main from './Main';
+import Home from './Home';
 import Register from './Register';
 import React, { useState } from 'react';
 import axios from 'axios';
@@ -19,11 +19,12 @@ const Login = () => {
     const onSuccess = (response) =>{
         console.log(response)
         setIsLogin(true)
-        // response.tokenId
+        setUsername(response.profileObj.name)
         axios.post('http://localhost:5000/login',{token: response.accessToken, name: response.profileObj.name})
-        .then(response=>{console.log(response)
+        .then(res=>{
+            console.log(res)
         })
-        history.push("/main/" + response.accessToken)
+        history.push("/home/" + response.accessToken)
     }
     const onFailure = (res) => {
         console.log('[login Failed] res: ',res)
@@ -36,10 +37,12 @@ const Login = () => {
         setIsLogin(true)
         //given: acessesToken,id,name,userID;
         //send the acessToken to backend.
+        setUsername(response.name)
         axios.post('http://localhost:5000/login',{token: response.accessToken, name: response.name})
-        .then(response=>{console.log(response)
+        .then(res=>{
+            console.log(res)
         })
-        history.push("/main/" + response.accessToken )
+        history.push("/home/" + response.accessToken )
       }
 
     const componentClicked =() =>{
@@ -49,16 +52,17 @@ const Login = () => {
     const login= (e) =>{
         e.preventDefault();
         axios
-        .post('http://localhost:5000/login',{username:username, password:password})
-        .then(response=>{console.log(response)
-                if (response.data === 'pass'){
+        .post('http://localhost:5000/login',{email:username, password:password})
+        .then(response=>{
+                console.log(response)
+                if (response.data.result === 'Pass'){
                     //  I also need to store the cookie here.
                     setIsLogin(true);
-                    history.push("/main/" + username);
+                    history.push("/home/" + username);
                 }
                 else{
                     console.log(response.data);
-                    setError(response.data);
+                    setError(response.data.result);
                 }
                 // I will need to check the response message. If pass. everything good. Else, check error data.
             })
@@ -116,8 +120,8 @@ const Login = () => {
         </Col>
         </Row>
         <Switch>
-        <Route path={"/main/"+username}>
-            <Main username={username}/>
+        <Route path={"/home/"+username}>
+            <Home username="username"/>
         </Route>
         <Route path='/register'>
             <Register/>

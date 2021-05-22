@@ -20,21 +20,21 @@ const Register = () => {
         axios.post('http://localhost:5000/register',{email:emailReg, username:usernameReg, password:passwordReg}).then(
             (response)=>{
                 console.log(response);
-                if (response.data === "pass"){
+                if (response.data.result === "Pass"){
                     history.push("/login");
                 }
-                else if (response.data === "The email already existed please sign in or change to another email"){
-                    setEmailError(response.data);
+                else if (response.data.result === "The email already existed please sign in or change to another email"){
+                    setEmailError(response.data.result);
                     setPasswordError("")
                     setUsernameError("")
                 }
-                else if (response.data === "The password is not satisfied categories"){
-                    setPasswordError(response.data)
+                else if (response.data.result === "The password is not satisfied categories"){
+                    setPasswordError(response.data.result)
                     setEmailError("")
                     setUsernameError("")
                 }
                 else{
-                    setUsernameError(response.data)
+                    setUsernameError(response.data.result)
                     setPasswordError("")
                     setEmailError("")
                 }
@@ -73,7 +73,7 @@ const Register = () => {
                 <Form.Control size="sm" type="text" onChange={(e)=>{
                     setUsernameReg(e.target.value);
                 }} placeholder="Enter username" />
-                {usernameError? (<Form.Text style={{ color:"red" }}>{usernameError}</Form.Text>):null}
+                {usernameError? (<Form.Text style={{ color:"red" }}>{usernameError}</Form.Text>) : null}
             </Form.Group>
 
             <Form.Group controlId="formGroupPassword">
