@@ -9,7 +9,7 @@ const Login = ({ Login,error }) => {
     const [password,setPassword] = useState('')
 
     const login= () =>{
-        Axios.post('http://localhost:5000/login',{email:email, password:password}).then(
+        Axios.post('http://localhost:5000/login',{withCredentials: true, email:email, password:password}).then(
             (response)=>{
                 console.log(response)
             }

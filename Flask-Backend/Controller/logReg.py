@@ -42,7 +42,7 @@ def register():
     salt = os.urandom(32)  # reference: https://nitratine.net/blog/post/how-to-hash-passwords-in-python/
     salt_password = hashlib.pbkdf2_hmac('sha256', data['password'].encode('utf-8'), salt, 100000)
 
-    user_document = {"name": data['username'], "salt_password": salt_password, "email": data['email'],
+    user_document = {"username": data['username'], "salt_password": salt_password, "email": data['email'],
                      "salt": salt, "cookies": None, "self_ticket": [], "public_ticket": []}
     mongo.db.user.insert_one(user_document)
     return jsonify({"result": "Pass"})
@@ -71,31 +71,34 @@ def valid_pwd(pwd):
     return up_case and low_case and num and special_char
 
 
-@app.route('/login', methods=['POST'])
+@app.route('/login', methods=['POST', 'GET'])
 def login():
     """
     :return: String with content "pass" and other
     """
+    if request.method == 'Get':
+        res = make_response()
+        res.set_cookie(key="login", value="response_cookie", max_age=3*60)
+        return res
     data = request.get_json()
-    print("cookies is: " + str(request.cookies.get('login')))
+    print(str(request.headers))
     if request.cookies.get('login') is not None:
         user = return_user(request.cookies.get('login'))
         if user is not None:
             return jsonify({"result": "Pass"})
     password = data['password']
-    query = mongo.db.user.find_one({"email": data['email']})
+    query = mongo.db.user.find_one({"username": data['username']})
     if query is None:
         return jsonify({"result": "The user is not existed"})
     elif query['email'] == data['email']:
         new_salt_password = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), query['salt'], 100000)
         if new_salt_password != query['salt_password']:
-            return jsonify({"result":"Password is wrong"})
+            return jsonify({"result": "Password is wrong"})
 
     response_cookie = token_urlsafe(16)
     response = make_response({"result": "Pass"})
-    response.set_cookie(key="login", value=response_cookie, max_age=1*60)
+    response.set_cookie(key="login", value=response_cookie, max_age=3*60)
     response.headers['Content-type'] = "application/json"
-
     return response
 
 
