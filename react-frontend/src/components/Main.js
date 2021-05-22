@@ -1,9 +1,12 @@
 
-const Main = () => {
+import React from 'react'
+import Logout from './Logout'
+const Main = ({username}) => {
     return (
-        <div>
-           <h1>Hi from Main</h1> 
-        </div>
+      <>
+      <h1>Hi {username}</h1>
+      <Logout/>
+      </>
     )
 }
 
