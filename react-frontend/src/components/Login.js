@@ -16,6 +16,7 @@ const Login = () => {
     const [error,setError] = useState('');
     const history = useHistory();
 
+    //This function will handle login request from google.
     const onSuccess = (response) =>{
         console.log(response)
         setIsLogin(true)
@@ -26,12 +27,16 @@ const Login = () => {
         })
         history.push("/home/" + response.accessToken)
     }
+
+    //This function will handle login from facebook/google on failure.
     const onFailure = (res) => {
         console.log('[login Failed] res: ',res)
         setIsLogin(false)
         setError("google/facebook login fail")
     }
 
+
+    //This function will make a post request for facebook sucessful Login.
     const responseFacebook = (response) => {
         console.log(response);
         setIsLogin(true)
@@ -45,10 +50,7 @@ const Login = () => {
         history.push("/home/" + response.accessToken )
       }
 
-    const componentClicked =() =>{
-        console.log('clicked facebook button');
-    }
-
+    //his function will handle normal login client.Post data to backend server.
     const login= (e) =>{
         e.preventDefault();
         axios
@@ -68,6 +70,8 @@ const Login = () => {
             })
         .catch(error=>{ console.log(error) })
     }
+
+    
 
     return (
     <Container fluid="sm">
@@ -109,7 +113,6 @@ const Login = () => {
                 <FacebookLogin
                     appId="2318622718268647"
                     callback={responseFacebook}
-                    onClick = {componentClicked}
                     onFailure = {onFailure}
                     autoload = {false}
                     render={renderProps => (
