@@ -39,6 +39,8 @@ def register():
         return jsonify({"result": "The email is not valid"})
     elif mongo.db.user.find_one({"email": data['email']}) is not None:
         return jsonify({"result": "The email already existed please sign in or change to another email"})
+    elif mongo.db.user.find_one({"username": data['username']}) is not None:
+        return jsonify({"result": "Username is already exist please enter different one"})
     salt = os.urandom(32)  # reference: https://nitratine.net/blog/post/how-to-hash-passwords-in-python/
     salt_password = hashlib.pbkdf2_hmac('sha256', data['password'].encode('utf-8'), salt, 100000)
 
