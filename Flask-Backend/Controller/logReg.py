@@ -2,8 +2,8 @@ import hashlib
 import os
 import re
 from flask_cors import CORS
-import json
-from datetime import timedelta
+from google.oauth2 import id_token
+from google.auth.transport import requests
 from secrets import token_urlsafe
 
 from flask import Flask, request, jsonify, Response, make_response
@@ -73,17 +73,12 @@ def valid_pwd(pwd):
     return up_case and low_case and num and special_char
 
 
-@app.route('/login', methods=['POST', 'GET'])
+@app.route('/login', methods=['POST'])
 def login():
     """
     :return: String with content "pass" and other
     """
-    if request.method == 'Get':
-        res = make_response()
-        res.set_cookie(key="login", value="response_cookie", max_age=3*60)
-        return res
     data = request.get_json()
-    print(str(request.headers))
     if request.cookies.get('login') is not None:
         user = return_user(request.cookies.get('login'))
         if user is not None:
@@ -92,7 +87,7 @@ def login():
     query = mongo.db.user.find_one({"username": data['username']})
     if query is None:
         return jsonify({"result": "The user is not existed"})
-    elif query['email'] == data['email']:
+    elif query['username'] == data['username']:
         new_salt_password = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), query['salt'], 100000)
         if new_salt_password != query['salt_password']:
             return jsonify({"result": "Password is wrong"})
@@ -102,6 +97,23 @@ def login():
     response.set_cookie(key="login", value=response_cookie, max_age=3*60)
     response.headers['Content-type'] = "application/json"
     return response
+
+
+@app.route("/google/login", methods=['POST'])
+def google_login():
+    print(str(request.get_json()))
+    token = request.get_json()['token']
+    # name = request.get_json()['name']
+    idinfo = id_token.verify_oauth2_token(token, requests.Request(), None)
+    print(str(idinfo))
+    try:
+        # idinfo = id_token.verify_oauth2_token(token, requests.Request())
+        print("a")
+
+    except ValueError:
+        print(ValueError)
+        ValueError
+    return "hello"
 
 
 def return_user(cookie):
