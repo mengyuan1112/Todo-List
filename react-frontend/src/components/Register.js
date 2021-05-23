@@ -34,6 +34,7 @@ const Register = () => {
                     setUsernameError("")
                 }
                 else{
+
                     setUsernameError(response.data.result)
                     setPasswordError("")
                     setEmailError("")
