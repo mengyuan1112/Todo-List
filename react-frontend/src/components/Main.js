@@ -7,6 +7,7 @@ import './Main.css'
 const Main = ({username}) => {
     return (
       <>
+      <Logout/>
       <div className="mainDay">
         <Navbar>
           <Nav className="nav-fill w-100">
