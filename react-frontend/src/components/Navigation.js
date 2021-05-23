@@ -14,7 +14,7 @@ const Navigation=()=>{
         <Navbar.Brand href="/">ToDo</Navbar.Brand> 
         <Navbar.Collapse id="navbarScroll"> 
         <Nav>
-        <Nav.Link onClick={() => setExpanded(false)} href="/">Home</Nav.Link>
+        <Nav.Link onClick={() => setExpanded(false)} href="/home">Home</Nav.Link>
         <Nav.Link onClick={() => setExpanded(false)} href="/about">About Us</Nav.Link>
         <Nav.Link onClick={() => setExpanded(false)} href="/login">Login</Nav.Link>
         <Nav.Link onClick={() => setExpanded(false)} href="/register">Register</Nav.Link>

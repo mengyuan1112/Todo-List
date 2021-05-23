@@ -1,6 +1,7 @@
 import { Container,Row,Form,Button,Col } from 'react-bootstrap';
 import { Link,Route,Switch,useHistory } from 'react-router-dom';
 import Home from './Home';
+import Main from './Main';
 import Register from './Register';
 import React, { useState } from 'react';
 import axios from 'axios';
@@ -18,17 +19,20 @@ const Login = () => {
 
     //This function will handle login request from google.
     const onSuccess = (response) =>{
-        console.log(response)
+        console.log('[Login Sucess from google] ',response)
         setIsLogin(true)
         setUsername(response.profileObj.name)
+        history.push("/main")
+
+        // Send the token and name to backend.
         axios.post('login',{token: response.accessToken, name: response.profileObj.name})
         .then(res=>{
             console.log(res)
-            history.push("/home/" + response.accessToken)
         })
         .catch(err =>{
             console.log(err)
         })
+
     }
 
     //This function will handle login from facebook/google on failure.
@@ -41,15 +45,17 @@ const Login = () => {
 
     //This function will make a post request for facebook sucessful Login.
     const responseFacebook = (response) => {
-        console.log(response);
         setIsLogin(true)
+        console.log('[Login sucess from Facebook] ',response)
         //given: acessesToken,id,name,userID;
         //send the acessToken to backend.
         setUsername(response.name)
+        history.push("/main")
+
+        // Send the token and name to backend.
         axios.post('http://localhost:5000/login',{token: response.accessToken, name: response.name})
         .then(res=>{
             console.log(res)
-            history.push("/home/" + response.accessToken )
         })
         .catch(err =>{
             console.log(err)
@@ -59,23 +65,29 @@ const Login = () => {
     //his function will handle normal login client.Post data to backend server.
     const login= (e) =>{
         e.preventDefault();
+
+
+        //Send the username and password to backend.
         axios
         .post('login',{username:username, password:password})
         .then(response=>{
                 console.log(response)
                 if (response.data.result === 'Pass'){
                     //  I also need to store the cookie here.
-                    localStorage.setItem('token')
+                    console.log('[Regular login passed]',response);
                     setIsLogin(true);
-                    history.push("/home/" + username);
+                    history.push('/main')
+                    // history.push("/home/"+username);
                 }
                 else{
+                    setIsLogin(false);
                     console.log(response.data);
                     setError(response.data.result);
                 }
-                // I will need to check the response message. If pass. everything good. Else, check error data.
+
             })
         .catch(error=>{ console.log(error) })
+
     }
 
 
@@ -115,7 +127,7 @@ const Login = () => {
                 cookiePolicy ={'single_host_origin'}
                 style={{ marginTop: '100px'}}
                 buttonText="Login with Google"
-                isSignedIn ={true}/> 
+                isSignedIn ={false}/> 
                 <br></br>
                 <FacebookLogin
                     appId="2318622718268647"
@@ -130,12 +142,9 @@ const Login = () => {
         </Col>
         </Row>
         <Switch>
-        <Route path={"/home/"+username}>
-            <Home username="username"/>
-        </Route>
-        <Route path='/register'>
-            <Register/>
-        </Route>
+        <Route path="/main" component={<Main/>} />
+        <Route path={"/home/"+username} component={<Home/>} />
+        <Route path='/register' component={<Register/>}/>
         </Switch>
     </Container>
     )
