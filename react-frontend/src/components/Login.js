@@ -21,11 +21,14 @@ const Login = () => {
         console.log(response)
         setIsLogin(true)
         setUsername(response.profileObj.name)
-        axios.post('http://localhost:5000/login',{token: response.accessToken, name: response.profileObj.name})
+        axios.post('login',{token: response.accessToken, name: response.profileObj.name})
         .then(res=>{
             console.log(res)
+            history.push("/home/" + response.accessToken)
         })
-        history.push("/home/" + response.accessToken)
+        .catch(err =>{
+            console.log(err)
+        })
     }
 
     //This function will handle login from facebook/google on failure.
@@ -46,19 +49,23 @@ const Login = () => {
         axios.post('http://localhost:5000/login',{token: response.accessToken, name: response.name})
         .then(res=>{
             console.log(res)
+            history.push("/home/" + response.accessToken )
         })
-        history.push("/home/" + response.accessToken )
+        .catch(err =>{
+            console.log(err)
+        })
       }
 
     //his function will handle normal login client.Post data to backend server.
     const login= (e) =>{
         e.preventDefault();
         axios
-        .post('http://localhost:5000/login',{email:username, password:password})
+        .post('login',{username:username, password:password})
         .then(response=>{
                 console.log(response)
                 if (response.data.result === 'Pass'){
                     //  I also need to store the cookie here.
+                    localStorage.setItem('token')
                     setIsLogin(true);
                     history.push("/home/" + username);
                 }
@@ -71,7 +78,7 @@ const Login = () => {
         .catch(error=>{ console.log(error) })
     }
 
-    
+
 
     return (
     <Container fluid="sm">

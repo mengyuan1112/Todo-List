@@ -7,6 +7,7 @@ import Main from './Main'
 import Background from '../2.png';
 import './Home.css'
 import Logout from './Logout'
+import axios from 'axios';
 
 const Home = ({username}) => {
     const monthNames = ["January", "February", "March", "April", "May", "June",
