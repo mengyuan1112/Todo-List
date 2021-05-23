@@ -19,22 +19,22 @@ const Register = () => {
         e.preventDefault();
         axios.post('http://localhost:5000/register',{email:emailReg, username:usernameReg, password:passwordReg}).then(
             (response)=>{
-                console.log(response);
-                if (response.data === "pass"){
+                console.log(response.data);
+                if (response.data['result'] === "pass"){
                     history.push("/login");
                 }
-                else if (response.data === "The email already existed please sign in or change to another email"){
-                    setEmailError(response.data);
+                else if (response.data['result'] === "The email already existed please sign in or change to another email"){
+                    setEmailError(response.data['result']);
                     setPasswordError("")
                     setUsernameError("")
                 }
-                else if (response.data === "The password is not satisfied categories"){
-                    setPasswordError(response.data)
+                else if (response.data['result'] === "The password is not satisfied categories"){
+                    setPasswordError(response.data['result'])
                     setEmailError("")
                     setUsernameError("")
                 }
                 else{
-                    setUsernameError(response.data)
+                    setUsernameError(response.data['result'])
                     setPasswordError("")
                     setEmailError("")
                 }
