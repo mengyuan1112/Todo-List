@@ -25,7 +25,7 @@ const Login = () => {
         history.push("/main")
 
         // Send the token and name to backend.
-        axios.post('google/login',{token: response.accessToken, name: response.profileObj.name})
+        axios.post('google/login',{token: response.tokenObj.id_token, name: response.profileObj.name})
         .then(res=>{
             console.log(res)
         })
