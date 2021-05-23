@@ -24,7 +24,8 @@ app.config['MONGO_URI'] = "mongodb://localhost:27017/Todo_list"
 mongo = PyMongo(app)
 
 
-regex = '^(\w|\.|\_|\-)+[@](\w|\_|\-|\.)+[.]\w{2,3}$'  # Regex for check email validation
+# Regex for check email validation
+regex = '^(\w|\.|\_|\-)+[@](\w|\_|\-|\.)+[.]\w{2,3}$'
 
 
 @app.route('/register', methods=['POST'])
@@ -39,10 +40,12 @@ def register():
         return jsonify({"result": "The email is not valid"})
     elif mongo.db.user.find_one({"email": data['email']}) is not None:
         return jsonify({"result": "The email already existed please sign in or change to another email"})
+      
     elif mongo.db.user.find_one({"username": data['username']}) is not None:
         return jsonify({"result": "Username is already exist please enter different one"})
     salt = os.urandom(32)  # reference: https://nitratine.net/blog/post/how-to-hash-passwords-in-python/
     salt_password = hashlib.pbkdf2_hmac('sha256', data['password'].encode('utf-8'), salt, 100000)
+
 
     user_document = {"username": data['username'], "salt_password": salt_password, "email": data['email'],
                      "salt": salt, "cookies": None, "self_ticket": [], "public_ticket": []}
@@ -93,7 +96,8 @@ def login():
     if query is None:
         return jsonify({"result": "The user is not existed"})
     elif query['email'] == data['email']:
-        new_salt_password = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), query['salt'], 100000)
+        new_salt_password = hashlib.pbkdf2_hmac(
+            'sha256', password.encode('utf-8'), query['salt'], 100000)
         if new_salt_password != query['salt_password']:
             return jsonify({"result": "Password is wrong"})
 

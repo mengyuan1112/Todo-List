@@ -1,6 +1,6 @@
 import { Container,Row,Form,Button,Col } from 'react-bootstrap';
 import { Link,Route,Switch,useHistory } from 'react-router-dom';
-import Main from './Main';
+import Home from './Home';
 import Register from './Register';
 import React, { useState } from 'react';
 import axios from 'axios';
@@ -16,54 +16,69 @@ const Login = () => {
     const [error,setError] = useState('');
     const history = useHistory();
 
+    //This function will handle login request from google.
     const onSuccess = (response) =>{
         console.log(response)
         setIsLogin(true)
-        // response.tokenId
-        axios.post('http://localhost:5000/login',{token: response.accessToken, name: response.profileObj.name})
-        .then(response=>{console.log(response)
+        setUsername(response.profileObj.name)
+        axios.post('login',{token: response.accessToken, name: response.profileObj.name})
+        .then(res=>{
+            console.log(res)
+            history.push("/home/" + response.accessToken)
         })
-        history.push("/main/" + response.accessToken)
+        .catch(err =>{
+            console.log(err)
+        })
     }
+
+    //This function will handle login from facebook/google on failure.
     const onFailure = (res) => {
         console.log('[login Failed] res: ',res)
         setIsLogin(false)
         setError("google/facebook login fail")
     }
 
+
+    //This function will make a post request for facebook sucessful Login.
     const responseFacebook = (response) => {
         console.log(response);
         setIsLogin(true)
         //given: acessesToken,id,name,userID;
         //send the acessToken to backend.
+        setUsername(response.name)
         axios.post('http://localhost:5000/login',{token: response.accessToken, name: response.name})
-        .then(response=>{console.log(response)
+        .then(res=>{
+            console.log(res)
+            history.push("/home/" + response.accessToken )
         })
-        history.push("/main/" + response.accessToken )
+        .catch(err =>{
+            console.log(err)
+        })
       }
 
-    const componentClicked =() =>{
-        console.log('clicked facebook button');
-    }
-
+    //his function will handle normal login client.Post data to backend server.
     const login= (e) =>{
         e.preventDefault();
         axios
-        .post('http://localhost:5000/login',{username:username, password:password})
-        .then(response=>{console.log(response)
-                if (response.data === 'pass'){
+        .post('login',{username:username, password:password})
+        .then(response=>{
+                console.log(response)
+                if (response.data.result === 'Pass'){
                     //  I also need to store the cookie here.
+                    localStorage.setItem('token')
                     setIsLogin(true);
-                    history.push("/main/" + username);
+                    history.push("/home/" + username);
                 }
                 else{
                     console.log(response.data);
-                    setError(response.data);
+                    setError(response.data.result);
                 }
                 // I will need to check the response message. If pass. everything good. Else, check error data.
             })
         .catch(error=>{ console.log(error) })
     }
+
+
 
     return (
     <Container fluid="sm">
@@ -105,7 +120,6 @@ const Login = () => {
                 <FacebookLogin
                     appId="2318622718268647"
                     callback={responseFacebook}
-                    onClick = {componentClicked}
                     onFailure = {onFailure}
                     autoload = {false}
                     render={renderProps => (
@@ -116,8 +130,8 @@ const Login = () => {
         </Col>
         </Row>
         <Switch>
-        <Route path={"/main/"+username}>
-            <Main username={username}/>
+        <Route path={"/home/"+username}>
+            <Home username="username"/>
         </Route>
         <Route path='/register'>
             <Register/>
