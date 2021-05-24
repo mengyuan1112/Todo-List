@@ -1,6 +1,5 @@
 import { Container,Row,Form,Button,Col } from 'react-bootstrap';
 import { Link,Route,Switch,useHistory } from 'react-router-dom';
-import Home from './Home';
 import Main from './Main';
 import Register from './Register';
 import React, { useState } from 'react';
@@ -17,80 +16,54 @@ const Login = () => {
     const [error,setError] = useState('');
     const history = useHistory();
 
-    //This function will handle login request from google.
     const onSuccess = (response) =>{
-        console.log('[Login Sucess from google] ',response)
-        setIsLogin(true)
-        setUsername(response.profileObj.name)
-        history.push("/main")
-
-        // Send the token and name to backend.
-        axios.post('google/login',{token: response.tokenObj.id_token, name: response.profileObj.name})
-        .then(res=>{
-            console.log(res)
+        console.log(response)
+        setIsLogin(false)
+        // response.tokenId
+        axios.post('http://localhost:5000/google/login',{token: response.tokenObj.id_token, name: response.profileObj.name})
+        .then(response=>{console.log(response)
         })
-        .catch(err =>{
-            console.log(err)
-        })
-
+        history.push("/main/" + response.accessToken)
     }
-
-    //This function will handle login from facebook/google on failure.
     const onFailure = (res) => {
         console.log('[login Failed] res: ',res)
         setIsLogin(false)
         setError("google/facebook login fail")
     }
 
-
-    //This function will make a post request for facebook sucessful Login.
     const responseFacebook = (response) => {
+        console.log(response);
         setIsLogin(true)
-        console.log('[Login sucess from Facebook] ',response)
         //given: acessesToken,id,name,userID;
         //send the acessToken to backend.
-        setUsername(response.name)
-        history.push("/main")
-
-        // Send the token and name to backend.
         axios.post('http://localhost:5000/login',{token: response.accessToken, name: response.name})
-        .then(res=>{
-            console.log(res)
+        .then(response=>{console.log(response)
         })
-        .catch(err =>{
-            console.log(err)
-        })
+        history.push("/main/" + response.accessToken )
       }
 
-    //his function will handle normal login client.Post data to backend server.
-    const login= (e) =>{
-        e.preventDefault();
-
-
-        //Send the username and password to backend.
-        axios
-        .post('login',{username:username, password:password})
-        .then(response=>{
-                console.log(response)
-                if (response.data.result === 'Pass'){
-                    //  I also need to store the cookie here.
-                    console.log('[Regular login passed]',response);
-                    setIsLogin(true);
-                    history.push('/main')
-                    // history.push("/home/"+username);
-                }
-                else{
-                    setIsLogin(false);
-                    console.log(response.data);
-                    setError(response.data.result);
-                }
-
-            })
-        .catch(error=>{ console.log(error) })
-
+    const componentClicked =() =>{
+        console.log('clicked facebook button');
     }
 
-
+    const login= (e) =>{
+        e.preventDefault();
+        axios
+        .post('http://localhost:5000/login',{username:username, password:password})
+        .then(response=>{console.log(response)
+                if (response.data === 'pass'){
+                    //  I also need to store the cookie here.
+                    setIsLogin(true);
+                    history.push("/main/" + username);
+                }
+                else{
+                    console.log(response.data);
+                    setError(response.data);
+                }
+                // I will need to check the response message. If pass. everything good. Else, check error data.
+            })
+        .catch(error=>{ console.log(error) })
+    }
 
     return (
     <Container fluid="sm">
@@ -127,11 +100,12 @@ const Login = () => {
                 cookiePolicy ={'single_host_origin'}
                 style={{ marginTop: '100px'}}
                 buttonText="Login with Google"
-                isSignedIn ={false}/> 
+                isSignedIn ={false}/>
                 <br></br>
                 <FacebookLogin
                     appId="2318622718268647"
                     callback={responseFacebook}
+                    onClick = {componentClicked}
                     onFailure = {onFailure}
                     autoload = {false}
                     render={renderProps => (
@@ -142,9 +116,12 @@ const Login = () => {
         </Col>
         </Row>
         <Switch>
-        <Route path="/main" component={<Main/>} />
-        <Route path={"/home/"+username} component={<Home/>} />
-        <Route path='/register' component={<Register/>}/>
+        <Route path={"/main/"+username}>
+            <Main username={username}/>
+        </Route>
+        <Route path='/register'>
+            <Register/>
+        </Route>
         </Switch>
     </Container>
     )
