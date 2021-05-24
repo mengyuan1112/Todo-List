@@ -13,7 +13,6 @@ import GoogleLogin from 'react-google-login';
 const Login = ({name,onNameChange}) => {
     const [username,setUsername] = useState('');
     const [password,setPassword] = useState('');
-    const [isLogin,setIsLogin] = useState(false);
     const [error,setError] = useState('');
     const history = useHistory();
 
@@ -23,7 +22,6 @@ const Login = ({name,onNameChange}) => {
         // Send the token and name to backend.
         axios.post('google/login',{token: response.tokenObj.id_token, name: response.profileObj.name})
         .then(res=>{
-            setIsLogin(true)
             onNameChange(response.profileObj.name)
             localStorage.setItem('token',response.tokenObj.id_token);
             console.log(res)
@@ -37,7 +35,6 @@ const Login = ({name,onNameChange}) => {
     //This function will handle login from facebook/google on failure.
     const onFailure = (res) => {
         console.log('[login Failed] res: ',res)
-        setIsLogin(false)
         onNameChange('')
         setError("google/facebook login fail")
     }
@@ -45,7 +42,6 @@ const Login = ({name,onNameChange}) => {
 
     //This function will make a post request for facebook sucessful Login.
     const responseFacebook = (response) => {
-        setIsLogin(true)
         onNameChange(response.name)
         localStorage.setItem('token',response.accessToken);
         console.log('[Login sucess from Facebook] ',response)
@@ -73,13 +69,11 @@ const Login = ({name,onNameChange}) => {
                 if (response.data.result === 'Pass'){
                     //  I also need to store the cookie here.
                     console.log('[Regular login passed]',response);
-                    setIsLogin(true);
                     localStorage.setItem('token',response.data.token);
                     onNameChange(response.data.name)
                     history.push('/home')
                 }
                 else{
-                    setIsLogin(false);
                     console.log(response.data);
                     setError(response.data.result);
                 }
@@ -99,7 +93,7 @@ const Login = ({name,onNameChange}) => {
             <br></br>
             <h1>Login</h1>
             <hr></hr>
-            {isLogin ? (<Link to="/home"/>) : (<p style={{color:'red'}} >{error}</p>)}
+            {name ? (<Link to="/home"/>) : (<p style={{color:'red'}} >{error}</p>)}
             <Form onSubmit={login}>
             <Form.Group>
             <Form.Control size="sm" style={{borderRadius:'10px'}} onChange={(e)=>{

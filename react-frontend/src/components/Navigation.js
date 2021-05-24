@@ -8,8 +8,9 @@ const Navigation=(props)=>{
     const logout =()=>{
         setExpanded(false)
         localStorage.clear()
-        props.onNameChange('')};
+        props.onNameChange('')
         history.push('/home')
+    };
     return (
     <>
     <Navbar expand="xl" className="d-flex justify-content-start" expanded = {expanded}>
