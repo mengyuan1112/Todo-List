@@ -103,12 +103,12 @@ const Login = () => {
             {isLogin ? (<Link to="/main"/>) : (<p style={{color:'red'}} >{error}</p>)}
             <Form onSubmit={login}>
             <Form.Group>
-            <Form.Control size="sm" onChange={(e)=>{
+            <Form.Control size="sm" style={{borderRadius:'10px'}} onChange={(e)=>{
                     setUsername(e.target.value)
                 }} type="text" placeholder="Enter username" />
             </Form.Group>
             <Form.Group controlId="formGroupPassword">
-                <Form.Control size="sm" onChange={(e)=>{
+                <Form.Control size="sm" style={{borderRadius:'10px'}} onChange={(e)=>{
                     setPassword(e.target.value)
                 }} type="password" placeholder="Enter Password" />
 
