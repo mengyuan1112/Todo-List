@@ -1,5 +1,5 @@
 import Navigation from './components/Navigation'
-import React,{Component} from 'react'
+import React ,{useState,useEffect} from 'react'
 import { Switch, Route} from 'react-router-dom';
 import Home from './components/Home';
 import Register from './components/Register';
@@ -9,33 +9,40 @@ import axios from 'axios';
 
 
 
-export default class App extends Component  {
+function App() {
+  const [name,setName] = useState('');
 
-  componentDidMount = () =>{
-    axios.get('config').then(
+  useEffect(() => {
+    axios.get('login').then(
       res => {
-        console.log(res);
+        setName(res.data.name)
       },
       err => {
-        console.log(err)
+        console.log(err);
+        setName('')
       }
-    )
-  };
-  render(){
-  return (
-    <div className="App">
-      <Navigation/>
-      <div>
-        <Switch>
-        <Route exact path="/home" component = {Home}/>
-        <Route exact path='/register' component={Register} />
-        <Route exact path='/login' component={Login} />
-        <Route exact path='/main' component={Main}/>
-        <Route exact path="/" component = {Home}/>
-        </Switch>
-      </div>
-    </div>
-  );
-}
-}
+    )},[])
+
+    function onChange(newName) {
+      setName(newName)
+    }
+
+
+    return (
+        <div className="App">
+          <Navigation name={name} onNameChange={onChange}/>
+          <div>
+            <Switch>
+            <Route exact path="/home" component = {()=> <Home name={name}  onNameChange={onChange} />}/>
+            <Route exact path='/register' component={Register} />
+            <Route exact path='/login' component={()=> <Login name={name} onNameChange={onChange}/>} />
+            <Route exact path='/main' component={()=> <Main name={name} onNameChange={onChange}/>} />
+            <Route exact path="/" component = {()=> <Home name={name} onNameChange={onChange} />}/>
+            </Switch>
+          </div>
+        </div>
+      );
+  }
+
+  export default App;
 
