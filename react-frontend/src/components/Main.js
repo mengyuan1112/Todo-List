@@ -1,13 +1,13 @@
 
 import React from 'react'
 import Logout from './Logout'
-import {Nav,Navbar,Col,Row} from 'react-bootstrap';
+import {Nav,Navbar,Col,Row,ListGroup,Card} from 'react-bootstrap';
 import './Main.css'
 
 const Main = ({name,onNameChange}) => {
     return (
       <>
-      <div className="mainDay">
+      <div className="mainDay" style={{backgroundColor:'white'}}>
         <Navbar>
           <Nav className="nav-fill w-100">
             <Nav.Link href="#"><span className="navBarDay">Mon</span></Nav.Link>
@@ -21,18 +21,22 @@ const Main = ({name,onNameChange}) => {
           </Navbar>
           <hr/>
           {/* <Logout/> */}
-        <Row>
-          <Col>
-            {/* <Container>
-              <p>ToDo</p>
-            </Container> */}
-          </Col>
-          <Col>
-            {/* <Container>
-              <p>Finished</p>
-            </Container> */}
-          </Col>
-          </Row>
+        <Card style={{ width: '35%', display:'inline-block', margin:'0 25px'}}>
+          <Card.Header>Todo</Card.Header>
+          <ListGroup variant="flush">
+            <ListGroup.Item>Cras justo odio</ListGroup.Item>
+            <ListGroup.Item>Dapibus ac facilisis in</ListGroup.Item>
+            <ListGroup.Item>Vestibulum at eros</ListGroup.Item>
+          </ListGroup>
+        </Card>
+        <Card style={{ width: '35%', display:'inline-block' }}>
+          <Card.Header>Finished</Card.Header>
+          <ListGroup variant="flush">
+            <ListGroup.Item>Cras justo odio</ListGroup.Item>
+            <ListGroup.Item>Dapibus ac facilisis in</ListGroup.Item>
+            <ListGroup.Item>Vestibulum at eros</ListGroup.Item>
+          </ListGroup>
+        </Card>
       </div>
       </>
     )
