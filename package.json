@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "axios": "^0.21.1"
+    "axios": "^0.21.1",
+    "react-native-web": "^0.16.3"
   }
 }

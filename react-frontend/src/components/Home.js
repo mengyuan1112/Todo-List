@@ -57,8 +57,8 @@ const Home = () => {
                     backgroundRepeat: 'no-repeat'}}>
                         <Container>
                             <br/>
-                        <Col><p className="lead" style={{fontSize:40, color:"#696969",paddingRight:'55px',marginBottom:'5px'}} className="d-flex justify-content-center">{monthNames[month]}  {date}</p></Col>
-                        <Col><p className="lead" style={{fontSize:30, color:"#696969",paddingRight:'55px'}} className="d-flex justify-content-center">{dayName[day]}</p></Col>
+                        <Col><p className="lead" style={{fontSize:40, color:"#696969",paddingRight:'px',marginBottom:'5px'}} className="d-flex justify-content-center">{monthNames[month]}  {date}</p></Col>
+                        <Col><p className="lead" style={{fontSize:30, color:"#696969",paddingRight:'0px'}} className="d-flex justify-content-center">{dayName[day]}</p></Col>
                       
                         </Container>
                 </Col>
