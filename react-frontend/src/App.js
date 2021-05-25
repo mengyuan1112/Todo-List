@@ -33,11 +33,12 @@ function App() {
           <Navigation name={name} onNameChange={onChange}/>
           <div>
             <Switch>
-            <Route exact path="/home" component = {()=> <Home name={name}  onNameChange={onChange} />}/>
-            <Route exact path='/register' component={Register} />
-            <Route exact path='/login' component={()=> <Login name={name} onNameChange={onChange}/>} />
-            <Route exact path='/main' component={()=> <Main name={name} onNameChange={onChange}/>} />
-            <Route exact path="/" component = {()=> <Home name={name} onNameChange={onChange} />}/>
+            <Route exact path={{name} + "/home"} component = {()=> <Home name={name}  onNameChange={onChange} />}/>
+            <Route exact path={{name} + "/register"} component={Register} />
+            <Route exact path={{name} + "/login"} component={()=> <Login name={name} onNameChange={onChange}/>} />
+            <Route exact path={{name} + "/main"} component={()=> <Main name={name} onNameChange={onChange}/>} />
+            <Route exact path={{name} + "/profile"} component={()=> <Profile name={name} onNameChange={onChange}/>} />
+            <Route exact path={{name} + "/"} component = {()=> <Home name={name} onNameChange={onChange} />}/>
             </Switch>
           </div>
         </div>
