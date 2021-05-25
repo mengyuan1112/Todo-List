@@ -34,13 +34,16 @@ const Navigation=({name,onNameChange})=>{
         <Navbar.Brand href={`${hreflink}/home`}>ToDo</Navbar.Brand>
         <Navbar.Collapse id="navbarScroll"> 
         <Nav>
-        <Nav.Link onClick={() => setExpanded(false)} href={`${hreflink}/home`}>Home</Nav.Link>
-        <Nav.Link onClick={() => setExpanded(false)} href={`${hreflink}/about`}>About Us</Nav.Link>
-        {name ? (<Nav.Link onClick={logout}>Logout</Nav.Link>) :
+        {name ? (
+        <>
+        <Nav.Link onClick={() => setExpanded(false)} href={`${hreflink}/main`}>ToDo List</Nav.Link>
+        <Nav.Link onClick={logout}>Logout</Nav.Link> </>):
          (<>
+            <Nav.Link onClick={() => setExpanded(false)} href={`${hreflink}/home`}>Home</Nav.Link>
             <Nav.Link onClick={() => setExpanded(false)} href={`${hreflink}/login`}>Login</Nav.Link>
             <Nav.Link onClick={() => setExpanded(false)} href={`${hreflink}/register`}>Register</Nav.Link>
         </>)}
+        <Nav.Link onClick={() => setExpanded(false)} href={`${hreflink}/about`}>About Us</Nav.Link>
         </Nav>
         </Navbar.Collapse>
         <div className="menu-container">
