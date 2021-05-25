@@ -1,13 +1,12 @@
 
 import React from 'react'
 import Logout from './Logout'
-import {Nav,Navbar,Col,Row,Container} from 'react-bootstrap';
+import {Nav,Navbar,Col,Row} from 'react-bootstrap';
 import './Main.css'
 
-const Main = ({username}) => {
+const Main = ({name,onNameChange}) => {
     return (
       <>
-      <Logout/>
       <div className="mainDay">
         <Navbar>
           <Nav className="nav-fill w-100">

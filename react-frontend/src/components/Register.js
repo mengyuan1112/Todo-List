@@ -63,22 +63,36 @@ const Register = () => {
             <h1>Register</h1>
             <hr></hr>
             <Form onSubmit={submitHandler}>
-            <Form.Group controlId="formGroupEmail">
+                {emailError? 
+                (
+                <Form.Group controlId="formGroupEmail">
                 <Form.Control onChange={(e)=>{
                     setEmailReg(e.target.value);
-                }} size="sm" type="email" placeholder="Enter Email" />
-                {emailError? (<Form.Text style={{ color:"red" }}>{emailError}</Form.Text>) : null}
-            </Form.Group>
+                }} size="sm" type="email" placeholder="Enter Email" style={{borderColor:"red", borderRadius:'10px'}} />
+                <Form.Text style={{ color:"red" }}>{emailError}</Form.Text> 
+                </Form.Group>
+                ) : 
+                (<Form.Group controlId="formGroupEmail">
+                <Form.Control onChange={(e)=>{
+                    setEmailReg(e.target.value);
+                }} size="sm" type="email" placeholder="Enter Email" style={{borderRadius:'10px'}}/>
+                </Form.Group>)
+                }
 
-            <Form.Group>
-                <Form.Control size="sm" type="text" onChange={(e)=>{
-                    setUsernameReg(e.target.value);
+                {usernameError? (
+                <Form.Group>
+                <Form.Control size="sm" type="text" style={{borderColor:"red", borderRadius:'10px'}} onChange={(e)=>{
+                        setUsernameReg(e.target.value);
                 }} placeholder="Enter username" />
-                {usernameError? (<Form.Text style={{ color:"red" }}>{usernameError}</Form.Text>) : null}
-            </Form.Group>
+                <Form.Text style={{ color:"red" }}>{usernameError}</Form.Text> 
+                </Form.Group>) 
+                : 
+                (<Form.Group>
+                <Form.Control size="sm" type="text" style={{borderRadius:'10px'}} onChange={(e)=>{
+                    setUsernameReg(e.target.value);}} placeholder="Enter username" /> </Form.Group>)}
 
             <Form.Group controlId="formGroupPassword">
-                <Form.Control size="sm" type="password" onChange={(e)=>{
+                <Form.Control size="sm" type="password" style={{borderRadius:'10px'}} onChange={(e)=>{
                     setPasswordReg(e.target.value)
                 }}  placeholder="Password" />
                 <Form.Text id="passwordHelpBlock" muted>
@@ -86,11 +100,14 @@ const Register = () => {
                 must not contain spaces, special characters, or emoji.
                 </Form.Text>
             </Form.Group>
-
-            <Form.Group controlId="formGroupPasswordConfirm">
-                <Form.Control size="sm" type="password" onChange={(e)=>checkPassword(e)} placeholder="Confirm Password" />
-                {passwordError? (<Form.Text style={{ color:"red" }}>{passwordError}</Form.Text>) : null}
-            </Form.Group>
+                {passwordError? 
+                (<Form.Group controlId="formGroupPasswordConfirm">
+                <Form.Control size="sm" type="password" style={{borderColor:"red",borderRadius:'10px'}} onChange={(e)=>checkPassword(e)} placeholder="Confirm Password" />
+                <Form.Text style={{ color:"red" }}>{passwordError}</Form.Text>
+                </Form.Group>
+                ):(<Form.Group controlId="formGroupPasswordConfirm">
+                    <Form.Control size="sm" type="password" style={{borderRadius:'10px'}} onChange={(e)=>checkPassword(e)} placeholder="Confirm Password" /> 
+                    </Form.Group> )}
             <Button variant="success" type="submit" >Register</Button>
             </Form>
         </Col>

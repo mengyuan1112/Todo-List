@@ -10,48 +10,43 @@ import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props
 import { ImFacebook2 } from "react-icons/im"
 import GoogleLogin from 'react-google-login';
 
-const Login = () => {
+const Login = ({name,onNameChange}) => {
     const [username,setUsername] = useState('');
     const [password,setPassword] = useState('');
-    const [isLogin,setIsLogin] = useState(false);
     const [error,setError] = useState('');
     const history = useHistory();
 
     //This function will handle login request from google.
     const onSuccess = (response) =>{
         console.log('[Login Sucess from google] ',response)
-        setIsLogin(true)
-        setUsername(response.profileObj.name)
-        history.push("/main")
-
         // Send the token and name to backend.
         axios.post('google/login',{token: response.tokenObj.id_token, name: response.profileObj.name})
         .then(res=>{
+            onNameChange(response.profileObj.name)
+            localStorage.setItem('token',response.tokenObj.id_token);
             console.log(res)
         })
         .catch(err =>{
             console.log(err)
         })
-
+        history.push('/home')
     }
 
     //This function will handle login from facebook/google on failure.
     const onFailure = (res) => {
         console.log('[login Failed] res: ',res)
-        setIsLogin(false)
+        onNameChange('')
         setError("google/facebook login fail")
     }
 
 
     //This function will make a post request for facebook sucessful Login.
     const responseFacebook = (response) => {
-        setIsLogin(true)
+        onNameChange(response.name)
+        localStorage.setItem('token',response.accessToken);
         console.log('[Login sucess from Facebook] ',response)
         //given: acessesToken,id,name,userID;
         //send the acessToken to backend.
-        setUsername(response.name)
-        history.push("/main")
-
         // Send the token and name to backend.
         axios.post('http://localhost:5000/login',{token: response.accessToken, name: response.name})
         .then(res=>{
@@ -60,13 +55,12 @@ const Login = () => {
         .catch(err =>{
             console.log(err)
         })
+        history.push('/home')
       }
 
     //his function will handle normal login client.Post data to backend server.
     const login= (e) =>{
         e.preventDefault();
-
-
         //Send the username and password to backend.
         axios
         .post('login',{username:username, password:password})
@@ -75,20 +69,19 @@ const Login = () => {
                 if (response.data.result === 'Pass'){
                     //  I also need to store the cookie here.
                     console.log('[Regular login passed]',response);
-                    setIsLogin(true);
-                    history.push('/main')
-                    // history.push("/home/"+username);
+                    localStorage.setItem('token',response.data.token);
+                    onNameChange(response.data.name)
+                    history.push('/home')
                 }
                 else{
-                    setIsLogin(false);
                     console.log(response.data);
                     setError(response.data.result);
                 }
 
             })
         .catch(error=>{ console.log(error) })
-
     }
+    
 
 
 
@@ -100,15 +93,15 @@ const Login = () => {
             <br></br>
             <h1>Login</h1>
             <hr></hr>
-            {isLogin ? (<Link to="/main"/>) : (<p style={{color:'red'}} >{error}</p>)}
+            {name ? (<Link to="/home"/>) : (<p style={{color:'red'}} >{error}</p>)}
             <Form onSubmit={login}>
             <Form.Group>
-            <Form.Control size="sm" onChange={(e)=>{
+            <Form.Control size="sm" style={{borderRadius:'10px'}} onChange={(e)=>{
                     setUsername(e.target.value)
                 }} type="text" placeholder="Enter username" />
             </Form.Group>
             <Form.Group controlId="formGroupPassword">
-                <Form.Control size="sm" onChange={(e)=>{
+                <Form.Control size="sm" style={{borderRadius:'10px'}} onChange={(e)=>{
                     setPassword(e.target.value)
                 }} type="password" placeholder="Enter Password" />
 
@@ -142,8 +135,8 @@ const Login = () => {
         </Col>
         </Row>
         <Switch>
-        <Route path="/main" component={<Main/>} />
-        <Route path={"/home/"+username} component={<Home/>} />
+        <Route path="/main" component = {()=> <Main name={name} />}/>
+        <Route path="/home" component = {()=> <Home name={name} />}/>
         <Route path='/register' component={<Register/>}/>
         </Switch>
     </Container>
