@@ -10,7 +10,7 @@ const Home = ({name,onNameChange}) => {
     const handleClick =()=>{
         console.log("clicked start planning")
         if (name){
-            history.push("/main")
+            history.push(`/${name}/main`)
         }
         else{
             history.push("/login")

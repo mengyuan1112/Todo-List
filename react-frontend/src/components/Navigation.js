@@ -17,7 +17,13 @@ const Navigation=({name,onNameChange})=>{
         history.push('/home')
     };
     const onClick = () => setIsActive(!isActive);
-
+    let hreflink=""
+    if (name){
+        hreflink='/'+name
+    }
+    else{
+        hreflink=""
+    }
     return (
     <>
     <Navbar expand="xl" className="d-flex justify-content-start" expanded = {expanded}>
@@ -25,17 +31,16 @@ const Navigation=({name,onNameChange})=>{
             setExpanded(expanded ? false : true)
         }} aria-controls="navbarScroll" /> 
         {/*  Add logo here when it's ready. */}
-        <Navbar.Brand href="/home">ToDo</Navbar.Brand> 
+        <Navbar.Brand href={`${hreflink}/home`}>ToDo</Navbar.Brand>
         <Navbar.Collapse id="navbarScroll"> 
         <Nav>
-        <Nav.Link onClick={() => setExpanded(false)} href="/home">Home</Nav.Link>
-        <Nav.Link onClick={() => setExpanded(false)} href="/about">About Us</Nav.Link>
+        <Nav.Link onClick={() => setExpanded(false)} href={`${hreflink}/home`}>Home</Nav.Link>
+        <Nav.Link onClick={() => setExpanded(false)} href={`${hreflink}/about`}>About Us</Nav.Link>
         {name ? (<Nav.Link onClick={logout}>Logout</Nav.Link>) :
          (<>
-            <Nav.Link onClick={() => setExpanded(false)} href="/login">Login</Nav.Link>
-            <Nav.Link onClick={() => setExpanded(false)} href="/register">Register</Nav.Link>
+            <Nav.Link onClick={() => setExpanded(false)} href={`${hreflink}/login`}>Login</Nav.Link>
+            <Nav.Link onClick={() => setExpanded(false)} href={`${hreflink}/register`}>Register</Nav.Link>
         </>)}
-        <Nav.Link onClick={() => setExpanded(false)} href="/setting">Setting</Nav.Link>
         </Nav>
         </Navbar.Collapse>
         <div className="menu-container">
@@ -44,7 +49,7 @@ const Navigation=({name,onNameChange})=>{
             </button>
             <nav ref={dropdownRef} className={`menu ${isActive ? 'active' : 'inactive'}`}>
                 <ul>
-                    <li><a href={{name}/profile}>Profile</a></li>
+                    <li><a href={`${hreflink}/profile`}>Profile</a></li>
                     <li><a href="/logout">Logout</a></li>
                 </ul>
             </nav>

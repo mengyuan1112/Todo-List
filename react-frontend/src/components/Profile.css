@@ -1,0 +1,15 @@
+.jjj {
+  display: flex;
+  -webkit-box-orient: vertical;
+  box-orient: vertical;
+  flex-direction: column;
+  width: 100%;
+}
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+.kkk {
+  height: 60px;
+  width: 60px;
+  border-radius: 20%;
+}

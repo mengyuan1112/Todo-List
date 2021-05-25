@@ -29,7 +29,7 @@ const Login = ({name,onNameChange}) => {
         .catch(err =>{
             console.log(err)
         })
-        history.push('/home')
+        history.push(`/${response.profileObj.name}/home`)
     }
 
     //This function will handle login from facebook/google on failure.
@@ -55,7 +55,7 @@ const Login = ({name,onNameChange}) => {
         .catch(err =>{
             console.log(err)
         })
-        history.push('/home')
+        history.push(`/${response.name}/home`)
       }
 
     //his function will handle normal login client.Post data to backend server.
@@ -71,7 +71,7 @@ const Login = ({name,onNameChange}) => {
                     console.log('[Regular login passed]',response);
                     localStorage.setItem('token',response.data.token);
                     onNameChange(response.data.name)
-                    history.push('/home')
+                    history.push("/"+response.data.name+'/home')
                 }
                 else{
                     console.log(response.data);
@@ -93,7 +93,7 @@ const Login = ({name,onNameChange}) => {
             <br></br>
             <h1>Login</h1>
             <hr></hr>
-            {name ? (<Link to="/home"/>) : (<p style={{color:'red'}} >{error}</p>)}
+            {name ? (<Link to= {`/${name}/home`} />) : (<p style={{color:'red'}} >{error}</p>)}
             <Form onSubmit={login}>
             <Form.Group>
             <Form.Control size="sm" style={{borderRadius:'10px'}} onChange={(e)=>{
@@ -134,11 +134,6 @@ const Login = ({name,onNameChange}) => {
             </div>
         </Col>
         </Row>
-        <Switch>
-        <Route path="/main" component = {()=> <Main name={name} />}/>
-        <Route path="/home" component = {()=> <Home name={name} />}/>
-        <Route path='/register' component={<Register/>}/>
-        </Switch>
     </Container>
     )
 }
