@@ -5,6 +5,7 @@ import Home from './components/Home';
 import Register from './components/Register';
 import Login from './components/Login';
 import Main from './components/Main';
+import Profile from './components/Profile'
 import axios from 'axios';
 
 
@@ -38,6 +39,7 @@ function App() {
             <Route exact path='/login' component={()=> <Login name={name} onNameChange={onChange}/>} />
             <Route exact path='/main' component={()=> <Main name={name} onNameChange={onChange}/>} />
             <Route exact path="/" component = {()=> <Home name={name} onNameChange={onChange} />}/>
+            <Route exact path="/profile" component={()=> <Profile/>}></Route>
             </Switch>
           </div>
         </div>
