@@ -1,31 +1,55 @@
 import { Container,Row,Form,Button,Col } from 'react-bootstrap'
-import { Link,Route,Switch } from 'react-router-dom'
-import {useState } from 'react'
+import { Route,Switch,useHistory } from 'react-router-dom'
+import React,{useState } from 'react'
 import Login from './Login'
-import Axios from 'axios'
+import axios from 'axios'
 
 
 const Register = () => {
     const [emailReg,setEmailReg] = useState('');
-    const [checkError, setCheckError] = useState('');
+    const [passwordError,setPasswordError] = useState('');
+    const [emailError,setEmailError] = useState('');
+    const [usernameError,setUsernameError] = useState('');
     const [usernameReg,setUsernameReg] = useState('');
     const [passwordReg,setPasswordReg] = useState('');
     const [confirmPasswordReg,setConfirmPasswordReg] = useState('');
-    const registers= () =>{
-        Axios.post('http://localhost:5000/register',{email:emailReg, username:usernameReg, password:passwordReg}).then(
+    const history = useHistory();
+
+    const submitHandler= (e) =>{
+        e.preventDefault();
+        axios.post('http://localhost:5000/register',{email:emailReg, username:usernameReg, password:passwordReg}).then(
             (response)=>{
-                console.log(response)
-            }
-        )
+                console.log(response);
+                if (response.data.result === "Pass"){
+                    history.push("/login");
+                }
+                else if (response.data.result === "The email already existed please sign in or change to another email"){
+                    setEmailError(response.data.result);
+                    setPasswordError("")
+                    setUsernameError("")
+                }
+                else if (response.data.result === "The password is not satisfied categories"){
+                    setPasswordError(response.data.result)
+                    setEmailError("")
+                    setUsernameError("")
+                }
+                else{
+
+                    setUsernameError(response.data.result)
+                    setPasswordError("")
+                    setEmailError("")
+                }
+            })
+            .catch(err=>{ console.log(err) });
     }
+
     const checkPassword=(e)=>{
-        setCheckError('');
         setConfirmPasswordReg(e.target.value);
-        if (passwordReg !== e.target.value){
-            setCheckError("Password doesn't match")
+        if (passwordReg !== e.target.value ){
+            setPasswordError("Password did't match")
         }
         else{
-            setCheckError('');
+            setPasswordError('');
         }
     }
 
@@ -38,22 +62,37 @@ const Register = () => {
             <br></br>
             <h1>Register</h1>
             <hr></hr>
-            <Form>
-
-            <Form.Group controlId="formGroupEmail">
+            <Form onSubmit={submitHandler}>
+                {emailError? 
+                (
+                <Form.Group controlId="formGroupEmail">
                 <Form.Control onChange={(e)=>{
                     setEmailReg(e.target.value);
-                }} size="sm" type="email" placeholder="Enter Email" />
-            </Form.Group>
+                }} size="sm" type="email" placeholder="Enter Email" style={{borderColor:"red", borderRadius:'10px'}} />
+                <Form.Text style={{ color:"red" }}>{emailError}</Form.Text> 
+                </Form.Group>
+                ) : 
+                (<Form.Group controlId="formGroupEmail">
+                <Form.Control onChange={(e)=>{
+                    setEmailReg(e.target.value);
+                }} size="sm" type="email" placeholder="Enter Email" style={{borderRadius:'10px'}}/>
+                </Form.Group>)
+                }
 
-            <Form.Group>
-                <Form.Control size="sm" type="text" onChange={(e)=>{
-                    setUsernameReg(e.target.value);
+                {usernameError? (
+                <Form.Group>
+                <Form.Control size="sm" type="text" style={{borderColor:"red", borderRadius:'10px'}} onChange={(e)=>{
+                        setUsernameReg(e.target.value);
                 }} placeholder="Enter username" />
-            </Form.Group>
+                <Form.Text style={{ color:"red" }}>{usernameError}</Form.Text> 
+                </Form.Group>) 
+                : 
+                (<Form.Group>
+                <Form.Control size="sm" type="text" style={{borderRadius:'10px'}} onChange={(e)=>{
+                    setUsernameReg(e.target.value);}} placeholder="Enter username" /> </Form.Group>)}
 
             <Form.Group controlId="formGroupPassword">
-                <Form.Control size="sm" type="password" onChange={(e)=>{
+                <Form.Control size="sm" type="password" style={{borderRadius:'10px'}} onChange={(e)=>{
                     setPasswordReg(e.target.value)
                 }}  placeholder="Password" />
                 <Form.Text id="passwordHelpBlock" muted>
@@ -61,15 +100,16 @@ const Register = () => {
                 must not contain spaces, special characters, or emoji.
                 </Form.Text>
             </Form.Group>
-
-            <Form.Group controlId="formGroupPasswordConfirm">
-                <Form.Control size="sm" type="password" onChange={(e)=>checkPassword(e)} placeholder="Confirm Password" />
-                <Form.Text style={{ color:"red" }}>{checkError}</Form.Text>
-            </Form.Group>
-
-            <Link to="/login"><Button onClick={registers} variant="success" type="submit" >Register</Button></Link>
+                {passwordError? 
+                (<Form.Group controlId="formGroupPasswordConfirm">
+                <Form.Control size="sm" type="password" style={{borderColor:"red",borderRadius:'10px'}} onChange={(e)=>checkPassword(e)} placeholder="Confirm Password" />
+                <Form.Text style={{ color:"red" }}>{passwordError}</Form.Text>
+                </Form.Group>
+                ):(<Form.Group controlId="formGroupPasswordConfirm">
+                    <Form.Control size="sm" type="password" style={{borderRadius:'10px'}} onChange={(e)=>checkPassword(e)} placeholder="Confirm Password" /> 
+                    </Form.Group> )}
+            <Button variant="success" type="submit" >Register</Button>
             </Form>
-
         </Col>
         </Row>
         <Switch>

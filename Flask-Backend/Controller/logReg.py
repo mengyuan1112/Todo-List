@@ -1,12 +1,15 @@
 import hashlib
 import os
 import re
-from flask_cors import CORS
-import json
-from datetime import timedelta
-from secrets import token_urlsafe
+import jwt
 
-from flask import Flask, request, jsonify, Response, make_response
+import datetime
+
+from google.oauth2 import id_token
+from google.auth.transport import requests
+
+from flask_cors import CORS
+from flask import Flask, request, jsonify
 from flask_pymongo import PyMongo
 
 
@@ -18,13 +21,16 @@ cors = CORS(app)
     port: 27017
     database name: Todo_list
     collection name: user
-    DB document [name, salt_password, email, salt, cookies, self_ticket, public_ticket]
+    DB document [username, name, salt_password, email, salt, self_ticket, public_ticket]
 """
-app.config['MONGO_URI'] = "mongodb://localhost:27017/Todo_list"
-mongo = PyMongo(app)
+# app.config['MONGO_URI'] = "mongodb://localhost:27017/Todo_list"
+UserDB = PyMongo(app, uri="mongodb://localhost:27017/Todo_list")
+# GoogleDB = PyMongo(app, uri="mongodb://localhost:27017/Todo_list")
 
 
-regex = '^(\w|\.|\_|\-)+[@](\w|\_|\-|\.)+[.]\w{2,3}$'  # Regex for check email validation
+# Regex for check email validation
+regex = '^(\w|\.|\_|\-)+[@](\w|\_|\-|\.)+[.]\w{2,3}$'
+key = "HelloWord"
 
 
 @app.route('/register', methods=['POST'])
@@ -34,18 +40,22 @@ def register():
     """
     data = request.get_json()
     if not valid_pwd(data['password']):
-        return "The password is not satisfied categories"
+        return jsonify({"result": "The password is not satisfied categories"})
     elif not re.search(regex, data['email']):
-        return "The email is not valid"
-    elif mongo.db.user.find_one({"email": data['email']}) is not None:
-        return "The email already existed please sign in or change to another email"
-    salt = os.urandom(32)  # reference: https://nitratine.net/blog/post/how-to-hash-passwords-in-python/
-    salt_password = hashlib.pbkdf2_hmac('sha256', data['password'].encode('utf-8'), salt, 100000)
+        return jsonify({"result": "The email is not valid"})
+    elif UserDB.db.user.find_one({"email": data['email']}) is not None:
+        return jsonify({"result": "The email already existed please sign in or change to another email"})
+    elif UserDB.db.user.find_one({"username": data['username']}) is not None:
+        return jsonify({"result": "Username is already exist please enter different one"})
+    # reference: https://nitratine.net/blog/post/how-to-hash-passwords-in-python/
+    salt = os.urandom(32)
+    salt_password = hashlib.pbkdf2_hmac(
+        'sha256', data['password'].encode('utf-8'), salt, 100000)
 
-    user_document = {"name": data['username'], "salt_password": salt_password, "email": data['email'],
-                     "salt": salt, "cookies": None, "self_ticket": [], "public_ticket": []}
-    mongo.db.user.insert_one(user_document)
-    return "pass"
+    user_document = {"username": data['username'], "name": data['username'], "salt_password": salt_password, "email": data['email'],
+                     "salt": salt, "self_ticket": [], "public_ticket": []}
+    UserDB.db.user.insert_one(user_document)
+    return jsonify({"result": "Pass"})
 
 
 def valid_pwd(pwd):
@@ -71,38 +81,77 @@ def valid_pwd(pwd):
     return up_case and low_case and num and special_char
 
 
-@app.route('/login', methods=['POST'])
+@app.route('/login', methods=['POST', 'GET'])
 def login():
     """
     :return: String with content "pass" and other
     """
-    data = request.get_json()
-    user = return_user(request.cookies.get('login'))
-    if user is not None:
-        return "pass"
-    password = data['password']
-    query = mongo.db.user.find_one({"email": data['email']})
-    if query is None:
-        return "The user is not existed"
-    elif query['email'] == data['email']:
-        new_salt_password = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), query['salt'], 100000)
-        if new_salt_password != query['salt_password']:
-            return "Password is wrong"
+    if request.method == 'GET':
+        token = request.headers['Authorization'].split(" ")[1]
+        status = check_token(token)
+        return jsonify(status)
+    else:
+        data = request.get_json()
+        if request.cookies.get('login') is not None:
+            user = return_user(request.cookies.get('login'))
+            if user is not None:
+                return jsonify({"result": "Pass"})
+        password = data['password']
+        query = UserDB.db.user.find_one({"username": data['username']})
+        if query is None:
+            return jsonify({"result": "The user is not existed"})
+        elif query['username'] == data['username']:
+            new_salt_password = hashlib.pbkdf2_hmac(
+                'sha256', password.encode('utf-8'), query['salt'], 100000)
+            if new_salt_password != query['salt_password']:
+                return jsonify({"result": "Password is wrong"})
+        token = gen_jwt(data['username'])
+    return jsonify({"result": "Pass", "token": token, "name": query['name']})
 
-    # response_cookie = token_urlsafe(16)
-    # response = make_response()
-    # response.set_cookie(key="login", value=response_cookie, max_age=3600)
-    # response.headers['Content-type'] = "application/json"
 
-    return "pass"
+@app.route("/google/login", methods=['POST'])
+def google_login():
+    token = request.get_json()['token']
+    try:
+        id_info = id_token.verify_oauth2_token(token, requests.Request(), None)
+        UserDB.db.googleUser.insert_one(id_info)
+        first_name = id_info['family_name']
+        last_name = id_info['given_name']
+        response = {'result': "successful",
+                    'first_name': first_name, 'last_name': last_name}
+        return jsonify(response)
+    except ValueError:
+        ValueError
+    return jsonify({"result": "unsuccessful"})
 
 
 def return_user(cookie):
-    query = mongo.db.user.find_one({'cookies': cookie})
+    query = UserDB.db.user.find_one({'cookies': cookie})
     if query is None:
         return None
     else:
         return query
+
+
+def gen_jwt(username):
+    issue_time = datetime.datetime.utcnow()
+    token = jwt.encode({"iss": username, "iat": issue_time, "exp": issue_time + datetime.timedelta(minutes=30)},
+                       key,
+                       algorithm="HS256")
+    return token
+
+
+def check_token(token):
+    try:
+        form = jwt.decode(token, key, algorithms="HS256")
+        username = form['iss']
+        user = UserDB.db.user.find_one({"username": username})
+        response = {"username": user['username'], "name": user['name'],
+                    "email": user['email'], "self_ticket": user['self_ticket'],
+                    "public_ticket": user['public_ticket']}
+        return response
+    except jwt.exceptions.ExpiredSignatureError:
+        return {"result": "Expired"}
 
 
 if __name__ == "__main__":
