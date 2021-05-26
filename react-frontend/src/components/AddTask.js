@@ -14,7 +14,7 @@ const AddTask = (props) => {
         e.preventDefault();
         console.log(title,content,date,time)
         //make a post request .
-        axios.post('main',{title:title,content:content,date:date,time:time})
+        axios.post('main/addTask',{title:title,content:content,date:date,time:time})
         .then(response=>{
             console.log(response);
             if (response.data.result == "Success"){
