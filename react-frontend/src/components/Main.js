@@ -1,15 +1,16 @@
 
 import React,{useState} from 'react'
 import Logout from './Logout'
-import {CardDeck,Row,Button,ListGroup,Card} from 'react-bootstrap';
+import {Col,CardDeck,Row,Button,ListGroup,Card} from 'react-bootstrap';
 import './Main.css'
 import { Switch, Route,useParams} from 'react-router-dom';
 import AddTask from './AddTask'
-import { useHistory } from 'react-router';
+import { Redirect, useHistory } from 'react-router';
 import DayNavbar from './DayNavbar'
 import DayDisplay from './DayDisplay';
 
 const Main = ({name,onNameChange}) => {
+    const [isShown,setIsShown] = useState(false);
     const [thingsToDo,setThingTodo]= useState(0);
     const [modalShow, setModalShow] = useState(false);
     const thingsFinished = 0;
@@ -19,6 +20,10 @@ const Main = ({name,onNameChange}) => {
 
     return (
       <>
+      {name? null : <Redirect to="home"/>}
+      {/* <Button bsPrefix="btn sideButton" onMouseEnter={() => setIsShown(true)}
+        onMouseLeave={() => setIsShown(false)} variant="none">&gt;</Button>
+       */}
       <div className="mainDay">
         <DayNavbar/>
         <hr/>
@@ -29,7 +34,7 @@ const Main = ({name,onNameChange}) => {
             <Card.Title>ToDo ({thingsToDo})</Card.Title>
             <hr/>
             <Card.Text><Button onClick={() => setModalShow(true)} variant="light">+</Button></Card.Text>
-            <AddTask show={modalShow} onHide={() => setModalShow(false)}/>
+            <AddTask name={name} show={modalShow} onHide={() => setModalShow(false)}/>
           </Card.Body>
         </Card>
 

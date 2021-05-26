@@ -2,6 +2,7 @@
 
 .mainDay {
   border: 1px solid grey;
+  display: block;
   margin: 50px auto;
   margin-bottom: 10px;
   border-radius: 10px;
@@ -9,6 +10,12 @@
   width: 75%;
   background-color: rgb(217, 234, 235);
 }
+/* 
+.sideButton {
+  margin-top: 150px;
+  margin-right: 100px;
+  display: "inline-block";
+} */
 
 .ContainerForTodo {
   border: 0.5px solid rgb(201, 198, 198);
@@ -27,4 +34,5 @@ hr {
 
 .CardBody {
   height: 350px;
+  border-radius: 5%;
 }
