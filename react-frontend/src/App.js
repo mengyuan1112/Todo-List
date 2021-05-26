@@ -27,7 +27,6 @@ function App() {
       setName(newName)
     }
 
-
     return (
         <div className="App">
           <Navigation name={name} onNameChange={onChange}/>
