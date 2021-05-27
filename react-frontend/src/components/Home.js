@@ -5,8 +5,11 @@ import { Container,Row,Col} from 'react-bootstrap';
 import DayDisplay from './DayDisplay';
 import './Home.css'
 
-const Home = ({name,onNameChange}) => {
+const Home = ({name,onNameChange,thingsToDo}) => {
     const history = useHistory();
+
+
+
     const handleClick =()=>{
         console.log("clicked start planning")
         if (name){
@@ -33,7 +36,7 @@ const Home = ({name,onNameChange}) => {
                     ( <h2 className="display-4">{name}</h2>): <br></br>}
                     <br></br>
                     <br></br>
-                    <Col><p className="lead">You still have things to do today</p></Col>
+                    <Col><p className="lead">You still have {thingsToDo} things to do today</p></Col>
                     <Col><Button onClick={handleClick} variant="outline-dark"> start planning</Button></Col>
                     </Col>
                     <DayDisplay/>

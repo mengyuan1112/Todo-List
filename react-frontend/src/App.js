@@ -12,10 +12,14 @@ import Profile from './components/Profile'
 
 function App() {
   const [name,setName] = useState('');
+  const [self_ticket,setSelf_ticket] = useState([]);
+  const [username,setUsername] = useState('');
   useEffect(() => {
     axios.get('login').then(
       res => {
         setName(res.data.name)
+        setSelf_ticket(res.data.self_ticket)
+        setUsername(res.data.username)
       },
       err => {
         console.log(err);
@@ -32,7 +36,7 @@ function App() {
           <Navigation name={name} onNameChange={onChange}/>
           <div>
             {name?(<Switch>
-              <Route exact path={`/:name/home`} component = {()=> <Home name={name}  onNameChange={onChange} />}/>
+              <Route exact path={`/:name/home`} component = {()=> <Home name={name}  onNameChange={onChange} thingsToDo={self_ticket.length}/>}/>
               <Route exact path={`/:name/register`} component={Register} />
               <Route exact path={`/:name/login`} component={()=> <Login name={name} onNameChange={onChange}/>} />
               <Route exact path={`/:name/main`} component={()=> <Main name={name} onNameChange={onChange}/>} />

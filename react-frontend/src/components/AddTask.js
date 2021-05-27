@@ -6,20 +6,26 @@ const AddTask = (props) => {
     var myCurrentDate = new Date();
     const [title,setTitle] = useState('')
     const [content,setContent] = useState('')
-    const [date,setDate] = useState(myCurrentDate)
+    const [date,setDate] = useState(myCurrentDate.getDate())
     const [time,setTime] = useState()
 
 
     const handleSubmitTask=(e)=>{
         e.preventDefault();
-        console.log(title,content,date,time)
-        //make a post request .
+        // props.addtask({title,content,date,time});
+        props.onHide();
+        // make a post request .
         axios.post(props.name + '/main/addTask',{title:title,content:content,date:date,time:time})
         .then(response=>{
             console.log(response);
-            if (response.data.result == "Success"){
+            if (response.data.result === "Success"){
                 //add the task........
+                props.addtask({title,content,date,time})
             }
+            setTitle('')
+            setContent('')
+            setDate(myCurrentDate)
+            setTime()  
         })
         .catch(err=>{
             console.log(err);
@@ -27,7 +33,8 @@ const AddTask = (props) => {
     }
     return (
         <Modal
-        {...props}
+        show={props.show} 
+        onHide={props.onHide}
         size="lg"
         aria-labelledby="contained-modal-title-vcenter"
         centered>
