@@ -2,24 +2,27 @@
 
 .mainDay {
   border: 1px solid grey;
+  display: block;
   margin: 50px auto;
   margin-bottom: 10px;
   border-radius: 10px;
   height: 600px;
-  width: 60%;
+  width: 75%;
+  background-color: rgb(217, 234, 235);
 }
+/* 
+.sideButton {
+  margin-top: 150px;
+  margin-right: 100px;
+  display: "inline-block";
+} */
 
-.navBarDay {
-  padding: 15px 25px;
-  background-color: rgb(103, 184, 204);
-  display: block;
-  width: 90px;
-  color: white;
-  border-radius: 70%;
-  text-align: center;
-  font-size: 20px;
-  border: 1px solid rgb(104, 174, 192);
-  font-family: "KoHo", sans-serif;
+.ContainerForTodo {
+  border: 0.5px solid rgb(201, 198, 198);
+  width: 90%;
+  margin: 10px 10px;
+  height: 350px;
+  border-radius: 5%;
 }
 
 hr {
@@ -29,6 +32,7 @@ hr {
   border-width: 3px;
 }
 
-.navBarDay:hover {
-  background-color: rgb(28, 85, 99);
+.CardBody {
+  height: 350px;
+  border-radius: 5%;
 }
