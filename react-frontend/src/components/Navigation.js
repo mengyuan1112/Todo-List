@@ -3,6 +3,7 @@ import React,{useState,useRef} from 'react';
 import {useHistory} from 'react-router-dom'
 import './Navigation.css'
 import hhh from '../1.png';
+import ListGroup from 'react-bootstrap/ListGroup'
 
 // This will create the navbar.
 const Navigation=(props)=>{
@@ -16,6 +17,8 @@ const Navigation=(props)=>{
         props.onNameChange('')
         history.push('/home')
     };
+    
+    
     const onClick = () => setIsActive(!isActive);
 
     return (
@@ -38,17 +41,21 @@ const Navigation=(props)=>{
         <Nav.Link onClick={() => setExpanded(false)} href="/setting">Setting</Nav.Link>
         </Nav>
         </Navbar.Collapse>
-        <div className="menu-container">
+
+        {props.name        
+        ?(<div className="menu-container">
             <button onClick={onClick} className="menu-trigger">
                 <img className="photo" src={hhh} alt="User avatar" />
             </button>
             <nav ref={dropdownRef} className={`menu ${isActive ? 'active' : 'inactive'}`}>
-                <ul>
-                    <li><a href="/profile">Profile</a></li>
-                    <li><a href="/logout">Logout</a></li>
-                </ul>
+                <ListGroup>
+                    <ListGroup.Item action href="/profile">Profile </ListGroup.Item>
+                    <ListGroup.Item action onClick={logout}> Logout </ListGroup.Item>
+                </ListGroup>
             </nav>
-        </div>
+        </div>)
+        :(<></>)}      
+        
     </Navbar>
     </>
     )

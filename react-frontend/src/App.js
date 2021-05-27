@@ -39,7 +39,7 @@ function App() {
             <Route exact path='/login' component={()=> <Login name={name} onNameChange={onChange}/>} />
             <Route exact path='/main' component={()=> <Main name={name} onNameChange={onChange}/>} />
             <Route exact path="/" component = {()=> <Home name={name} onNameChange={onChange} />}/>
-            <Route exact path="/profile" component={()=> <Profile/>}></Route>
+            <Route exact path="/profile" component={()=> <Profile name={name} onNameChange={onChange}/>}></Route>
             </Switch>
           </div>
         </div>
