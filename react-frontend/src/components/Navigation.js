@@ -50,7 +50,7 @@ const Navigation=({name,onNameChange})=>{
         </Nav>
         </Navbar.Collapse>
 
-        {props.name        
+        {name
         ?(<div className="menu-container">
             <button onClick={onClick} className="menu-trigger">
                 <img className="photo" src={hhh} alt="User avatar" />
