@@ -5,6 +5,7 @@ import Home from './components/Home';
 import Register from './components/Register';
 import Login from './components/Login';
 import Main from './components/Main';
+import Profile from './components/Profile'
 import axios from 'axios';
 import Profile from './components/Profile'
 
@@ -35,6 +36,7 @@ function App() {
         <div className="App">
           <Navigation name={name} onNameChange={onChange}/>
           <div>
+
             {name?(<Switch>
               <Route exact path={`/:name/home`} component = {()=> <Home name={name}  onNameChange={onChange} thingsToDo={self_ticket.length}/>}/>
               <Route exact path={`/:name/register`} component={Register} />
@@ -50,6 +52,7 @@ function App() {
               <Route exact path="/main" component={()=> <Main name={name} onNameChange={onChange}/>} />
               <Route exact path="/profile" component={()=> <Profile name={name} onNameChange={onChange}/>} />
               <Route exact path="/" component = {()=> <Home name={name} onNameChange={onChange} />}/>
+
             </Switch>
               )}
           </div>
