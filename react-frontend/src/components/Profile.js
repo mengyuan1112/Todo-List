@@ -1,6 +1,8 @@
+
 import { Container,Col,Row,Form} from 'react-bootstrap';
 import React ,{useState,useRef,Component,useEffect} from "react"
 import {ListGroup,Card} from 'react-bootstrap'
+
 import hhh from '../1.png';
 import "./Profile.css";
 import axios from 'axios';
@@ -8,6 +10,7 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal'
 import Changepassword from './Changepassword'
 import { Switch, Route, Link } from 'react-router-dom';
+
 import Alert from 'react-bootstrap/Alert'
 
 
@@ -223,6 +226,7 @@ const Profile = ({name,onNameChange}) => {
 
         </div>
         
+
 
     )
 }
