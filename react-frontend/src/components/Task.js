@@ -1,15 +1,23 @@
 import React from 'react'
-import { FaTimes } from 'react-icons/fa'
-import {ListGroup} from 'react-bootstrap'
+import { FaCheck } from 'react-icons/fa'
+import {Card,ListGroup} from 'react-bootstrap'
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import ShowTaskContent from './ShowTaskContent'
 
-
-const Task = ({title,onDelete}) => {
+const Task = ({task,onDelete}) => {
+    const [modalShow, setModalShow] = React.useState(false);
     return (
-        <ListGroup.Item>
-            {title} 
-            <FaTimes onClick={()=>onDelete(title)}
-            style={{ color:'red',cursor:'pointer'}}/>
+    <ListGroup variant="flush" >
+        <ListGroup.Item action onDoubleClick={()=>setModalShow(true)}>
+            {task.title} 
+            <FaCheck onClick={()=>onDelete(task)}
+            style={{float:'right', color:'green',cursor:'pointer'}}/> 
         </ListGroup.Item>
+        <ShowTaskContent
+        task={task}
+        show={modalShow}
+        onHide={() => setModalShow(false)}/>
+    </ListGroup>
     )
 }
 

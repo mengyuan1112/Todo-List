@@ -2,7 +2,6 @@ import hashlib
 import os
 import re
 import jwt
-
 import datetime
 
 from google.oauth2 import id_token
