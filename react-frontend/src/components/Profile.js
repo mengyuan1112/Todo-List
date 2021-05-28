@@ -26,8 +26,8 @@ const Profile = ({name,onNameChange}) => {
     const handleClose1 = () => setShow1(false);
     const handleShow1 = () => setShow1(true);
 
-    const [show2, setShow2] = useState(true);
-    const handleShow2 = () => setShow2(true);
+    const [show2, setShow2] = useState(false);
+    const handleShow2 = () => setShow2(false);
 
 
     const [emailPro,Getemail] = useState('');
@@ -61,6 +61,8 @@ const Profile = ({name,onNameChange}) => {
     const [newnamePro, Setnewname] = useState('');
     const [newnameError, SetnewnameErr]=  useState('');
     const [confirmPasswordPro,setConfirmPasswordPro] = useState('');
+
+
     const submitHandler= (e) =>{
     e.preventDefault();
     axios.post('http://localhost:5000/register',{name:newnamePro, password:newpasswordPro}).then(
@@ -99,19 +101,22 @@ const Profile = ({name,onNameChange}) => {
         }
     }
 
-
     
-
+    const [timeOut, setTimeOut] = useState(null)
     
+    setTimeout(() => {
+        setTimeOut(1)
+      }, 5000)
 
     return(
         <div>
        
-        <Alert show={show2} variant="success" onClose={() => setShow2(false)} dismissible>
+        {!timeOut &&<Alert show={show2} variant="success" onClose={() => setShow2(false)} dismissible>
         <p>
             Congratulations! Your nickname was successfully changed.
         </p>
-        </Alert>
+        </Alert>}
+        
             
             
         <br></br>
@@ -128,11 +133,13 @@ const Profile = ({name,onNameChange}) => {
                 </ListGroup.Item>
                 <ListGroup.Item>
                     <Row>
-                        <Col xs="11"><h4>Username</h4> {usernamePro}</Col> <Col> </Col>
+                        <Col xs="3"><h4>Username</h4></Col> <Col>{usernamePro}</Col>
                     </Row>
                 </ListGroup.Item>
-                <ListGroup.Item action onClick={handleShow}>
-                        <h4>Nickname</h4>{name}
+                <ListGroup.Item action onClick={handleShow} >
+                    
+                        <h4>Nickname</h4> {name}
+                   
                 </ListGroup.Item>
                 <ListGroup.Item >
                     <h4>Email</h4>{emailPro}
@@ -155,9 +162,9 @@ const Profile = ({name,onNameChange}) => {
           <Modal.Title>Nickname Change</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-            <Form>
+            <Form onSubmit={submitHandler}>
                 <Form.Group className="mb-3" controlId="formBasicEmail">
-                    <Form.Control type="nickname" placeholder="Enter nickname" />
+                    <Form.Control type="nickname" onChange={(e)=>Setnewname(e.target.value)} placeholder="Enter nickname"  />
                     <Form.Text className="text-muted">
                     Please enter your new nickname.
                     </Form.Text>
@@ -168,7 +175,7 @@ const Profile = ({name,onNameChange}) => {
             <Button variant="secondary" onClick={handleClose}>
             Close
             </Button>
-            {!show2 &&<Button variant="primary" onClick={()=>{setShow(false);setShow2(true)}}>Save Changes</Button>}
+            {!show2 && <Button variant="primary" type="submit" onClick={()=>{setShow(false);setShow2(true)}}>Save Changes</Button>}
         </Modal.Footer>
       </Modal>
 
@@ -177,10 +184,10 @@ const Profile = ({name,onNameChange}) => {
           <Modal.Title>Password change</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-        <Form>
+        <Form onSubmit={submitHandler}>
             <Form.Group className="mb-3" controlId="formBasicPassword">
                 
-                <Form.Control type="email" placeholder="Old Password" />
+                <Form.Control type="password" placeholder="Old Password" />
                 <Form.Text className="text-muted">
                   Please enter your old password
                 </Form.Text>
@@ -188,7 +195,7 @@ const Profile = ({name,onNameChange}) => {
 
             <Form.Group className="mb-3" controlId="formBasicPassword">
                 
-                <Form.Control type="password" placeholder="New Password" />
+                <Form.Control type="password" onChange={(e)=>Setnewpassword(e.target.value)} placeholder="New Password" />
                 <Form.Text className="text-muted">
                 Your password must be 8-20 characters long, contain uppercase letters, lowercase letters, numbers, and at least one spercial character.
                 Your password must not contain spaces, or emoji.
@@ -196,14 +203,14 @@ const Profile = ({name,onNameChange}) => {
             </Form.Group>
             {newpasswordErr
             ?(<Form.Group className="mb-3" controlId="formBasicPassword">
-                <Form.Control type="password" placeholder="Confirm Password" />
+                <Form.Control type="password" placeholder="Confirm Password" onChange={(e)=>checkPassword(e)} />
                 <Form.Text style={{ color:"red" }}>
                 {newpasswordErr}
                 </Form.Text>
             </Form.Group>)
             :(<Form.Group className="mb-3" controlId="formBasicPassword">
                 
-                <Form.Control type="password" placeholder="Confirm Password" />
+                <Form.Control type="password" placeholder="Confirm Password" onChange={(e)=>checkPassword(e)}/>
             </Form.Group>)
             }
         </Form>   
@@ -213,10 +220,10 @@ const Profile = ({name,onNameChange}) => {
             Close
           </Button>
           {newpasswordErr
-          ?(<Button variant="primary" onClick={handleClose1}>
+          ?(<Button variant="primary" type="submit" onClick={handleClose1}>
           Submit
           </Button>)
-          :(<Button variant="primary" onClick={handleClose1}>
+          :(<Button variant="primary" type="submit" onClick={handleClose1}>
           Submit
           </Button>)}
         </Modal.Footer>
