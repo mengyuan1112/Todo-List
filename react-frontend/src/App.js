@@ -13,14 +13,14 @@ import axios from 'axios';
 function App() {
   const [name,setName] = useState('');
   const [self_ticket,setSelf_ticket] = useState([]);
-  const [username,setUsername] = useState('');
+  const [nickName,setNickName] = useState('');
   const [length,setLength] = useState(0)
   useEffect(() => {
     axios.get('login').then(
       res => {
-        setName(res.data.name)
+        setName(res.data.username)
         setSelf_ticket(res.data.self_ticket)
-        setUsername(res.data.username)
+        setNickName(res.data.name)
         setLength(self_ticket.length)
       },
       err => {
@@ -40,20 +40,20 @@ function App() {
 
             {name?(<Switch>
 
-              <Route exact path={`/:name/home`} component = {()=> <Home name={name}  onNameChange={onChange} thingsToDo={2}/>}/>
+              <Route exact path={`/:name/home`} component = {()=> <Home name={name} nickName={nickName}  onNameChange={onChange} thingsToDo={2}/>}/>
               <Route exact path={`/:name/register`} component={Register} />
               <Route exact path={`/:name/login`} component={()=> <Login name={name} onNameChange={onChange}/>} />
               <Route exact path={`/:name/main`} component={()=> <Main name={name} onNameChange={onChange}/>} />
               <Route exact path={`/:name/profile`} component={()=> <Profile name={name} onNameChange={onChange}/>} />
-              <Route exact path={`/:name/`} component = {()=> <Home name={name} onNameChange={onChange} />}/>
+              <Route exact path={`/:name/`} component = {()=> <Home name={name} nickName={nickName} onNameChange={onChange} />}/>
               </Switch>) 
             :(<Switch>
-              <Route exact path="/home" component = {()=> <Home name={name}  onNameChange={onChange} />}/>
+              <Route exact path="/home" component = {()=> <Home name={name} nickName={nickName}  onNameChange={onChange} />}/>
               <Route exact path="/register" component={Register} />
               <Route exact path="/login" component={()=> <Login name={name} onNameChange={onChange}/>} />
               <Route exact path="/main" component={()=> <Main name={name} onNameChange={onChange}/>} />
               <Route exact path="/profile" component={()=> <Profile name={name} onNameChange={onChange}/>} />
-              <Route exact path="/" component = {()=> <Home name={name} onNameChange={onChange} />}/>
+              <Route exact path="/" component = {()=> <Home name={name} nickName={nickName} onNameChange={onChange} />}/>
 
             </Switch>
               )}

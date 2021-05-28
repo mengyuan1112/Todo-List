@@ -30,7 +30,7 @@ const Main = ({name,onNameChange}) => {
     const [ currentDate,setCurrentDate] = useState(new Date());  //initalize the date tobe today.
 
     useEffect(() => {
-      socket.on(`date:${currentDate}`,data=>{
+      socket.on(`currentDate:${currentDate}`,data=>{
         //update todo, finished and shared list to monday.
         console.log(data)
         setTasks(data);
@@ -42,8 +42,8 @@ const Main = ({name,onNameChange}) => {
     const addTask=(task)=>{
       setTasks([...tasks,task])
       currentDate.setHours(0,0,0,0);
-      console.log({date:currentDate, ...task})
-      //socket.emit("AddedTask",{date:currentDate, ...task});
+      console.log({currentDate:currentDate, ...task})
+      socket.emit("AddedTask",{currentDate:currentDate, ...task});
       setThingTodo(thingsToDo+1)
     }
 
@@ -53,16 +53,16 @@ const Main = ({name,onNameChange}) => {
       setThingTodo(thingsToDo-1)
       setThingsFinished(thingsFinished+1)
       currentDate.setHours(0,0,0,0);
-      console.log({date:currentDate,...t}) //Task to be deleted from todo. == Task to be added to Finished
-      //socket.emit("deleteTask",{date:currentDate,...t})
+      console.log({currentDate:currentDate,...t}) //Task to be deleted from todo. == Task to be added to Finished
+      socket.emit("deleteTask",{currentDate:currentDate,...t})
     }
 
     const moveBackTodo=(t) =>{
       setFinishedTask(finishedTask.filter((task)=> task.title !== t.title ))
       setTasks([...tasks,t])
       currentDate.setHours(0,0,0,0);
-      console.log({data:currentDate, ...t});
-      //socket.emit("AddedTaskBackToDo",{data:currentDate, ...t})
+      console.log({currentDate:currentDate, ...t});
+      socket.emit("AddedTaskBackToDo",{currentDate:currentDate, ...t})
       setThingsFinished(thingsFinished-1)
       setThingTodo(thingsToDo+1)
     }
@@ -78,11 +78,11 @@ const Main = ({name,onNameChange}) => {
     const setNewDay = (e) =>{
       setCurrentDate(e);
       e.setHours(0,0,0,0);
-      console.log(currentDate);
-      socket.on(`date:${currentDate}`,data=>{
+      console.log(e);
+      socket.on(`currentDate:${e}`,data=>{
         //update todo, finished and shared list to monday.
-        console.log(data)
-        setTasks([{title:'hi'}])
+      console.log(data)
+      setTasks([{title:'hi'}])
       setFinishedTask([{title:"finished."}])
       setSharedTasks([{title:"Share tasks with friend!"}])
       })
@@ -97,7 +97,7 @@ const Main = ({name,onNameChange}) => {
         onMouseLeave={() => setIsShown(false)} variant="none">&gt;</Button>
        */}
       <div className="mainDay">
-        <DayNavbar socket={socket} day={currentDate} setNewDay={setNewDay}/>
+        <DayNavbar day={currentDate} setNewDay={setNewDay}/>
         <hr/>
       <CardDeck style={{margin:'5px 10px'}}>
 

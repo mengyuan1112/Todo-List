@@ -1,7 +1,6 @@
 import axios from 'axios';
 import React, { useState } from 'react'
 import {Modal,Button,Form,Row,Col} from 'react-bootstrap'
-import io from 'socket.io-client';
 
 
 const AddTask = (props) => {
@@ -14,9 +13,7 @@ const AddTask = (props) => {
     const handleSubmitTask=()=>{
         // props.addtask({title,content,date,time});
         props.onHide();
-        //props.socket.emit("AddedTask",{createdAt:myCurrentDate,title:title,content:content,data:date,time:time});
         props.addtask({title:title,content:content,date:date,time:time})
-
     }
     return (
         <Modal
