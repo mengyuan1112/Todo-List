@@ -1,35 +1,22 @@
 import axios from 'axios';
 import React, { useState } from 'react'
 import {Modal,Button,Form,Row,Col} from 'react-bootstrap'
+import io from 'socket.io-client';
+
 
 const AddTask = (props) => {
     var myCurrentDate = new Date();
     const [title,setTitle] = useState('')
     const [content,setContent] = useState('')
-    const [date,setDate] = useState(myCurrentDate.getDate())
-    const [time,setTime] = useState()
+    const [date,setDate] = useState('')
+    const [time,setTime] = useState('')
 
-
-    const handleSubmitTask=(e)=>{
-        e.preventDefault();
+    const handleSubmitTask=()=>{
         // props.addtask({title,content,date,time});
         props.onHide();
-        // make a post request .
-        axios.post(props.name + '/main/addTask',{title:title,content:content,date:date,time:time})
-        .then(response=>{
-            console.log(response);
-            if (response.data.result === "Success"){
-                //add the task........
-                props.addtask({title,content,date,time})
-            }
-            setTitle('')
-            setContent('')
-            setDate(myCurrentDate)
-            setTime()  
-        })
-        .catch(err=>{
-            console.log(err);
-        })
+        // props.socket.emit("AddedTask",{myCurrentDate,title,content,date,time});
+        props.addtask({title:title,content:content,date:date,time:time})
+
     }
     return (
         <Modal
@@ -43,7 +30,7 @@ const AddTask = (props) => {
             Add Task
           </Modal.Title>
         </Modal.Header>
-        <Form onSubmit={handleSubmitTask}>
+        <Form>
         <Modal.Body>
             <Form.Group as={Row} className="mb-3" controlId="TaskTitle">
                 <Form.Label column sm="3">Title</Form.Label>
@@ -75,7 +62,7 @@ const AddTask = (props) => {
         </Modal.Body>
         <Modal.Footer>
             <Button variant="secondary" onClick={props.onHide}>Close</Button>
-            <Button type="submit" variant="primary">Save changes</Button>
+            <Button onClick={handleSubmitTask} variant="primary">Save changes</Button>
         </Modal.Footer>
     </Form>
       </Modal>

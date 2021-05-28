@@ -5,8 +5,10 @@
   display: block;
   margin: 50px auto;
   margin-bottom: 10px;
+  padding-bottom: 30px;
   border-radius: 10px;
-  height: 600px;
+  overflow: auto;
+  min-height: 500px;
   width: 75%;
   background-color: rgb(217, 234, 235);
 }
@@ -33,6 +35,7 @@ hr {
 }
 
 .CardBody {
-  height: 350px;
+  overflow: auto;
+  min-height: 350px;
   border-radius: 5%;
 }
