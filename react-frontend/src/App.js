@@ -10,6 +10,7 @@ import axios from 'axios';
 
 
 
+
 function App() {
   const [name,setName] = useState('');
   const [self_ticket,setSelf_ticket] = useState([]);
@@ -41,6 +42,7 @@ function App() {
             {name?(<Switch>
 
               <Route exact path={`/:name/home`} component = {()=> <Home name={name} nickName={nickName}  onNameChange={onChange} thingsToDo={2}/>}/>
+
               <Route exact path={`/:name/register`} component={Register} />
               <Route exact path={`/:name/login`} component={()=> <Login name={name} onNameChange={onChange}/>} />
               <Route exact path={`/:name/main`} component={()=> <Main name={name} onNameChange={onChange}/>} />

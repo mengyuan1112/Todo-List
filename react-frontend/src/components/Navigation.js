@@ -51,6 +51,7 @@ const Navigation=({name,onNameChange})=>{
         </Navbar.Collapse>
 
 
+
         {name
         ?(<div className="menu-container">
             <button onClick={onClick} className="menu-trigger">
