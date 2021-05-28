@@ -48,66 +48,52 @@ const DayNavbar = (props) => {
     var date = (new Date(new Date().setDate(new Date().getDate()+(i-1))));
     date.setHours(0,0,0,0);
     console.log(date)
-    props.socket.on(`date:${date}`,data=>{
-      //update todo, finished and shared list to monday.
-      console.log(data)
-    })
+    props.setNewDay(date);
+
   }
 
   const handleClickMonday=()=>{
     var date = (new Date(new Date().setDate(new Date().getDate()+(i+0))));
     date.setHours(0,0,0,0);
     console.log(date)
-    props.socket.on(`date:${date}`,data=>{
-      //update todo, finished and shared list to monday.
-      console.log(data)
-    })
+    props.setNewDay(date);
+    
   }
 
   const handleClickTuesday=()=>{
     var date = (new Date(new Date().setDate(new Date().getDate()+(i+1))));
     date.setHours(0,0,0,0);
     console.log(date)
-    props.socket.on(`date:${date}`,data=>{
-      //update todo, finished and shared list to monday.
-      console.log(data)
-    })
+    props.setNewDay(date);
+    
   }
   const handleClickWednesday=()=>{
     var date = (new Date(new Date().setDate(new Date().getDate()+(i+2))));
     date.setHours(0,0,0,0);
     console.log(date)
-    props.socket.on(`date:${date}`,data=>{
-      //update todo, finished and shared list to monday.
-      console.log(data)
-    })
+    props.setNewDay(date);
+    
   }
   const handleClickThursday=()=>{
     var date = (new Date(new Date().setDate(new Date().getDate()+(i+3))));
     date.setHours(0,0,0,0);
     console.log(date)
-    props.socket.on(`date:${date}`,data=>{
-      //update todo, finished and shared list to monday.
-      console.log(data)
-    })
+    props.setNewDay(date);
+    
   }
   const handleClickFriday=()=>{
     var date = (new Date(new Date().setDate(new Date().getDate()+(i+4))));
     date.setHours(0,0,0,0);
     console.log(date)
-    props.socket.on(`date:${date}`,data=>{
-      //update todo, finished and shared list to monday.
-      console.log(data)
-    })
+    props.setNewDay(date);
+    
   }
   const handleClickSaturday=()=>{
     var date = (new Date(new Date().setDate(new Date().getDate()+(i+5))));
     date.setHours(0,0,0,0);
     console.log(date)
-    props.socket.on(`date:${date}`,data=>{
-      //update todo, finished and shared list to monday.
-      console.log(data)
-    })
+    props.setNewDay(date);
+    
   }
 
 

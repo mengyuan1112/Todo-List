@@ -5,7 +5,7 @@ import {Col,CardDeck,Row,Button,ListGroup,Card} from 'react-bootstrap';
 import './Main.css'
 import { Switch, Route,useParams} from 'react-router-dom';
 import AddTask from './AddTask'
-import { Redirect, useHistory } from 'react-router';
+import { Redirect} from 'react-router';
 import DayNavbar from './DayNavbar'
 import Task from './Task'
 import socketIOClient from "socket.io-client";
@@ -19,21 +19,18 @@ const Main = ({name,onNameChange}) => {
 
   const endPoint = `http://localhost:5000/${name}/main`;
   const socket = socketIOClient.connect(`${endPoint}`);
-    const [isShown,setIsShown] = useState(false);
-    const [thingsToDo,setThingTodo]= useState(2);
     const [modalShow, setModalShow] = useState(false);
     const [tasks, setTasks] = useState([{title:'test1',content:'test1 content balallalalala',date:"5/30/2021",time:"11:59pm"},{title:'test2',content:""}]);
     const [finishedTask,setFinishedTask] = useState([{title:'finished',content:'fff'},{title:'aaaaa',content:'fff'}]);
     const [task,setTask] = useState();
     const [sharedTasks, setSharedTasks] = useState([]);
     const [thingsFinished,setThingsFinished] = useState(2)
-    const [sharedThings, setShareThing] = useState(0)
-    const history = useHistory();
+    const [thingsToDo,setThingTodo]= useState(2);
+    const [sharedThings, setShareThing] = useState(0);
+    const [ currentDate,setCurrentDate] = useState(new Date());  //initalize the date tobe today.
+
     useEffect(() => {
-      const date = new Date();
-      date.setHours(0,0,0,0);
-      console.log(date)
-      socket.on(`date:${date}`,data=>{
+      socket.on(`date:${currentDate}`,data=>{
         //update todo, finished and shared list to monday.
         console.log(data)
         setTasks(data);
@@ -44,6 +41,9 @@ const Main = ({name,onNameChange}) => {
 
     const addTask=(task)=>{
       setTasks([...tasks,task])
+      currentDate.setHours(0,0,0,0);
+      console.log({date:currentDate, ...task})
+      //socket.emit("AddedTask",{date:currentDate, ...task});
       setThingTodo(thingsToDo+1)
     }
 
@@ -52,11 +52,17 @@ const Main = ({name,onNameChange}) => {
       setFinishedTask([...finishedTask,t])
       setThingTodo(thingsToDo-1)
       setThingsFinished(thingsFinished+1)
+      currentDate.setHours(0,0,0,0);
+      console.log({date:currentDate,...t}) //Task to be deleted from todo. == Task to be added to Finished
+      //socket.emit("deleteTask",{date:currentDate,...t})
     }
 
     const moveBackTodo=(t) =>{
       setFinishedTask(finishedTask.filter((task)=> task.title !== t.title ))
       setTasks([...tasks,t])
+      currentDate.setHours(0,0,0,0);
+      console.log({data:currentDate, ...t});
+      //socket.emit("AddedTaskBackToDo",{data:currentDate, ...t})
       setThingsFinished(thingsFinished-1)
       setThingTodo(thingsToDo+1)
     }
@@ -69,7 +75,18 @@ const Main = ({name,onNameChange}) => {
       <FinishedTasks key={task.title} task={task} backTodo={moveBackTodo}/>
     );
 
-
+    const setNewDay = (e) =>{
+      setCurrentDate(e);
+      e.setHours(0,0,0,0);
+      console.log(currentDate);
+      socket.on(`date:${currentDate}`,data=>{
+        //update todo, finished and shared list to monday.
+        console.log(data)
+        setTasks([{title:'hi'}])
+      setFinishedTask([{title:"finished."}])
+      setSharedTasks([{title:"Share tasks with friend!"}])
+      })
+    }
 
 
 
@@ -80,7 +97,7 @@ const Main = ({name,onNameChange}) => {
         onMouseLeave={() => setIsShown(false)} variant="none">&gt;</Button>
        */}
       <div className="mainDay">
-        <DayNavbar socket={socket}/>
+        <DayNavbar socket={socket} day={currentDate} setNewDay={setNewDay}/>
         <hr/>
       <CardDeck style={{margin:'5px 10px'}}>
 

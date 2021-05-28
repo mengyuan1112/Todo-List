@@ -5,16 +5,16 @@ import io from 'socket.io-client';
 
 
 const AddTask = (props) => {
-    var myCurrentDate = new Date();
     const [title,setTitle] = useState('')
     const [content,setContent] = useState('')
     const [date,setDate] = useState('')
     const [time,setTime] = useState('')
-
+    var myCurrentDate = new Date();
+    myCurrentDate.setHours(0,0,0,0);
     const handleSubmitTask=()=>{
         // props.addtask({title,content,date,time});
         props.onHide();
-        // props.socket.emit("AddedTask",{createdAt:new Date();,title:title,content:content,data:date,time:time});
+        //props.socket.emit("AddedTask",{createdAt:myCurrentDate,title:title,content:content,data:date,time:time});
         props.addtask({title:title,content:content,date:date,time:time})
 
     }
