@@ -7,7 +7,7 @@ const ShowTaskContent = (props) => {
         <Modal
         show={props.show} 
         onHide={props.onHide}
-        size="lg"
+        size="sm"
         aria-labelledby="contained-modal-title-vcenter"
         centered>
       <Modal.Header closeButton>

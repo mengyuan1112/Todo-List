@@ -8,7 +8,6 @@ import AddTask from './AddTask'
 import { Redirect, useHistory } from 'react-router';
 import DayNavbar from './DayNavbar'
 import Task from './Task'
-import axios from 'axios'
 import socketIOClient from "socket.io-client";
 import FinishedTasks from './FinishedTasks';
 
@@ -19,7 +18,7 @@ import FinishedTasks from './FinishedTasks';
 const Main = ({name,onNameChange}) => {
 
   const endPoint = `http://localhost:5000/${name}/main`;
-
+  const socket = socketIOClient.connect(`${endPoint}`);
     const [isShown,setIsShown] = useState(false);
     const [thingsToDo,setThingTodo]= useState(2);
     const [modalShow, setModalShow] = useState(false);
@@ -30,21 +29,15 @@ const Main = ({name,onNameChange}) => {
     const [thingsFinished,setThingsFinished] = useState(2)
     const [sharedThings, setShareThing] = useState(0)
     const history = useHistory();
-
-    //Make a get request .
     useEffect(() => {
-      const socket = socketIOClient.connect(`${endPoint}`);
-      socket.on('TodoTask' , data=>{
+      const date = new Date();
+      date.setHours(0,0,0,0);
+      console.log(date)
+      socket.on(`date:${date}`,data=>{
+        //update todo, finished and shared list to monday.
+        console.log(data)
         setTasks(data);
         setThingTodo(data.length)
-      })
-
-      socket.on('FinishedTask',data=>{
-        setFinishedTask(data)
-      })
-
-      socket.on('sharedTask',data=>{
-        setSharedTasks(data)
       })
       },[]);
 
@@ -87,7 +80,7 @@ const Main = ({name,onNameChange}) => {
         onMouseLeave={() => setIsShown(false)} variant="none">&gt;</Button>
        */}
       <div className="mainDay">
-        <DayNavbar/>
+        <DayNavbar socket={socket}/>
         <hr/>
       <CardDeck style={{margin:'5px 10px'}}>
 

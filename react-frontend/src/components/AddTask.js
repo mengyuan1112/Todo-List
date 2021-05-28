@@ -14,7 +14,7 @@ const AddTask = (props) => {
     const handleSubmitTask=()=>{
         // props.addtask({title,content,date,time});
         props.onHide();
-        // props.socket.emit("AddedTask",{myCurrentDate,title,content,date,time});
+        // props.socket.emit("AddedTask",{createdAt:new Date();,title:title,content:content,data:date,time:time});
         props.addtask({title:title,content:content,date:date,time:time})
 
     }
