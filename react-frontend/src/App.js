@@ -39,7 +39,8 @@ function App() {
           <div>
 
             {name?(<Switch>
-              <Route exact path={`/:name/home`} component = {()=> <Home name={name}  onNameChange={onChange} thingsToDo={length}/>}/>
+
+              <Route exact path={`/:name/home`} component = {()=> <Home name={name}  onNameChange={onChange} thingsToDo={2}/>}/>
               <Route exact path={`/:name/register`} component={Register} />
               <Route exact path={`/:name/login`} component={()=> <Login name={name} onNameChange={onChange}/>} />
               <Route exact path={`/:name/main`} component={()=> <Main name={name} onNameChange={onChange}/>} />

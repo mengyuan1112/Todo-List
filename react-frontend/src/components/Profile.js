@@ -63,7 +63,7 @@ const Profile = ({name,onNameChange}) => {
     const [confirmPasswordPro,setConfirmPasswordPro] = useState('');
     const submitHandler= (e) =>{
     e.preventDefault();
-    axios.post('http://localhost:5000/register',{name:newnamePro, password:newpasswordPro}).then(
+    axios.post('profile',{name:newnamePro, password:newpasswordPro}).then(
     (response)=>{
         console.log(response);
         if (response.data.result === "Pass"){
