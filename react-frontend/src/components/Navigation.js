@@ -52,7 +52,9 @@ const Navigation=({name,onNameChange})=>{
 
 
 
+
         {name
+
         ?(<div className="menu-container">
             <button onClick={onClick} className="menu-trigger">
                 <img className="photo" src={hhh} alt="User avatar" />

@@ -41,6 +41,7 @@ function App() {
 
             {name?(<Switch>
 
+
               <Route exact path={`/:name/home`} component = {()=> <Home name={name} nickName={nickName}  onNameChange={onChange} thingsToDo={2}/>}/>
 
               <Route exact path={`/:name/register`} component={Register} />
