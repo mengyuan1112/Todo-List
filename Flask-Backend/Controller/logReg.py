@@ -2,19 +2,15 @@ import hashlib
 import os
 import re
 import jwt
-
 import datetime
 
 from google.oauth2 import id_token
 from google.auth.transport import requests
+from flask import request, jsonify
+from flask import Blueprint
+from .database import db
 
-from flask_cors import CORS
-from flask import Flask, request, jsonify
-from flask_pymongo import PyMongo
-
-
-app = Flask(__name__)
-cors = CORS(app)
+logReg = Blueprint('logReg', __name__)
 """
     Database: Mongodb
     host: localhost
@@ -24,7 +20,7 @@ cors = CORS(app)
     DB document [username, name, salt_password, email, salt, self_ticket, public_ticket]
 """
 # app.config['MONGO_URI'] = "mongodb://localhost:27017/Todo_list"
-UserDB = PyMongo(app, uri="mongodb://localhost:27017/Todo_list")
+UserDB = db
 # GoogleDB = PyMongo(app, uri="mongodb://localhost:27017/Todo_list")
 
 
@@ -33,7 +29,7 @@ regex = '^(\w|\.|\_|\-)+[@](\w|\_|\-|\.)+[.]\w{2,3}$'
 key = "HelloWord"
 
 
-@app.route('/register', methods=['POST'])
+@logReg.route('/register', methods=['POST'])
 def register():
     """
     :return: String with content "pass" and other
@@ -43,18 +39,17 @@ def register():
         return jsonify({"result": "The password is not satisfied categories"})
     elif not re.search(regex, data['email']):
         return jsonify({"result": "The email is not valid"})
-    elif UserDB.db.user.find_one({"email": data['email']}) is not None:
+    elif UserDB.user.find_one({"email": data['email']}) is not None:
         return jsonify({"result": "The email already existed please sign in or change to another email"})
-    elif UserDB.db.user.find_one({"username": data['username']}) is not None:
+    elif UserDB.user.find_one({"username": data['username']}) is not None:
         return jsonify({"result": "Username is already exist please enter different one"})
     # reference: https://nitratine.net/blog/post/how-to-hash-passwords-in-python/
     salt = os.urandom(32)
     salt_password = hashlib.pbkdf2_hmac(
         'sha256', data['password'].encode('utf-8'), salt, 100000)
-
-    user_document = {"username": data['username'], "name": data['username'], "salt_password": salt_password, "email": data['email'],
-                     "salt": salt, "self_ticket": [], "public_ticket": []}
-    UserDB.db.user.insert_one(user_document)
+    user_document = {"username": data['username'], "name": data['username'], "salt_password": salt_password,
+                     "email": data['email'], "salt": salt, "self_ticket": [], "public_ticket": []}
+    UserDB.user.insert_one(user_document)
     return jsonify({"result": "Pass"})
 
 
@@ -81,7 +76,7 @@ def valid_pwd(pwd):
     return up_case and low_case and num and special_char
 
 
-@app.route('/login', methods=['POST', 'GET'])
+@logReg.route('/login', methods=['POST', 'GET'])
 def login():
     """
     :return: String with content "pass" and other
@@ -97,7 +92,7 @@ def login():
             if user is not None:
                 return jsonify({"result": "Pass"})
         password = data['password']
-        query = UserDB.db.user.find_one({"username": data['username']})
+        query = UserDB.user.find_one({"username": data['username']})
         if query is None:
             return jsonify({"result": "The user is not existed"})
         elif query['username'] == data['username']:
@@ -109,12 +104,12 @@ def login():
     return jsonify({"result": "Pass", "token": token, "name": query['name']})
 
 
-@app.route("/google/login", methods=['POST'])
+@logReg.route("/google/login", methods=['POST'])
 def google_login():
     token = request.get_json()['token']
     try:
         id_info = id_token.verify_oauth2_token(token, requests.Request(), None)
-        UserDB.db.googleUser.insert_one(id_info)
+        UserDB.googleUser.insert_one(id_info)
         first_name = id_info['family_name']
         last_name = id_info['given_name']
         response = {'result': "successful",
@@ -126,7 +121,7 @@ def google_login():
 
 
 def return_user(cookie):
-    query = UserDB.db.user.find_one({'cookies': cookie})
+    query = UserDB.user.find_one({'cookies': cookie})
     if query is None:
         return None
     else:
@@ -145,7 +140,7 @@ def check_token(token):
     try:
         form = jwt.decode(token, key, algorithms="HS256")
         username = form['iss']
-        user = UserDB.db.user.find_one({"username": username})
+        user = UserDB.user.find_one({"username": username})
         response = {"username": user['username'], "name": user['name'],
                     "email": user['email'], "self_ticket": user['self_ticket'],
                     "public_ticket": user['public_ticket']}
@@ -153,6 +148,3 @@ def check_token(token):
     except jwt.exceptions.ExpiredSignatureError:
         return {"result": "Expired"}
 
-
-if __name__ == "__main__":
-    app.run()

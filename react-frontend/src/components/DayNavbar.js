@@ -2,7 +2,7 @@ import React, { useState ,useEffect} from 'react'
 import {Nav,Navbar,Button} from 'react-bootstrap';
 import "./DayNavbar.css"
 
-const DayNavbar = () => {
+const DayNavbar = (props) => {
   const [i,setI] = useState(0);
   const [today,setToday] =useState(i);
   const monthNames = ["January", "February", "March", "April", "May", "June",
@@ -44,10 +44,60 @@ const DayNavbar = () => {
     }
 
   }, []) 
-  const handleClickMonday=()=>{
-    console.log("Show monday context.")
-    //update todo, finished and shared list to monday.
+  const handleClickSunday=()=>{
+    var date = (new Date(new Date().setDate(new Date().getDate()+(i-1))));
+    date.setHours(0,0,0,0);
+    console.log(date)
+    props.setNewDay(date);
+
   }
+
+  const handleClickMonday=()=>{
+    var date = (new Date(new Date().setDate(new Date().getDate()+(i+0))));
+    date.setHours(0,0,0,0);
+    console.log(date)
+    props.setNewDay(date);
+    
+  }
+
+  const handleClickTuesday=()=>{
+    var date = (new Date(new Date().setDate(new Date().getDate()+(i+1))));
+    date.setHours(0,0,0,0);
+    console.log(date)
+    props.setNewDay(date);
+    
+  }
+  const handleClickWednesday=()=>{
+    var date = (new Date(new Date().setDate(new Date().getDate()+(i+2))));
+    date.setHours(0,0,0,0);
+    console.log(date)
+    props.setNewDay(date);
+    
+  }
+  const handleClickThursday=()=>{
+    var date = (new Date(new Date().setDate(new Date().getDate()+(i+3))));
+    date.setHours(0,0,0,0);
+    console.log(date)
+    props.setNewDay(date);
+    
+  }
+  const handleClickFriday=()=>{
+    var date = (new Date(new Date().setDate(new Date().getDate()+(i+4))));
+    date.setHours(0,0,0,0);
+    console.log(date)
+    props.setNewDay(date);
+    
+  }
+  const handleClickSaturday=()=>{
+    var date = (new Date(new Date().setDate(new Date().getDate()+(i+5))));
+    date.setHours(0,0,0,0);
+    console.log(date)
+    props.setNewDay(date);
+    
+  }
+
+
+
 
   return (
     <>  
@@ -61,7 +111,7 @@ const DayNavbar = () => {
           <Nav className="nav-fill w-100 justify-content-center" >
 
             {/* Sunday */}
-            <span name="Sunday" className={i===-6? 'navBarToday': 'navBarDay'}>Sun  
+            <span onClick={handleClickSunday} name="Sunday" className={i===-6? 'navBarToday': 'navBarDay'}>Sun  
             <span name="7"  className={i===-6? 'navBarDate-today': 'navBarDate'}>
               {(new Date(new Date().setDate(new Date().getDate()+ i-1)).getDate())}</span></span> 
 
@@ -72,27 +122,27 @@ const DayNavbar = () => {
             </span>
 
             {/* Tuesday */}
-            <span name="Tuesday" className={i===-1? 'navBarToday': 'navBarDay'}>Tues  
+            <span onClick={handleClickTuesday} name="Tuesday" className={i===-1? 'navBarToday': 'navBarDay'}>Tues  
             <span name="2"  className={i===-1? 'navBarDate-today': 'navBarDate'}>
             {(new Date(new Date().setDate(new Date().getDate()+i+1)).getDate())}</span></span> 
 
             {/* Wednesday */}
-            <span name="Wednesday" className={i===-2? 'navBarToday': 'navBarDay'}>Wed  
+            <span onClick={handleClickWednesday} name="Wednesday" className={i===-2? 'navBarToday': 'navBarDay'}>Wed  
             <span name="3"  className={i===-2? 'navBarDate-today': 'navBarDate'}>
               {(new Date(new Date().setDate(new Date().getDate()+i+2)).getDate())}</span></span> 
 
             {/* Thursday */}
-            <span name="Thursday" className={i===-3? 'navBarToday': 'navBarDay'}>Thur  
+            <span onClick={handleClickThursday} name="Thursday" className={i===-3? 'navBarToday': 'navBarDay'}>Thur  
             <span name="4"  className={i===-3? 'navBarDate-today': 'navBarDate'}>
               {(new Date(new Date().setDate(new Date().getDate()+i+3)).getDate())}</span></span> 
 
             {/* Firday */}
-            <span name="Firday" className={i===-4? 'navBarToday': 'navBarDay'}>Fri  
+            <span onClick={handleClickFriday} name="Firday" className={i===-4? 'navBarToday': 'navBarDay'}>Fri  
             <span name="5"  className={i===-4? 'navBarDate-today': 'navBarDate'}>
               {(new Date(new Date().setDate(new Date().getDate()+i+4)).getDate())}</span></span>
 
              {/*Saturday  */}
-            <span name="Saturday" className={i===-5? 'navBarToday': 'navBarDay'}>Sat  
+            <span  onClick={handleClickSaturday} name="Saturday" className={i===-5? 'navBarToday': 'navBarDay'}>Sat  
             <span name="6"  className={i===-5? 'navBarDate-today': 'navBarDate'}>
               {(new Date(new Date().setDate(new Date().getDate()+i+5)).getDate())}</span></span> 
           </Nav>

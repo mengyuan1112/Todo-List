@@ -26,8 +26,10 @@ const Profile = ({name,onNameChange}) => {
     const handleClose1 = () => setShow1(false);
     const handleShow1 = () => setShow1(true);
 
+
     const [nicknamealert, Setnicknamealert] = useState(false);
     const [passwordalert, Setpasswordalert] = useState(false);
+
 
 
     const [emailPro,Getemail] = useState('');
@@ -65,6 +67,7 @@ const Profile = ({name,onNameChange}) => {
     const submitNickname= (e) =>{
     e.preventDefault();
     axios.post('profile/nickname',{username:usernamePro, newpassword:newpasswordPro,oldpassword:passwordPro}).then(
+
     (response)=>{
         console.log(response);
         if (response.data.result === "Pass"){
@@ -114,6 +117,7 @@ const Profile = ({name,onNameChange}) => {
         }
     }
 
+
     const checkNicname=(e)=>{
         Setnewname(e.target.value)
         if (e.target.value== ""){
@@ -130,14 +134,18 @@ const Profile = ({name,onNameChange}) => {
         Setnicknamealert(false);Setpasswordalert(false)
       }, 2000)
 
+
     return(
         <div>
        
+
         {/*!timeOut &&*/<Alert show={nicknamealert} variant="success" /*onClose={() => setShow2(false)} dismissible*/>
+
         <p>
             Congratulations! Your nickname was successfully changed.
         </p>
         </Alert>}
+
 
         {/*!timeOut &&*/<Alert show={passwordalert} variant="success" /*onClose={() => setShow2(false)} dismissible*/>
         <p>
@@ -145,6 +153,7 @@ const Profile = ({name,onNameChange}) => {
         </p>
         </Alert>}
         
+
         <br></br>
         <br></br>
         <Container>
@@ -190,10 +199,12 @@ const Profile = ({name,onNameChange}) => {
           <Modal.Title>Nickname Change</Modal.Title>
         </Modal.Header>
         <Modal.Body>
+
             <Form onSubmit={submitNickname}>
                 {newnameError
                 ?(<Form.Group className="mb-3" controlId="formBasicEmail">
                     <Form.Control type="nickname" onChange={(e)=>checkNicname(e)} placeholder="Enter nickname"  />
+
                     <Form.Text className="text-muted">
                     Please enter your new nickname.
                     </Form.Text>
@@ -213,10 +224,12 @@ const Profile = ({name,onNameChange}) => {
             <Button variant="secondary" onClick={handleClose}>
             Close
             </Button>
+
             {newnameError
             ?(<Button variant="primary" type="submit" >Save Changes</Button>)
             :(<Button variant="primary" type="submit" onClick={()=>{setShow(false);Setnicknamealert(true)}}>Save Changes</Button>)
             }
+
         </Modal.Footer>
       </Modal>
 
@@ -225,8 +238,10 @@ const Profile = ({name,onNameChange}) => {
           <Modal.Title>Password change</Modal.Title>
         </Modal.Header>
         <Modal.Body>
+
         <Form onSubmit={submitPassword}>
             <Form.Group className="mb-3" controlId="formBasicPassword" >               
+
                 <Form.Control type="password" placeholder="Old Password" />
                 <Form.Text className="text-muted">
                   Please enter your old password
@@ -260,8 +275,10 @@ const Profile = ({name,onNameChange}) => {
             Close
           </Button>
           {newpasswordErr
+
           ?(<Button variant="primary" type="submit" >Submit</Button>)
           :(<Button variant="primary" type="submit" onClick={()=>{setShow1(false);Setpasswordalert(true)}}>Submit</Button>)}
+
         </Modal.Footer>
       </Modal>
 
