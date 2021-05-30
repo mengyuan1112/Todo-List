@@ -26,8 +26,8 @@ const Profile = ({name,onNameChange}) => {
     const handleClose1 = () => setShow1(false);
     const handleShow1 = () => setShow1(true);
 
-    const [show2, setShow2] = useState(true);
-    const handleShow2 = () => setShow2(true);
+    const [nicknamealert, Setnicknamealert] = useState(false);
+    const [passwordalert, Setpasswordalert] = useState(false);
 
 
     const [emailPro,Getemail] = useState('');
@@ -35,13 +35,12 @@ const Profile = ({name,onNameChange}) => {
     const [passwordPro, Getpassword] = useState('');
 
     function kkk(){
-        setShow1(false);
-        
+        setShow1(false);    
     }
   
 
     useEffect(() => {
-      axios.get('login').then(
+      axios.get('profile').then(
         res => {
             Getemail(res.data.email)
             Getusername(res.data.username)
@@ -58,36 +57,52 @@ const Profile = ({name,onNameChange}) => {
       
     const [newpasswordPro,Setnewpassword] = useState('');
     const [newpasswordErr,SetnewpasswordErr] = useState('');
-    const [newnamePro, Setnewname] = useState('');
+    const [newnickname, Setnewname] = useState('');
     const [newnameError, SetnewnameErr]=  useState('');
     const [confirmPasswordPro,setConfirmPasswordPro] = useState('');
-    const submitHandler= (e) =>{
+
+
+    const submitNickname= (e) =>{
     e.preventDefault();
-    axios.post('http://localhost:5000/register',{name:newnamePro, password:newpasswordPro}).then(
+    axios.post('profile/nickname',{username:usernamePro, newpassword:newpasswordPro,oldpassword:passwordPro}).then(
     (response)=>{
         console.log(response);
         if (response.data.result === "Pass"){
            
         }
-        else if (response.data.result === "Nickname cannot be empty"){
-            SetnewnameErr(response.data.result)
+        else if (newnickname=== "newnickname"){
+            SetnewnameErr("nickname can not be empty")
             SetnewpasswordErr("")
-        }
-
-        else if (response.data.result === "The password is not satisfied categories"){
-            SetnewpasswordErr(response.data.result)
-            SetnewnameErr("")
-        }
-
-        else if (response.data.result === "You old password is not correct"){
-            SetnewpasswordErr(response.data.result)
-            SetnewnameErr("")
         }
 
  
     })
     .catch(err=>{ console.log(err) });
     }
+
+    const submitPassword= (e) =>{
+        e.preventDefault();
+        axios.post('profile/password',{username:usernamePro, newname:newnickname}).then(
+        (response)=>{
+            console.log(response);
+            if (response.data.result === "Pass"){
+               
+            }
+            
+    
+            else if (response.data.result === "The password is not satisfied categories"){
+                SetnewpasswordErr(response.data.result)
+                SetnewnameErr("")
+            }
+    
+            else if (response.data.result === "You old password is not correct"){
+                SetnewpasswordErr(response.data.result)
+                SetnewnameErr("")
+            }
+    
+        })
+        .catch(err=>{ console.log(err) });
+        }
 
     const checkPassword=(e)=>{
         setConfirmPasswordPro(e.target.value);
@@ -99,21 +114,37 @@ const Profile = ({name,onNameChange}) => {
         }
     }
 
+    const checkNicname=(e)=>{
+        Setnewname(e.target.value)
+        if (e.target.value== ""){
+            SetnewnameErr("Nickname cannot be empty")
+        }
+        else{
+            SetnewnameErr('');
+        }
+    }
 
     
-
     
+    setTimeout(() => {
+        Setnicknamealert(false);Setpasswordalert(false)
+      }, 2000)
 
     return(
         <div>
        
-        <Alert show={show2} variant="success" onClose={() => setShow2(false)} dismissible>
+        {/*!timeOut &&*/<Alert show={nicknamealert} variant="success" /*onClose={() => setShow2(false)} dismissible*/>
         <p>
             Congratulations! Your nickname was successfully changed.
         </p>
-        </Alert>
-            
-            
+        </Alert>}
+
+        {/*!timeOut &&*/<Alert show={passwordalert} variant="success" /*onClose={() => setShow2(false)} dismissible*/>
+        <p>
+            Congratulations! Your password was successfully changed.
+        </p>
+        </Alert>}
+        
         <br></br>
         <br></br>
         <Container>
@@ -128,11 +159,13 @@ const Profile = ({name,onNameChange}) => {
                 </ListGroup.Item>
                 <ListGroup.Item>
                     <Row>
-                        <Col xs="11"><h4>Username</h4> {usernamePro}</Col> <Col> </Col>
+                        <Col xs="3"><h4>Username</h4></Col> <Col>{usernamePro}</Col>
                     </Row>
                 </ListGroup.Item>
-                <ListGroup.Item action onClick={handleShow}>
-                        <h4>Nickname</h4>{name}
+                <ListGroup.Item action onClick={handleShow} >
+                    
+                        <h4>Nickname</h4> {name}
+                   
                 </ListGroup.Item>
                 <ListGroup.Item >
                     <h4>Email</h4>{emailPro}
@@ -150,25 +183,40 @@ const Profile = ({name,onNameChange}) => {
             <Route path="/changepassword" component={<Changepassword/>} />
         </Switch>
 
+
+
         <Modal show={show} onHide={handleClose} animation={false}>
         <Modal.Header closeButton>
           <Modal.Title>Nickname Change</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-            <Form>
-                <Form.Group className="mb-3" controlId="formBasicEmail">
-                    <Form.Control type="nickname" placeholder="Enter nickname" />
+            <Form onSubmit={submitNickname}>
+                {newnameError
+                ?(<Form.Group className="mb-3" controlId="formBasicEmail">
+                    <Form.Control type="nickname" onChange={(e)=>checkNicname(e)} placeholder="Enter nickname"  />
                     <Form.Text className="text-muted">
                     Please enter your new nickname.
                     </Form.Text>
-                </Form.Group>         
+                    <Form.Text style={{ color:"red" }}>{newnameError}</Form.Text> 
+                </Form.Group>)  
+
+                :(<Form.Group className="mb-3" controlId="formBasicEmail">
+                <Form.Control type="nickname" onChange={(e)=>checkNicname(e)} placeholder="Enter nickname"  />
+                <Form.Text className="text-muted">
+                Please enter your new nickname.
+                </Form.Text>
+                </Form.Group>)
+                }     
             </Form>
         </Modal.Body>
         <Modal.Footer>
             <Button variant="secondary" onClick={handleClose}>
             Close
             </Button>
-            {!show2 &&<Button variant="primary" onClick={()=>{setShow(false);setShow2(true)}}>Save Changes</Button>}
+            {newnameError
+            ?(<Button variant="primary" type="submit" >Save Changes</Button>)
+            :(<Button variant="primary" type="submit" onClick={()=>{setShow(false);Setnicknamealert(true)}}>Save Changes</Button>)
+            }
         </Modal.Footer>
       </Modal>
 
@@ -177,10 +225,9 @@ const Profile = ({name,onNameChange}) => {
           <Modal.Title>Password change</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-        <Form>
-            <Form.Group className="mb-3" controlId="formBasicPassword">
-                
-                <Form.Control type="email" placeholder="Old Password" />
+        <Form onSubmit={submitPassword}>
+            <Form.Group className="mb-3" controlId="formBasicPassword" >               
+                <Form.Control type="password" placeholder="Old Password" />
                 <Form.Text className="text-muted">
                   Please enter your old password
                 </Form.Text>
@@ -188,7 +235,7 @@ const Profile = ({name,onNameChange}) => {
 
             <Form.Group className="mb-3" controlId="formBasicPassword">
                 
-                <Form.Control type="password" placeholder="New Password" />
+                <Form.Control type="password" onChange={(e)=>Setnewpassword(e.target.value)} placeholder="New Password" />
                 <Form.Text className="text-muted">
                 Your password must be 8-20 characters long, contain uppercase letters, lowercase letters, numbers, and at least one spercial character.
                 Your password must not contain spaces, or emoji.
@@ -196,14 +243,14 @@ const Profile = ({name,onNameChange}) => {
             </Form.Group>
             {newpasswordErr
             ?(<Form.Group className="mb-3" controlId="formBasicPassword">
-                <Form.Control type="password" placeholder="Confirm Password" />
+                <Form.Control type="password" placeholder="Confirm Password" onChange={(e)=>checkPassword(e)} />
                 <Form.Text style={{ color:"red" }}>
                 {newpasswordErr}
                 </Form.Text>
             </Form.Group>)
             :(<Form.Group className="mb-3" controlId="formBasicPassword">
                 
-                <Form.Control type="password" placeholder="Confirm Password" />
+                <Form.Control type="password" placeholder="Confirm Password" onChange={(e)=>checkPassword(e)}/>
             </Form.Group>)
             }
         </Form>   
@@ -213,16 +260,10 @@ const Profile = ({name,onNameChange}) => {
             Close
           </Button>
           {newpasswordErr
-          ?(<Button variant="primary" onClick={handleClose1}>
-          Submit
-          </Button>)
-          :(<Button variant="primary" onClick={handleClose1}>
-          Submit
-          </Button>)}
+          ?(<Button variant="primary" type="submit" >Submit</Button>)
+          :(<Button variant="primary" type="submit" onClick={()=>{setShow1(false);Setpasswordalert(true)}}>Submit</Button>)}
         </Modal.Footer>
       </Modal>
-
-     
 
         </div>
         
