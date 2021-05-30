@@ -1,21 +1,10 @@
-import React,{useState,useEffect} from 'react'
+import React,{useState} from 'react'
 import {Modal,Button,ListGroup} from 'react-bootstrap'
 import './ShowTaskContent.css'
 
 const ShowTaskContent = (props) => {
     const [toggleTitle,setToggleTitle] = useState(true);
     const [title,setTitle] =useState(props.task.title);
-    // useEffect(() => {
-    //   if (props.task.content === "" || props.task.content === null || !props.task.content){
-    //     props.task.content = "No content provided"
-    //   }
-    //   if (props.task.date === "" ||props.task.date === null){
-    //     props.task.date = "No date provided"
-    //   }
-    //   if (props.task.time === "" ||props.task.time === null){
-    //     props.task.time = "No time provided"
-    //   }
-    // },[])
     const [toggleContent,setToggleContent] = useState(true);
     const [content,setContent] = useState(props.task.content);
 
@@ -25,8 +14,17 @@ const ShowTaskContent = (props) => {
     const [toggleTime,setToggleTime] = useState(true);
     const [time,setTime] = useState(props.task.time);
 
-
-
+    const handleSave = () =>{
+      setToggleDate(true)
+      setToggleTitle(true)
+      setToggleContent(true)
+      setToggleTime(true)
+      props.task.title = title
+      props.task.content = content
+      props.task.date = date
+      props.task.time = time
+      props.onHide()
+    }
     return (
         <Modal
         show={props.show} 
@@ -122,6 +120,8 @@ const ShowTaskContent = (props) => {
           </ul>
       </Modal.Body>
       <Modal.Footer>
+        {(toggleTitle && toggleTime && toggleDate) ? null : 
+        <Button variant="success" onClick={handleSave}>Save Change</Button>}
         <Button onClick={props.onHide}>Close</Button>
       </Modal.Footer>
     </Modal>

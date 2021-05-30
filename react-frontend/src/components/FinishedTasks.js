@@ -11,7 +11,7 @@ const FinishedTasks = ({task,backTodo}) => {
     const [modalShow, setModalShow] = React.useState(false);
     return (
         <ListGroup variant="flush" >
-        <ListGroup.Item action onDoubleClick={()=>setModalShow(true)}>
+        <ListGroup.Item action onClick={()=>setModalShow(true)}>
             {task.title}
         <FaTimes onClick={()=>backTodo(task)}
             style={{float:'right', color:'red',cursor:'pointer'}}/> 
