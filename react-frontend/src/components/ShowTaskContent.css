@@ -2,7 +2,9 @@ ul {
   list-style-type: none;
 }
 
-li {
+li,
+label,
+p {
   font-size: large;
   margin-bottom: 5px;
 }
