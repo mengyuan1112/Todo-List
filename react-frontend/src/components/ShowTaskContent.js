@@ -25,6 +25,12 @@ const ShowTaskContent = (props) => {
       props.task.time = time
       props.onHide()
     }
+
+    const handleDelete = ()=>{
+      props.deleteTask(props.task)
+      props.onHide()
+    }
+
     return (
         <Modal
         show={props.show} 
@@ -120,9 +126,10 @@ const ShowTaskContent = (props) => {
           </ul>
       </Modal.Body>
       <Modal.Footer>
+        <Button size="sm" onClick={handleDelete} variant="danger"> Delete Task </Button>
         {(toggleTitle && toggleTime && toggleDate) ? null : 
-        <Button variant="success" onClick={handleSave}>Save Change</Button>}
-        <Button onClick={props.onHide}>Close</Button>
+        <Button variant="success" size="sm" onClick={handleSave}>Save Change</Button>}
+        <Button size="sm" onClick={props.onHide}>Close</Button>
       </Modal.Footer>
     </Modal>
     )
