@@ -43,7 +43,7 @@ const Main = ({name,onNameChange}) => {
 
     const addTask=(task)=>{
       setTasks([...tasks,task])
-      currentDate.setHours(0,0,0,0);
+      currentDate.setHours(0,0,0,0,0);
       console.log({username:name,currentDate:currentDate, ...task})
       socket.emit("AddedTask",{username:name,currentDate:currentDate, ...task});
       setThingTodo(thingsToDo+1)
@@ -54,7 +54,7 @@ const Main = ({name,onNameChange}) => {
       setFinishedTask([...finishedTask,t])
       setThingTodo(thingsToDo-1)
       setThingsFinished(thingsFinished+1)
-      currentDate.setHours(0,0,0,0);
+      currentDate.setHours(0,0,0,0,0);
       console.log({currentDate:currentDate,...t}) //Task to be deleted from todo. == Task to be added to Finished
       socket.emit("deleteTaskFromTodo",{username:name,currentDate:currentDate,...t})
     }
@@ -74,7 +74,7 @@ const Main = ({name,onNameChange}) => {
     const moveBackTodo=(t) =>{
       setFinishedTask(finishedTask.filter((task)=> task.title !== t.title ))
       setTasks([...tasks,t])
-      currentDate.setHours(0,0,0,0);
+      currentDate.setHours(0,0,0,0,0);
       console.log({currentDate:currentDate, ...t});
       socket.emit("AddedTask",{username:name,currentDate:currentDate, ...t})
       setThingsFinished(thingsFinished-1)
@@ -91,7 +91,7 @@ const Main = ({name,onNameChange}) => {
 
     const setNewDay = (e) =>{
       setCurrentDate(e);
-      e.setHours(0,0,0,0);
+      e.setHours(0,0,0,0,0);
       console.log(e);
       socket.on(`username:${name},currentDate:${e}`,data=>{
        // update todo, finished and shared list to monday.
