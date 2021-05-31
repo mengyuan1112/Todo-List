@@ -9,7 +9,6 @@ UserDB = db
 
 @socketio.on("AddedTask", namespace='/main')
 def handle_message(data):
-
     print('received message: ' + str(data))
 
 
