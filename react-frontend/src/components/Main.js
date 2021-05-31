@@ -16,6 +16,7 @@ const endPoint = "http://localhost:5000/main";
 
 
 const Main = ({name,onNameChange}) => {
+
     const socket = socketIOClient.connect(endPoint);
     const [modalShow, setModalShow] = useState(false);
     const [tasks, setTasks] = useState([]);
@@ -26,14 +27,17 @@ const Main = ({name,onNameChange}) => {
     const [thingsToDo,setThingTodo]= useState(0);
     const [sharedThings, setShareThing] = useState(0);
     const [ currentDate,setCurrentDate] = useState(new Date());  //initalize the date tobe today.
-
     useEffect(() => {
+      console.log(`currentDate:${currentDate},username:${name}`)
       socket.on(`currentDate:${currentDate},username:${name}`,data=>{
         //update todo, finished and shared list to monday.
         console.log(data)
         setTasks(data);
         setThingTodo(data.length)
-      })
+      });
+
+      //disconnect once done.
+      // return () =>socket.disconnect();
       },[]);
 
 
@@ -52,17 +56,19 @@ const Main = ({name,onNameChange}) => {
       setThingsFinished(thingsFinished+1)
       currentDate.setHours(0,0,0,0);
       console.log({currentDate:currentDate,...t}) //Task to be deleted from todo. == Task to be added to Finished
-      socket.emit("deleteTask",{username:name,currentDate:currentDate,...t})
+      socket.emit("deleteTaskFromTodo",{username:name,currentDate:currentDate,...t})
     }
 
     const deleteTaskFromTodo = (t) =>{
       setTasks(tasks.filter((task)=> task.title !== t.title ))
       setThingTodo(thingsToDo-1)
+      socket.emit("deleteTaskFromTodo",{username:name,currentDate:currentDate,...t})
     }
     
     const deleteTaskFromFinished =(t)=>{
       setFinishedTask(finishedTask.filter((task)=> task.title !== t.title ))
       setThingsFinished(thingsFinished-1)
+      socket.emit("deleteTaskFromFinished",{username:name,currentDate:currentDate,...t})
     }
 
     const moveBackTodo=(t) =>{
@@ -70,7 +76,7 @@ const Main = ({name,onNameChange}) => {
       setTasks([...tasks,t])
       currentDate.setHours(0,0,0,0);
       console.log({currentDate:currentDate, ...t});
-      socket.emit("AddedTaskBackToDo",{username:name,currentDate:currentDate, ...t})
+      socket.emit("AddedTask",{username:name,currentDate:currentDate, ...t})
       setThingsFinished(thingsFinished-1)
       setThingTodo(thingsToDo+1)
     }
