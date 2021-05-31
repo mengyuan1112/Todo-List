@@ -10,6 +10,9 @@ import DayNavbar from './DayNavbar'
 import Task from './Task'
 import socketIOClient from "socket.io-client";
 import FinishedTasks from './FinishedTasks';
+import AddSharedTask from './AddSharedTask'
+import ShareTask from './ShareTask'
+
 const endPoint = "http://localhost:5000/main";
 
 
@@ -19,6 +22,7 @@ const Main = ({name,onNameChange}) => {
 
     const socket = socketIOClient.connect(endPoint);
     const [modalShow, setModalShow] = useState(false);
+    const [modalForShared,setModalForShared] = useState(false);
     const [tasks, setTasks] = useState([]);
     const [finishedTask,setFinishedTask] = useState([]);
     const [task,setTask] = useState();
@@ -49,6 +53,14 @@ const Main = ({name,onNameChange}) => {
       setThingTodo(thingsToDo+1)
     }
 
+    const addSharedTask=(task)=>{
+      setSharedTasks([...sharedTasks,task])
+      currentDate.setHours(0,0,0,0,0);
+      console.log({username:name,currentDate:currentDate, ...task});
+      socket.emit("AddedSharedTask",{username:name,currentDate:currentDate, ...task});
+      setShareThing(sharedThings+1);
+    }
+
     const moveToFinish = (t) =>{
       setTasks(tasks.filter((task)=> task.title !== t.title ))
       setFinishedTask([...finishedTask,t])
@@ -57,6 +69,15 @@ const Main = ({name,onNameChange}) => {
       currentDate.setHours(0,0,0,0,0);
       console.log({currentDate:currentDate,...t}) //Task to be deleted from todo. == Task to be added to Finished
       socket.emit("deleteTaskFromTodo",{username:name,currentDate:currentDate,...t})
+    }
+
+    const shareListmoveToFinish = (t) =>{
+      setSharedTasks(sharedTasks.filter((task)=> task.title !== t.title ))
+      setFinishedTask([...finishedTask,t])
+      setShareThing(sharedThings-1)
+      setThingsFinished(thingsFinished+1)
+      console.log({currentDate:currentDate,...t}) //Task to be deleted from todo. == Task to be added to Finished
+      socket.emit("deleteTaskShareList",{username:name,currentDate:currentDate,...t})
     }
 
     const deleteTaskFromTodo = (t) =>{
@@ -69,6 +90,12 @@ const Main = ({name,onNameChange}) => {
       setFinishedTask(finishedTask.filter((task)=> task.title !== t.title ))
       setThingsFinished(thingsFinished-1)
       socket.emit("deleteTaskFromFinished",{username:name,currentDate:currentDate,...t})
+    }
+
+    const deleteTaskFromShareList = (t)=>{
+      setSharedTasks(sharedTasks.filter((task)=> task.title !== t.title ))
+      setShareThing(sharedThings-1)
+      socket.emit("deleteTaskFromShareList",{username:name,currentDate:currentDate,...t})
     }
 
     const moveBackTodo=(t) =>{
@@ -87,6 +114,10 @@ const Main = ({name,onNameChange}) => {
 
     const finish_list = finishedTask.map((task)=>
       <FinishedTasks key={task.title} task={task} backTodo={moveBackTodo} deleteTask={deleteTaskFromFinished}/>
+    );
+
+    const shared_list = sharedTasks.map((task) =>
+    <ShareTask key={task.title} task = {task}  onDelete={shareListmoveToFinish} deleteTask={deleteTaskFromShareList}/>
     );
 
     const setNewDay = (e) =>{
@@ -144,8 +175,9 @@ const Main = ({name,onNameChange}) => {
           <Card.Body className="CardBody">
             <Card.Title>Shared List ({sharedThings})</Card.Title>
             <hr/>
-            <AddTask task={setTask} addtask={addTask} show={modalShow} onHide={() => setModalShow(false)}/>
-            <Button onClick={() => setModalShow(true)} variant="light">+</Button>
+            <AddSharedTask addtask={addSharedTask} show={modalForShared} onHide={() => setModalForShared(false)}/>
+            {shared_list}
+            <Button onClick={() => setModalForShared(true)} variant="light">+</Button>
             <Card.Text>
             </Card.Text>
           </Card.Body>
