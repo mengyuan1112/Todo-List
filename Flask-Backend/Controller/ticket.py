@@ -1,7 +1,13 @@
 from flask import Flask
 from flask_socketio import SocketIO, send
-import Controller.database as db
+
 from flask import Blueprint
+
+from pymongo import MongoClient
+#client = MongoClient()
+client = MongoClient('localhost', 27017)
+db = client.Todo_list
+
 
 app = Flask(__name__)
 # app.config['SECRET_KEY'] = 'secret!'
@@ -12,10 +18,12 @@ UserDB = db.db
 @socketio.on("AddedTask", namespace='/main')
 def add_task(data):
     user_info = UserDB.user.find_one({"username": data['username']})
-    user, title, content, deadline_date, deadline_time, create_date, create_time = parsing_task(data)
+    user, title, content, deadline_date, deadline_time, create_date, create_time = parsing_task(
+        data)
 
     ticket = {"create_time": create_time, "title": title, "content": content,
               "date": deadline_date, "time": deadline_time}
+    print(ticket)
 
     self_ticket = user_info['self_ticket']  # {}
 
@@ -37,7 +45,8 @@ def add_task(data):
 
 @socketio.on("deleteTaskFromTodo", namespace='/main')
 def delete_task(data):
-    user, title, content, deadline_date, deadline_time, create_date, create_time = parsing_task(data)
+    user, title, content, deadline_date, deadline_time, create_date, create_time = parsing_task(
+        data)
     user_info = UserDB.user.find_one({"username": user})
     self_ticket = user_info['self_ticket']
     ticket_arr = self_ticket[create_date]
@@ -58,8 +67,6 @@ def delete_task_from_finished(data):
 
 
 @socketio.on("")
-
-
 def parsing_task(data):
     data_time_arr = data['currentDate'].split("T")
     create_date = data_time_arr[0]
@@ -68,6 +75,7 @@ def parsing_task(data):
         data['username'], data['title'], data['content'], data['date'], data['time']
     return user, title, content, deadline_date, deadline_time, create_date, create_time
 
+
 if __name__ == '__main__':
     print("websocket is running")
-    socketio.run(app, host="127.0.0.1", port=2000)
+    socketio.run(app, host="localhost", port=2000, debug=True)

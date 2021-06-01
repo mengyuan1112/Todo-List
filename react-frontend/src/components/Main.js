@@ -8,20 +8,17 @@ import AddTask from './AddTask'
 import { Redirect} from 'react-router';
 import DayNavbar from './DayNavbar'
 import Task from './Task'
-import socketIOClient from "socket.io-client";
+import io from 'socket.io-client';
 import FinishedTasks from './FinishedTasks';
 
 import AddSharedTask from './AddSharedTask'
 import ShareTask from './ShareTask'
 
 const endPoint = "http://localhost:2000/main";
-
-
+const socket = io.connect(endPoint);
 
 
 const Main = ({name,onNameChange}) => {
-
-    const socket = socketIOClient.connect(endPoint);
     const [modalShow, setModalShow] = useState(false);
     const [modalForShared,setModalForShared] = useState(false);
     const [tasks, setTasks] = useState([]);
@@ -35,13 +32,16 @@ const Main = ({name,onNameChange}) => {
       console.log(`currentDate:${currentDate},username:${name}`)
       socket.on(`currentDate:${currentDate},username:${name}`,data=>{
         //update todo, finished and shared list to monday.
-        console.log(data)
-        setTasks(data);
-        setThingTodo(data.length)
-      });
+          setTasks([]);
+          setThingTodo([]);
+          setSharedTasks([]);
+          setThingsFinished(0)
+          setThingTodo(0)
+          setShareThing(0)
 
+      });
       //disconnect once done.
-      return () =>socket.disconnect();
+      // return () =>socket.disconnect();
       },[]);
 
 
@@ -133,13 +133,15 @@ const Main = ({name,onNameChange}) => {
     const setNewDay = (e) =>{
       setCurrentDate(e);
       e.setHours(0,0,0,0,0);
-      console.log(e);
+      console.log("SetNewDayTo:",e);
       socket.on(`username:${name},currentDate:${e}`,data=>{
        // update todo, finished and shared list to monday.
-      console.log(data)
-      setTasks([{title:'hi'}])
-      setFinishedTask([{title:"finished."}])
-      setSharedTasks([{title:"Share tasks with friend!"}])
+      //  setTasks([]);
+      //  setThingTodo([]);
+      //  setSharedTasks([]);
+      //  setThingsFinished(0)
+      //  setThingTodo(0)
+      //  setShareThing(0)
       })
      }
 

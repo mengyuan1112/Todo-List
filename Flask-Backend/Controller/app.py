@@ -2,7 +2,7 @@ from flask import Flask
 from flask_cors import CORS
 from .logReg import logReg
 from .profile import profile
-# from .ticket import ticket
+#from .ticket import ticket
 
 
 app = Flask("__name__")
