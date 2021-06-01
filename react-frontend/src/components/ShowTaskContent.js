@@ -45,6 +45,9 @@ const ShowTaskContent = (props) => {
       </Modal.Header>
       <Modal.Body>
           <ul>
+            {props.task.sharedWith? (
+              <li>Shared with: <span>{props.task.sharedWith}</span></li>
+            ):null}
             <li onDoubleClick={()=>setToggleTitle(false)}>Title :
               {toggleTitle ? (<span>{title}</span>):
               (<input type='text' value={title} onChange={(e)=>{setTitle(e.target.value)}}

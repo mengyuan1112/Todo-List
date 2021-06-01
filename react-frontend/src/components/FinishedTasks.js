@@ -7,14 +7,17 @@ const taskClicked =() =>{
     console.log("onclicked")
 }
 
-const FinishedTasks = ({task,backTodo,deleteTask}) => {
+const FinishedTasks = ({task,backTodo,backShareList,deleteTask}) => {
     const [modalShow, setModalShow] = React.useState(false);
     return (
         <ListGroup variant="flush" >
         <ListGroup.Item action onClick={()=>setModalShow(true)}>
             {task.title}
+        {task.sharedWith? <FaUndo onClick={()=>backShareList(task)}
+            style={{float:'right', color:'black',cursor:'pointer' ,fontSize:'1rem'}}/> :
         <FaUndo onClick={()=>backTodo(task)}
             style={{float:'right', color:'black',cursor:'pointer' ,fontSize:'1rem'}}/> 
+        }
         </ListGroup.Item>
         <ShowTaskContent
         deleteTask={deleteTask}

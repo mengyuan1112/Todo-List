@@ -26,7 +26,7 @@ const Main = ({name,onNameChange}) => {
     const [tasks, setTasks] = useState([]);
     const [finishedTask,setFinishedTask] = useState([]);
     const [sharedTasks, setSharedTasks] = useState([]);
-    const [thingsFinished,setThingsFinished] = useState(0)
+    const [thingsFinished,setThingsFinished] = useState(0);
     const [thingsToDo,setThingTodo]= useState(0);
     const [sharedThings, setShareThing] = useState(0);
     const [ currentDate,setCurrentDate] = useState(new Date());  //initalize the date tobe today.
@@ -71,8 +71,8 @@ const Main = ({name,onNameChange}) => {
     }
 
     const shareListmoveToFinish = (t) =>{
-      setSharedTasks(sharedTasks.filter((task)=> task.title !== t.title ))
-      setFinishedTask([...finishedTask,t])
+      setSharedTasks(sharedTasks.filter((task)=> task.title !== t.title ))  // filter out the task from shared list.
+      setFinishedTask([...finishedTask,t])  // add the task to finished task.
       setShareThing(sharedThings-1)
       setThingsFinished(thingsFinished+1)
       console.log({currentDate:currentDate,...t}) //Task to be deleted from todo. == Task to be added to Finished
@@ -107,12 +107,22 @@ const Main = ({name,onNameChange}) => {
       setThingTodo(thingsToDo+1)
     }
 
+    const moveBackShareList=(t)=>{
+      setFinishedTask(finishedTask.filter((task)=> task.title !== t.title ))
+      setSharedTasks([...sharedTasks,t])
+      currentDate.setHours(0,0,0,0,0);
+      console.log({currentDate:currentDate, ...t});
+      socket.emit("moveFromFinishToSharedList",{username:name,currentDate:currentDate, ...t})
+      setThingsFinished(thingsFinished-1)
+      setShareThing(sharedThings+1)
+    }
+
     const todo_list = tasks.map((task) =>
         <Task key={task.title} task = {task}  onDelete={moveToFinish} deleteTask={deleteTaskFromTodo}/>
     );  
 
     const finish_list = finishedTask.map((task)=>
-      <FinishedTasks key={task.title} task={task} backTodo={moveBackTodo} deleteTask={deleteTaskFromFinished}/>
+      <FinishedTasks key={task.title} task={task} backShareList={moveBackShareList} backTodo={moveBackTodo} deleteTask={deleteTaskFromFinished}/>
     );
 
     const shared_list = sharedTasks.map((task) =>
