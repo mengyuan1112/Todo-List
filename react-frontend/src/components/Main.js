@@ -34,11 +34,14 @@ const Main = ({name,onNameChange}) => {
       console.log(`currentDate:${currentDate},username:${name}`)
       socket.on(`currentDate:${currentDate},username:${name}`,data=>{
         //update todo, finished and shared list to monday.
-        console.log(data)
-        setTasks(data);
-        setThingTodo(data.length)
-      });
+          setTasks([]);
+          setThingTodo([]);
+          setSharedTasks([]);
+          setThingsFinished(0)
+          setThingTodo(0)
+          setShareThing(0)
 
+      });
       //disconnect once done.
       return () =>socket.disconnect();
       },[]);
@@ -132,13 +135,15 @@ const Main = ({name,onNameChange}) => {
     const setNewDay = (e) =>{
       setCurrentDate(e);
       e.setHours(0,0,0,0,0);
-      console.log(e);
+      console.log("SetNewDayTo:",e);
       socket.on(`username:${name},currentDate:${e}`,data=>{
        // update todo, finished and shared list to monday.
-      console.log(data)
-      setTasks([{title:'hi'}])
-      setFinishedTask([{title:"finished."}])
-      setSharedTasks([{title:"Share tasks with friend!"}])
+      //  setTasks([]);
+      //  setThingTodo([]);
+      //  setSharedTasks([]);
+      //  setThingsFinished(0)
+      //  setThingTodo(0)
+      //  setShareThing(0)
       })
      }
 
