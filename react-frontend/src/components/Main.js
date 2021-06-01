@@ -8,20 +8,17 @@ import AddTask from './AddTask'
 import { Redirect} from 'react-router';
 import DayNavbar from './DayNavbar'
 import Task from './Task'
-import socketIOClient from "socket.io-client";
+import io from 'socket.io-client';
 import FinishedTasks from './FinishedTasks';
 
 import AddSharedTask from './AddSharedTask'
 import ShareTask from './ShareTask'
 
 const endPoint = "http://localhost:2000/main";
-
-
+const socket = io.connect(endPoint);
 
 
 const Main = ({name,onNameChange}) => {
-
-    const socket = socketIOClient.connect(endPoint);
     const [modalShow, setModalShow] = useState(false);
     const [modalForShared,setModalForShared] = useState(false);
     const [tasks, setTasks] = useState([]);
@@ -44,7 +41,7 @@ const Main = ({name,onNameChange}) => {
 
       });
       //disconnect once done.
-      return () =>socket.disconnect();
+      // return () =>socket.disconnect();
       },[]);
 
 
