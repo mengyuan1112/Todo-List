@@ -25,7 +25,6 @@ const Main = ({name,onNameChange}) => {
     const [modalForShared,setModalForShared] = useState(false);
     const [tasks, setTasks] = useState([]);
     const [finishedTask,setFinishedTask] = useState([]);
-    const [task,setTask] = useState();
     const [sharedTasks, setSharedTasks] = useState([]);
     const [thingsFinished,setThingsFinished] = useState(0)
     const [thingsToDo,setThingTodo]= useState(0);
@@ -41,7 +40,7 @@ const Main = ({name,onNameChange}) => {
       });
 
       //disconnect once done.
-      // return () =>socket.disconnect();
+      return () =>socket.disconnect();
       },[]);
 
 
@@ -68,7 +67,7 @@ const Main = ({name,onNameChange}) => {
       setThingsFinished(thingsFinished+1)
       currentDate.setHours(0,0,0,0,0);
       console.log({currentDate:currentDate,...t}) //Task to be deleted from todo. == Task to be added to Finished
-      socket.emit("deleteTaskFromTodo",{username:name,currentDate:currentDate,...t})
+      socket.emit("moveFromToDoToFinish",{username:name,currentDate:currentDate,...t})
     }
 
     const shareListmoveToFinish = (t) =>{
@@ -77,7 +76,7 @@ const Main = ({name,onNameChange}) => {
       setShareThing(sharedThings-1)
       setThingsFinished(thingsFinished+1)
       console.log({currentDate:currentDate,...t}) //Task to be deleted from todo. == Task to be added to Finished
-      socket.emit("deleteTaskShareList",{username:name,currentDate:currentDate,...t})
+      socket.emit("shareListmoveToFinish",{username:name,currentDate:currentDate,...t})
     }
 
     const deleteTaskFromTodo = (t) =>{
@@ -103,7 +102,7 @@ const Main = ({name,onNameChange}) => {
       setTasks([...tasks,t])
       currentDate.setHours(0,0,0,0,0);
       console.log({currentDate:currentDate, ...t});
-      socket.emit("AddedTask",{username:name,currentDate:currentDate, ...t})
+      socket.emit("moveFromFinishToTodo",{username:name,currentDate:currentDate, ...t})
       setThingsFinished(thingsFinished-1)
       setThingTodo(thingsToDo+1)
     }

@@ -12,6 +12,7 @@ const AddSharedTask = (props) => {
     myCurrentDate.setHours(0,0,0,0);
     const handleSubmitTask=()=>{
         props.onHide();
+        console.log(sharedWith)
         props.addtask({sharedWith:sharedWith,title:title,content:content,date:date,time:time})
     }
 
@@ -36,7 +37,7 @@ const AddSharedTask = (props) => {
                 <Form.Label column sm="3">Share with</Form.Label>
                 <Col sm="8"> 
                 <Form.Control as="select" multiple htmlSize={2} required onChange={(e) => 
-              setSharedWith(...sharedWith,e.target.value)}>
+              setSharedWith([...sharedWith,e.target.value]) }>
                     <option>friend 1 </option>
                     <option>friend 2 </option>
                     <option>friend 3 </option>

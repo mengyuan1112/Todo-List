@@ -1,6 +1,6 @@
 import Navigation from './components/Navigation'
 import React ,{useState,useEffect} from 'react'
-import { Switch, Route,useParams} from 'react-router-dom';
+import { Switch, Route,useParams, useHistory} from 'react-router-dom';
 import Home from './components/Home';
 import Register from './components/Register';
 import Login from './components/Login';
@@ -12,6 +12,7 @@ import axios from 'axios';
 
 
 function App() {
+  const history = useHistory();
   const [name,setName] = useState('');
   const [self_ticket,setSelf_ticket] = useState([]);
   const [nickName,setNickName] = useState('');
@@ -27,6 +28,7 @@ function App() {
       err => {
         console.log(err);
         setName('')
+        history.push('/home')
       }
     )},[])
 
