@@ -2,11 +2,12 @@ import React,{useState} from 'react'
 import {Modal,Button,ListGroup} from 'react-bootstrap'
 import './ShowTaskContent.css'
 
-const ShowTaskContent = (props) => {
+const ShowShareTaskContent = (props) => {
     const [toggleTitle,setToggleTitle] = useState(true);
     const [title,setTitle] =useState(props.task.title);
     const [toggleContent,setToggleContent] = useState(true);
     const [content,setContent] = useState(props.task.content);
+    
 
     const [toggleDate,setToggleDate] = useState(true);
     const [date,setDate] = useState(props.task.date);
@@ -45,9 +46,10 @@ const ShowTaskContent = (props) => {
       </Modal.Header>
       <Modal.Body>
           <ul>
-            {props.task.sharedWith? (
-              <li>Shared with: <span>{props.task.sharedWith}</span></li>
-            ):null}
+            <li>Share with :
+                <span>{props.task.sharedWith}</span>
+            </li>
+
             <li onDoubleClick={()=>setToggleTitle(false)}>Title :
               {toggleTitle ? (<span>{title}</span>):
               (<input type='text' value={title} onChange={(e)=>{setTitle(e.target.value)}}
@@ -138,4 +140,4 @@ const ShowTaskContent = (props) => {
     )
 }
 
-export default ShowTaskContent
+export default ShowShareTaskContent
