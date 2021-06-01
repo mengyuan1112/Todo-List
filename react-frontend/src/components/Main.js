@@ -10,7 +10,7 @@ import DayNavbar from './DayNavbar'
 import Task from './Task'
 import socketIOClient from "socket.io-client";
 import FinishedTasks from './FinishedTasks';
-const endPoint = "http://localhost:5000/main";
+const endPoint = "http://localhost:2000/main";
 
 
 
