@@ -5,6 +5,7 @@ import './Navigation.css'
 import hhh from '../1.png';
 import ListGroup from 'react-bootstrap/ListGroup'
 
+
 // This will create the navbar.
 const Navigation=({name,onNameChange})=>{
     const history = useHistory();
@@ -27,6 +28,9 @@ const Navigation=({name,onNameChange})=>{
     else{
         hreflink=""
     }
+
+    
+
     return (
     <>
     <Navbar expand="xl" className="d-flex justify-content-start" expanded = {expanded}>

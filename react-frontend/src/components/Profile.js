@@ -9,6 +9,8 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal'
 import Changepassword from './Changepassword'
 import { Switch, Route, Link } from 'react-router-dom';
+import { AiOutlineEdit } from "react-icons/ai";
+import { BiCheckCircle } from "react-icons/bi";
 
 import Alert from 'react-bootstrap/Alert'
 
@@ -32,18 +34,15 @@ const Profile = ({name,nickName,onNameChange}) => {
 
     const [nicknamealert, Setnicknamealert] = useState(false);
     const [passwordalert, Setpasswordalert] = useState(false);
+    const [iconalert, Seticonalert] = useState(false);
 
 
 
     const [emailPro,Getemail] = useState('');
     const [usernamePro,Getusername] = useState('');
     const [passwordPro, Getpassword] = useState('');
-    //const [imagegPro, Getimage] = useState({});
+    const [imagePro, Getimage] = useState('');
 
-    function kkk(){
-        setShow1(false);    
-    }
-  
 
     useEffect(() => {
       axios.get(`/${name}/profile`).then(
@@ -54,6 +53,7 @@ const Profile = ({name,nickName,onNameChange}) => {
             Getemail(res.data.email)
             Getusername(res.data.username)
             Getpassword(res.data.password)
+            Getimage(res.data.icon)
             
             
             //SetAvater(res.data.avater)
@@ -63,24 +63,13 @@ const Profile = ({name,nickName,onNameChange}) => {
           Getemail('');
           Getusername('')
           Getpassword('')
+          Getimage('')
           
          
         }
 
     
       )},[])
-      useEffect(() => {
-        axios.get(`/${name}/profile`,{responseType: 'arraybuffer'}).then(
-          res => {
-            Buffer.from(res.data, 'binary').toString('base64')
-              //SetAvater(res.data.avater)
-          },
-         err => {
-            
-          }
-  
-      
-        )},[])
 
       
     const [newpasswordPro,Setnewpassword] = useState('');
@@ -104,19 +93,22 @@ const Profile = ({name,nickName,onNameChange}) => {
           reader.readAsDataURL(file);
         }
       };
+    
+    
 
     const submitAvater =(e)=>{
         e.preventDefault();
+        Getimage(image.src)
         axios.post( `http://localhost:5000/${name}/profile/icon`,{icon:image.src}).then(
             (response)=>{
                 console.log(response);
                 if (response.data.result === "Pass"){
-                    setShow(false);Setnicknamealert(true)
+                    setShow2(false);Seticonalert(true)
                 }
             })
             //.catch(err=>{ console.log(err) });
             
-            console.log(image);
+           console.log(image);
     }
 
     const submitNickname= (e) =>{
@@ -185,7 +177,7 @@ const Profile = ({name,nickName,onNameChange}) => {
     
     
     setTimeout(() => {
-        Setnicknamealert(false);Setpasswordalert(false)
+        Setnicknamealert(false);Setpasswordalert(false);Seticonalert(false)
       }, 2000)
 
 
@@ -196,14 +188,20 @@ const Profile = ({name,nickName,onNameChange}) => {
         {/*!timeOut &&*/<Alert show={nicknamealert} variant="success" /*onClose={() => setShow2(false)} dismissible*/>
 
         <p>
-            Congratulations! Your nickname was successfully changed.
+          <BiCheckCircle/>Congratulations! Your nickname was successfully changed.
         </p>
         </Alert>}
 
 
         {/*!timeOut &&*/<Alert show={passwordalert} variant="success" /*onClose={() => setShow2(false)} dismissible*/>
         <p>
-            Congratulations! Your password was successfully changed.
+          <BiCheckCircle/>Congratulations! Your password was successfully changed.
+        </p>
+        </Alert>}
+
+        {/*!timeOut &&*/<Alert show={iconalert} variant="success" /*onClose={() => setShow2(false)} dismissible*/>
+        <p>
+          <BiCheckCircle/>Congratulations! Your Avater was successfully changed.
         </p>
         </Alert>}
         
@@ -214,48 +212,43 @@ const Profile = ({name,nickName,onNameChange}) => {
         <Row className="justify-content-md-center">
             <Col xs={8}>
             <Card>
-            <Card.Header><h4 >Profile</h4></Card.Header>
+            <Card.Header><h3>Profile</h3></Card.Header>
             <ListGroup>
            
-                {/*<ListGroup.Item action onClick={handleShow2}>
+                <ListGroup.Item action onClick={handleShow2}>
                     <Row>
-                    <Col xs="5"><h5>Avatar</h5></Col>
-                    <Col>
-                    <img className="Avatar" src={image.src} alt="User avatar"/>
+                    <Col xs="4"><h4>Avatar</h4></Col> 
+                    <Col xs="7">
+                    <img className="Avatar" src={imagePro} alt="User avatar"/>   
+                    {/*<Form.File id="exampleFormControlFile1" />*/}  
                     </Col>
+                    <Col><AiOutlineEdit/></Col>
                     </Row>
-                </ListGroup.Item>*/}
+                </ListGroup.Item>
             
                 <ListGroup.Item>
                     <Row>
-                        <Col xs="5"><h5>Username</h5></Col> <Col>{usernamePro}</Col>
+                        <Col xs="4"><h4>Username</h4></Col> <Col>{usernamePro}</Col>
                     </Row>
                 </ListGroup.Item>
                 <ListGroup.Item action onClick={handleShow} >
                     <Row>
-                    <Col xs="5"><h5>Nickname</h5></Col> <Col>{newnickname}</Col>
+                    <Col xs="4"><h4>Nickname  </h4></Col> <Col xs="7">{newnickname}</Col>
+                    <Col><AiOutlineEdit/></Col>
                     </Row>
                 </ListGroup.Item>
                 <ListGroup.Item >
                     <Row>
-                    <Col xs="5"><h5>Email</h5></Col> <Col>{emailPro}</Col>
+                    <Col xs="4"><h4>Email</h4></Col> <Col>{emailPro}</Col>
                     </Row>
                 </ListGroup.Item>
                 <ListGroup.Item action onClick={handleShow1}>
                     <Row>
-                    <Col xs="5"><h5>Password</h5> </Col> <Col>**********</Col>
+                    <Col xs="4"><h4>Password </h4> </Col> <Col xs="7">**********</Col>
+                    <Col><AiOutlineEdit/></Col>
                     </Row>
                 </ListGroup.Item>
 
-                <ListGroup.Item action onClick={handleShow2}>
-                    <Row>
-                    <Col xs="5"><h5>Avatar</h5></Col>
-                    <Col>
-                    <img className="Avatar" src={image} alt="User avatar"/>
-                    {/*<Form.File id="exampleFormControlFile1" />*/}  
-                    </Col>
-                    </Row>
-                </ListGroup.Item>
             </ListGroup>  
             </Card>
             </Col>
