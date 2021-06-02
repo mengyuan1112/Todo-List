@@ -1,10 +1,11 @@
 import React from 'react'
 import { FaCheck } from 'react-icons/fa'
-import {Card,ListGroup} from 'react-bootstrap'
-//import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import ShowTaskContent from './ShowTaskContent'
+import {Form,ListGroup} from 'react-bootstrap'
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import ShowShareTaskContent from './ShowShareTaskContent'
 
-const Task = ({task,onDelete,deleteTask}) => {
+
+const ShareTask = ({task,onDelete,deleteTask}) => {
     const [modalShow, setModalShow] = React.useState(false);
     return (
     <ListGroup variant="flush" >
@@ -12,8 +13,9 @@ const Task = ({task,onDelete,deleteTask}) => {
             {task.title} 
             <FaCheck onClick={()=>onDelete(task)}
             style={{float:'right', color:'green',cursor:'pointer',fontSize:'1.5rem'}}/> 
+            <Form.Text>shared with: {task.sharedWith}</Form.Text>
         </ListGroup.Item>
-        <ShowTaskContent
+        <ShowShareTaskContent
         deleteTask={deleteTask}
         task={task}
         show={modalShow}
@@ -22,4 +24,4 @@ const Task = ({task,onDelete,deleteTask}) => {
     )
 }
 
-export default Task
+export default ShareTask

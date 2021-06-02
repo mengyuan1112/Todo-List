@@ -8,85 +8,142 @@ import AddTask from './AddTask'
 import { Redirect} from 'react-router';
 import DayNavbar from './DayNavbar'
 import Task from './Task'
-import socketIOClient from "socket.io-client";
+import io from 'socket.io-client';
 import FinishedTasks from './FinishedTasks';
 
+import AddSharedTask from './AddSharedTask'
+import ShareTask from './ShareTask'
 
-
+const endPoint = "http://localhost:2000/main";
+const socket = io.connect(endPoint);
 
 
 const Main = ({name,onNameChange}) => {
-
-  const endPoint = `http://localhost:5000/${name}/main`;
-  const socket = socketIOClient.connect(`${endPoint}`);
     const [modalShow, setModalShow] = useState(false);
-    const [tasks, setTasks] = useState([{title:'test1',content:'test1 content balallalalala',date:"5/30/2021",time:"11:59pm"},{title:'test2',content:""}]);
-    const [finishedTask,setFinishedTask] = useState([{title:'finished',content:'fff'},{title:'aaaaa',content:'fff'}]);
-    const [task,setTask] = useState();
+    const [modalForShared,setModalForShared] = useState(false);
+    const [tasks, setTasks] = useState([]);
+    const [finishedTask,setFinishedTask] = useState([]);
     const [sharedTasks, setSharedTasks] = useState([]);
-    const [thingsFinished,setThingsFinished] = useState(2)
-    const [thingsToDo,setThingTodo]= useState(2);
+    const [thingsFinished,setThingsFinished] = useState(0);
+    const [thingsToDo,setThingTodo]= useState(0);
     const [sharedThings, setShareThing] = useState(0);
     const [ currentDate,setCurrentDate] = useState(new Date());  //initalize the date tobe today.
-
     useEffect(() => {
-      socket.on(`currentDate:${currentDate}`,data=>{
+      console.log(`currentDate:${currentDate},username:${name}`)
+      socket.on(`currentDate:${currentDate},username:${name}`,data=>{
         //update todo, finished and shared list to monday.
-        console.log(data)
-        setTasks(data);
-        setThingTodo(data.length)
-      })
+          setTasks([]);
+          setThingTodo([]);
+          setSharedTasks([]);
+          setThingsFinished(0)
+          setThingTodo(0)
+          setShareThing(0)
+
+      });
+      //disconnect once done.
+      // return () =>socket.disconnect();
       },[]);
 
 
     const addTask=(task)=>{
       setTasks([...tasks,task])
-      currentDate.setHours(0,0,0,0);
-      console.log({currentDate:currentDate, ...task})
-      socket.emit("AddedTask",{currentDate:currentDate, ...task});
+      currentDate.setHours(0,0,0,0,0);
+      console.log({username:name,currentDate:currentDate, ...task})
+      socket.emit("AddedTask",{username:name,currentDate:currentDate, ...task});
       setThingTodo(thingsToDo+1)
     }
 
-    const deleteTask = (t) =>{
+    const addSharedTask=(task)=>{
+      setSharedTasks([...sharedTasks,task])
+      currentDate.setHours(0,0,0,0,0);
+      console.log({username:name,currentDate:currentDate, ...task});
+      socket.emit("AddedSharedTask",{username:name,currentDate:currentDate, ...task});
+      setShareThing(sharedThings+1);
+    }
+
+    const moveToFinish = (t) =>{
       setTasks(tasks.filter((task)=> task.title !== t.title ))
       setFinishedTask([...finishedTask,t])
       setThingTodo(thingsToDo-1)
       setThingsFinished(thingsFinished+1)
-      currentDate.setHours(0,0,0,0);
+      currentDate.setHours(0,0,0,0,0);
       console.log({currentDate:currentDate,...t}) //Task to be deleted from todo. == Task to be added to Finished
-      socket.emit("deleteTask",{currentDate:currentDate,...t})
+      socket.emit("moveFromToDoToFinish",{username:name,currentDate:currentDate,...t})
+    }
+
+    const shareListmoveToFinish = (t) =>{
+      setSharedTasks(sharedTasks.filter((task)=> task.title !== t.title ))  // filter out the task from shared list.
+      setFinishedTask([...finishedTask,t])  // add the task to finished task.
+      setShareThing(sharedThings-1)
+      setThingsFinished(thingsFinished+1)
+      console.log({currentDate:currentDate,...t}) //Task to be deleted from todo. == Task to be added to Finished
+      socket.emit("shareListmoveToFinish",{username:name,currentDate:currentDate,...t})
+    }
+
+    const deleteTaskFromTodo = (t) =>{
+      setTasks(tasks.filter((task)=> task.title !== t.title ))
+      setThingTodo(thingsToDo-1)
+      socket.emit("deleteTaskFromTodo",{username:name,currentDate:currentDate,...t})
+    }
+    
+    const deleteTaskFromFinished =(t)=>{
+      setFinishedTask(finishedTask.filter((task)=> task.title !== t.title ))
+      setThingsFinished(thingsFinished-1)
+      socket.emit("deleteTaskFromFinished",{username:name,currentDate:currentDate,...t})
+    }
+
+    const deleteTaskFromShareList = (t)=>{
+      setSharedTasks(sharedTasks.filter((task)=> task.title !== t.title ))
+      setShareThing(sharedThings-1)
+      socket.emit("deleteTaskFromShareList",{username:name,currentDate:currentDate,...t})
     }
 
     const moveBackTodo=(t) =>{
       setFinishedTask(finishedTask.filter((task)=> task.title !== t.title ))
       setTasks([...tasks,t])
-      currentDate.setHours(0,0,0,0);
+      currentDate.setHours(0,0,0,0,0);
       console.log({currentDate:currentDate, ...t});
-      socket.emit("AddedTaskBackToDo",{currentDate:currentDate, ...t})
+      socket.emit("moveFromFinishToTodo",{username:name,currentDate:currentDate, ...t})
       setThingsFinished(thingsFinished-1)
       setThingTodo(thingsToDo+1)
     }
 
+    const moveBackShareList=(t)=>{
+      setFinishedTask(finishedTask.filter((task)=> task.title !== t.title ))
+      setSharedTasks([...sharedTasks,t])
+      currentDate.setHours(0,0,0,0,0);
+      console.log({currentDate:currentDate, ...t});
+      socket.emit("moveFromFinishToSharedList",{username:name,currentDate:currentDate, ...t})
+      setThingsFinished(thingsFinished-1)
+      setShareThing(sharedThings+1)
+    }
+
     const todo_list = tasks.map((task) =>
-        <Task key={task.title} task = {task} onDelete={deleteTask}/>
+        <Task key={task.title} task = {task}  onDelete={moveToFinish} deleteTask={deleteTaskFromTodo}/>
     );  
 
     const finish_list = finishedTask.map((task)=>
-      <FinishedTasks key={task.title} task={task} backTodo={moveBackTodo}/>
+      <FinishedTasks key={task.title} task={task} backShareList={moveBackShareList} backTodo={moveBackTodo} deleteTask={deleteTaskFromFinished}/>
+    );
+
+    const shared_list = sharedTasks.map((task) =>
+    <ShareTask key={task.title} task = {task}  onDelete={shareListmoveToFinish} deleteTask={deleteTaskFromShareList}/>
     );
 
     const setNewDay = (e) =>{
       setCurrentDate(e);
-      e.setHours(0,0,0,0);
-      console.log(e);
-      socket.on(`currentDate:${e}`,data=>{
-        //update todo, finished and shared list to monday.
-      console.log(data)
-      setTasks([{title:'hi'}])
-      setFinishedTask([{title:"finished."}])
-      setSharedTasks([{title:"Share tasks with friend!"}])
+      e.setHours(0,0,0,0,0);
+      console.log("SetNewDayTo:",e);
+      socket.on(`username:${name},currentDate:${e}`,data=>{
+       // update todo, finished and shared list to monday.
+      //  setTasks([]);
+      //  setThingTodo([]);
+      //  setSharedTasks([]);
+      //  setThingsFinished(0)
+      //  setThingTodo(0)
+      //  setShareThing(0)
       })
-    }
+     }
 
 
 
@@ -130,8 +187,9 @@ const Main = ({name,onNameChange}) => {
           <Card.Body className="CardBody">
             <Card.Title>Shared List ({sharedThings})</Card.Title>
             <hr/>
-            <AddTask task={setTask} addtask={addTask} show={modalShow} onHide={() => setModalShow(false)}/>
-            <Button onClick={() => setModalShow(true)} variant="light">+</Button>
+            <AddSharedTask addtask={addSharedTask} show={modalForShared} onHide={() => setModalForShared(false)}/>
+            {shared_list}
+            <Button onClick={() => setModalForShared(true)} variant="light">+</Button>
             <Card.Text>
             </Card.Text>
           </Card.Body>

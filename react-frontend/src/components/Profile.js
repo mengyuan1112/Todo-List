@@ -107,7 +107,7 @@ const Profile = ({name,nickName,onNameChange}) => {
 
     const submitAvater =(e)=>{
         e.preventDefault();
-        axios.post( `http://localhost:5000/${name}/profile/icon`,{icon:image}).then(
+        axios.post( `http://localhost:5000/${name}/profile/icon`,{icon:image.src}).then(
             (response)=>{
                 console.log(response);
                 if (response.data.result === "Pass"){

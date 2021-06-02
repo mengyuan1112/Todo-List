@@ -1,22 +1,26 @@
 import React from 'react'
 import {Card,ListGroup } from 'react-bootstrap'
-import { FaTimes } from 'react-icons/fa'
+import { FaUndo } from 'react-icons/fa'
 import ShowTaskContent from './ShowTaskContent'
 
 const taskClicked =() =>{
     console.log("onclicked")
 }
 
-const FinishedTasks = ({task,backTodo}) => {
+const FinishedTasks = ({task,backTodo,backShareList,deleteTask}) => {
     const [modalShow, setModalShow] = React.useState(false);
     return (
         <ListGroup variant="flush" >
-        <ListGroup.Item action onDoubleClick={()=>setModalShow(true)}>
+        <ListGroup.Item action onClick={()=>setModalShow(true)}>
             {task.title}
-        <FaTimes onClick={()=>backTodo(task)}
-            style={{float:'right', color:'red',cursor:'pointer'}}/> 
+        {task.sharedWith? <FaUndo onClick={()=>backShareList(task)}
+            style={{float:'right', color:'black',cursor:'pointer' ,fontSize:'1rem'}}/> :
+        <FaUndo onClick={()=>backTodo(task)}
+            style={{float:'right', color:'black',cursor:'pointer' ,fontSize:'1rem'}}/> 
+        }
         </ListGroup.Item>
         <ShowTaskContent
+        deleteTask={deleteTask}
         task={task}
         show={modalShow}
         onHide={() => setModalShow(false)}/>
