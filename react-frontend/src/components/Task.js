@@ -1,6 +1,8 @@
 import React from 'react'
 import { FaCheck } from 'react-icons/fa'
+
 import {ListGroup} from 'react-bootstrap'
+
 import ShowTaskContent from './ShowTaskContent'
 
 const Task = ({task,onDelete,deleteTask,editContent}) => {
