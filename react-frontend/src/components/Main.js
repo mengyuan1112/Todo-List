@@ -135,22 +135,55 @@ const Main = ({name,onNameChange}) => {
     }
 
 
-    const editContent=(task)=>{
+    const editTaskContent=(newTitle,task)=>{
+      if (newTitle === task.title){
+        socket.emit("EditTaskContent",{username:name,currentDate:currentDate,oldTitle:task.title, ...task})
+        return true
+      }
       // task title is unchangable.
-      console.log("Edit content is called. New Task content: \n",task)
-      socket.emit("EditTaskContent",{username:name,currentDate:currentDate, ...task})
+      const titleExist = tasks.find(t=>t.title === newTitle);
+      if (titleExist) { 
+        console.log(titleExist)
+        console.log("The title exit before. The new title is:",task.title)
+        return false
+      }
+      const oldTitle = task.title
+      task.title = newTitle
+      console.log("Old title: ",oldTitle,"\nNewTaskContent: ",task)
+      socket.emit("EditTaskContent",{username:name,currentDate:currentDate,oldTitle:oldTitle, ...task})
+      console.log("The title doesn't exit. Good to go! Title is",task.title)
+      return true
+    }
+
+    const editShareTaskContent =(newTitle,task)=>{
+      if (newTitle === task.title){
+        socket.emit("EditSharedTaskContent",{username:name,currentDate:currentDate,oldTitle:task.title, ...task})
+        return true
+      }
+      const titleExist = sharedTasks.find(t=>t.title === newTitle);
+      if (titleExist) { 
+        console.log(titleExist)
+        console.log("The title exit before. The new title is:",task.title)
+        return false
+      }
+      const oldTitle = task.title
+      task.title = newTitle
+      console.log("Old title: ",oldTitle,"\nNewTaskContent: ",task)
+      socket.emit("EditSharedTaskContent",{username:name,currentDate:currentDate,oldTitle:oldTitle, ...task})
+      console.log("The title doesn't exit. Good to go! Title is",task.title)
+      return true
     }
 
     const todo_list = tasks.map((task) =>
-        <Task key={task.title} editContent = {editContent} task = {task}  onDelete={moveToFinish} deleteTask={deleteTaskFromTodo}/>
+        <Task key={task.title} editContent = {editTaskContent} task = {task}  onDelete={moveToFinish} deleteTask={deleteTaskFromTodo}/>
     );  
 
     const finish_list = finishedTask.map((task)=>
-      <FinishedTasks key={task.title} editContent = {editContent} task={task} backShareList={moveBackShareList} backTodo={moveBackTodo} deleteTask={deleteTaskFromFinished}/>
+      <FinishedTasks key={task.title} editContent = {editTaskContent} task={task} backShareList={moveBackShareList} backTodo={moveBackTodo} deleteTask={deleteTaskFromFinished}/>
     );
 
     const shared_list = sharedTasks.map((task) =>
-    <ShareTask key={task.title} editContent = {editContent} task = {task}  taskStatus={shareTaskStatus} deleteTask={deleteTaskFromShareList}/>
+    <ShareTask key={task.title} editContent = {editShareTaskContent} task = {task}  taskStatus={shareTaskStatus} deleteTask={deleteTaskFromShareList}/>
     );
 
     const setNewDay = (e) =>{

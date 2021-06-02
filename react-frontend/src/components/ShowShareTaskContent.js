@@ -1,9 +1,12 @@
 import React,{useState} from 'react'
-import {Modal,Button,ListGroup} from 'react-bootstrap'
+import {Modal,Button,ListGroup,Alert} from 'react-bootstrap'
 import './ShowTaskContent.css'
 
 const ShowShareTaskContent = (props) => {
     const [title,setTitle] =useState(props.task.title);
+    const [newTitle,setNewTitle] = useState(props.task.title)
+    const [toggleTitle,setToggleTitle] = useState(true);
+
     const [toggleContent,setToggleContent] = useState(true);
     const [content,setContent] = useState(props.task.content);
     
@@ -12,16 +15,26 @@ const ShowShareTaskContent = (props) => {
 
     const [toggleTime,setToggleTime] = useState(true);
     const [time,setTime] = useState(props.task.time);
-
+    const [error,setError] = useState(false);
+    
     const handleSave = () =>{
-      setToggleDate(true)
-      setToggleContent(true)
-      setToggleTime(true)
       props.task.content = content
       props.task.date = date
       props.task.time = time
-      props.editContent(props.task)
-      props.onHide()
+      if (props.editContent(newTitle, props.task)){
+        props.task.title = newTitle
+        setError(false)
+        setToggleTitle(true)
+        setToggleDate(true)
+        setToggleContent(true)
+        setToggleTime(true)
+        props.onHide()
+      }
+      else{
+        setToggleTitle(false)
+        setError(true)
+        props.task.title = title
+      }
     }
 
     const handleDelete = ()=>{
@@ -42,12 +55,29 @@ const ShowShareTaskContent = (props) => {
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
+          {error? <Alert variant="danger">Duplicated title. Please try again.</Alert>:null}
           <ul>
             <li>Share with :
                 <span>{props.task.sharedWith}</span>
             </li>
 
-            <li>Title :<span>{title}</span> </li>
+            <li onDoubleClick={()=>setToggleTitle(false)}>Title :
+            {toggleTitle ? (<span>{newTitle}</span>):
+                (<input type='text' value={newTitle} onChange={(e)=>{setNewTitle(e.target.value)}}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    setNewTitle(e.target.value)
+                    handleSave()
+                  }
+                  else if (e.key === 'Escape'){
+                    setToggleTitle(true)
+                    e.preventDefault()
+                    e.stopPropagation()
+                  }}}
+                />  )}
+                </li>
               <li onDoubleClick={()=>setToggleContent(false)}>Content: 
                 {toggleContent ? (<span>{content}</span>):
                 (<input type='text' value={content} onChange={(e)=>{setContent(e.target.value)}}
@@ -114,7 +144,7 @@ const ShowShareTaskContent = (props) => {
       </Modal.Body>
       <Modal.Footer>
         <Button size="sm" onClick={handleDelete} variant="danger"> Delete Task </Button>
-        {(toggleContent && toggleTime && toggleDate) ? null : 
+        {(toggleTitle && toggleContent && toggleTime && toggleDate) ? null : 
         <Button variant="success" size="sm" onClick={handleSave}>Save Change</Button>}
         <Button size="sm" onClick={props.onHide}>Close</Button>
       </Modal.Footer>
