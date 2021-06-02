@@ -13,7 +13,7 @@ profile = Blueprint('profile', __name__)
     port: 27017
     database name: Todo_list
     collection name: user
-    DB document [username, name, salt_password, email, salt, self_ticket, public_ticket]
+    DB document [username, name, icon, salt_password, email, salt, self_ticket, public_ticket]
 """
 UserDB = db
 
@@ -22,7 +22,7 @@ UserDB = db
 def user_profile(user_name):
     user_info = UserDB.user.find_one({"username": user_name})
     doc = {"username": user_info['username'], "name": user_info['name'],
-           "email": user_info['email']}
+           "icon": user_info["icon"], "email": user_info['email']}
     return jsonify(doc)
 
 
@@ -51,4 +51,13 @@ def change_nickname(user_name):
     new_nickname = data['newName']
     UserDB.user.update_one({"username": user_name}, {
                            "$set": {"name": new_nickname}})
+    return jsonify({"result": "Pass"})
+
+
+@profile.route('/<user_name>/profile/icon', methods=['POST'])
+def change_icon(user_name):
+    data = request.get_json()
+    new_icon = data['icon']
+    UserDB.user.update_one({"username": user_name},
+                           {"$set": {"icon": new_icon}})
     return jsonify({"result": "Pass"})
