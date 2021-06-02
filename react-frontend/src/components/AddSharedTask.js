@@ -1,23 +1,30 @@
 import React, { useState } from 'react'
-import {Modal,Button,Form,Row,Col} from 'react-bootstrap'
+import {Alert,Modal,Button,Form,Row,Col} from 'react-bootstrap'
 
 
 const AddSharedTask = (props) => {
     const [validated, setValidated] = useState(false);
-    const [title,setTitle] = useState('')
+    const [title,setTitle] = useState('');
     const [content,setContent] = useState('')
     const [date,setDate] = useState('')
     const [time,setTime] = useState('')
     const [sharedWith, setSharedWith] = useState([])
+    const [error,setError] = useState(false);
     var myCurrentDate = new Date();
-    myCurrentDate.setHours(0,0,0,0);
-
+    myCurrentDate.setHours(0,0,0,0,0);
     // This function will handle the form submission for adding a shared task.
     const handleSubmitTask=(e)=>{
-        props.onHide();
         e.preventDefault();
-        console.log(sharedWith)
-        props.addtask({sharedWith:sharedWith,title:title,content:content,date:date,time:time})
+        setError(false)
+        if (props.addtask({sharedWith:sharedWith,title:title,content:content,date:date,time:time})){
+          //add task sucess
+          props.onHide();
+        }
+        else{
+          console.log("The title is duplicated.")
+          setError(true)
+          setTitle("")
+        }
           
     }
 
@@ -38,13 +45,14 @@ const AddSharedTask = (props) => {
         </Modal.Header>
         <Form onSubmit={handleSubmitTask}>
         <Modal.Body>
+        {error ? <Alert variant="danger">Duplicated title, please try again</Alert>:null}
             <Form.Group as={Row} className="mb-3" controlId="shareWith">
                 <Form.Label column sm="3">Share with</Form.Label>
                 <Col sm="8"> 
-                <Form.Control as="select" multiple htmlSize={2} required onChange={(e) => 
-              setSharedWith([e.target.value]) }>
+                <Form.Control as="select" multiple htmlSize={3} required onChange={(e) => 
+              setSharedWith([].slice.call(e.target.selectedOptions).map(item => item.value)) }>
                   {/* TODO: needed to get the friend list from server and display it here. */}
-                    <option>friend 1 </option>
+                    <option>friend 1 </option>  
                     <option>friend 2 </option>
                     <option>friend 3 </option>
                 </Form.Control>

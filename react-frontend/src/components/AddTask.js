@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import {Modal,Button,Form,Row,Col} from 'react-bootstrap'
+import {Alert,Modal,Button,Form,Row,Col} from 'react-bootstrap'
 import { FaTemperatureLow } from 'react-icons/fa'
 
 
@@ -10,17 +10,21 @@ const AddTask = (props) => {
     const [time,setTime] = useState('')
     const [error,setError] = useState(false)
     var myCurrentDate = new Date();
-    myCurrentDate.setHours(0,0,0,0);
+    myCurrentDate.setHours(0,0,0,0,0);
 
     const handleSubmitTask=(e)=>{
         // props.addtask({title,content,date,time});
         e.preventDefault();
-        props.onHide();
-        props.addtask({title:title,content:content,date:date,time:time})
-        setTitle("")
-        setContent('')
-        setDate('')
-        setTime('')
+        setError(false)
+        if (props.addtask({title:title,content:content,date:date,time:time})){
+          //add task sucess
+          props.onHide();
+        }
+        else{
+          console.log("The title is duplicated.")
+          setError(true)
+          setTitle("")
+        }
     }
     return (
         <Modal
@@ -36,6 +40,7 @@ const AddTask = (props) => {
         </Modal.Header>
         <Form onSubmit={handleSubmitTask}>
         <Modal.Body>
+          {error ? <Alert variant="danger">Duplicated title, please try again</Alert>:null}
             <Form.Group as={Row} className="mb-3" controlId="TaskTitle">
                 <Form.Label column sm="3">Title</Form.Label>
                 <Col sm="9"> 

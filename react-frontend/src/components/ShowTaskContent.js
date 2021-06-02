@@ -3,7 +3,7 @@ import {Modal,Button,ListGroup} from 'react-bootstrap'
 import './ShowTaskContent.css'
 
 const ShowTaskContent = (props) => {
-    const [toggleTitle,setToggleTitle] = useState(true);
+    //const [toggleTitle,setToggleTitle] = useState(true);
     const [title,setTitle] =useState(props.task.title);
     const [toggleContent,setToggleContent] = useState(true);
     const [content,setContent] = useState(props.task.content);
@@ -16,13 +16,12 @@ const ShowTaskContent = (props) => {
 
     const handleSave = () =>{
       setToggleDate(true)
-      setToggleTitle(true)
       setToggleContent(true)
       setToggleTime(true)
-      props.task.title = title
       props.task.content = content
       props.task.date = date
       props.task.time = time
+      props.editContent(props.task)
       props.onHide()
     }
 
@@ -48,25 +47,7 @@ const ShowTaskContent = (props) => {
             {props.task.sharedWith? (
               <li>Shared with: <span>{props.task.sharedWith}</span></li>
             ):null}
-            <li onDoubleClick={()=>setToggleTitle(false)}>Title :
-              {toggleTitle ? (<span>{title}</span>):
-              (<input type='text' value={title} onChange={(e)=>{setTitle(e.target.value)}}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  setToggleTitle(true)
-                  e.preventDefault()
-                  e.stopPropagation()
-                  setTitle(e.target.value)
-                  props.task.title = title
-                }
-                else if (e.key === 'Escape'){
-                  setToggleTitle(true)
-                  e.preventDefault()
-                  e.stopPropagation()
-                }}}
-              />)
-              }
-              </li>
+            <li>Title :<span>{title}</span></li>
               <li onDoubleClick={()=>setToggleContent(false)}>Content: 
                 {toggleContent ? (<span>{content}</span>):
                 (<input type='text' value={content} onChange={(e)=>{setContent(e.target.value)}}
@@ -77,6 +58,7 @@ const ShowTaskContent = (props) => {
                     e.stopPropagation()
                     setContent(e.target.value)
                     props.task.content = content
+                    handleSave()
                   }
                   else if (e.key === 'Escape'){
                     setToggleContent(true)
@@ -97,6 +79,7 @@ const ShowTaskContent = (props) => {
                       e.stopPropagation()
                       setDate(e.target.value)
                       props.task.date = date
+                      handleSave()
                     }
                     else if (e.key === 'Escape'){
                       setToggleDate(true)
@@ -117,6 +100,7 @@ const ShowTaskContent = (props) => {
                       e.stopPropagation()
                       setTime(e.target.value)
                       props.task.time = time
+                      handleSave()
                     }
                     else if (e.key === 'Escape'){
                       setToggleTime(true)
@@ -130,7 +114,7 @@ const ShowTaskContent = (props) => {
       </Modal.Body>
       <Modal.Footer>
         <Button size="sm" onClick={handleDelete} variant="danger"> Delete Task </Button>
-        {(toggleTitle && toggleTime && toggleDate) ? null : 
+        {(toggleContent && toggleTime && toggleDate) ? null : 
         <Button variant="success" size="sm" onClick={handleSave}>Save Change</Button>}
         <Button size="sm" onClick={props.onHide}>Close</Button>
       </Modal.Footer>

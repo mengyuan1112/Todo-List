@@ -1,6 +1,6 @@
 import Navigation from './components/Navigation'
 import React ,{useState,useEffect} from 'react'
-import { Switch, Route,useParams, useHistory} from 'react-router-dom';
+import { Switch, Route, useHistory} from 'react-router-dom';
 import Home from './components/Home';
 import Register from './components/Register';
 import Login from './components/Login';

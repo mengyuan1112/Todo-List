@@ -1,14 +1,13 @@
 import React from 'react'
 import { FaCheck } from 'react-icons/fa'
-import {Card,ListGroup} from 'react-bootstrap'
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {ListGroup} from 'react-bootstrap'
 import ShowTaskContent from './ShowTaskContent'
 
-const Task = ({task,onDelete,deleteTask}) => {
+const Task = ({task,onDelete,deleteTask,editContent}) => {
     const [modalShow, setModalShow] = React.useState(false);
     return (
     <ListGroup variant="flush" >
-        <ListGroup.Item action onClick={()=>setModalShow(true)}>
+        <ListGroup.Item action onDoubleClick={()=>setModalShow(true)}>
             {task.title} 
             <FaCheck onClick={()=>onDelete(task)}
             style={{float:'right', color:'green',cursor:'pointer',fontSize:'1.5rem'}}/> 
@@ -16,6 +15,7 @@ const Task = ({task,onDelete,deleteTask}) => {
         <ShowTaskContent
         deleteTask={deleteTask}
         task={task}
+        editContent={editContent}
         show={modalShow}
         onHide={() => setModalShow(false)}/>
     </ListGroup>
