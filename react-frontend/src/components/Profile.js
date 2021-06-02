@@ -44,6 +44,7 @@ const Profile = ({name,onNameChange}) => {
     useEffect(() => {
       axios.get('profile').then(
         res => {
+            console.log("The url is /name/profile",res)
             Getemail(res.data.email)
             Getusername(res.data.username)
             Getpassword(res.data.password)
