@@ -1,7 +1,7 @@
 import React from 'react'
 import { FaCheck } from 'react-icons/fa'
 import {Card,ListGroup} from 'react-bootstrap'
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+//import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ShowTaskContent from './ShowTaskContent'
 
 const Task = ({task,onDelete,deleteTask}) => {
