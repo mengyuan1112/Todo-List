@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import {Modal,Button,Form,Row,Col} from 'react-bootstrap'
+import { FaTemperatureLow } from 'react-icons/fa'
 
 
 const AddTask = (props) => {
@@ -7,6 +8,7 @@ const AddTask = (props) => {
     const [content,setContent] = useState('')
     const [date,setDate] = useState('')
     const [time,setTime] = useState('')
+    const [error,setError] = useState(false)
     var myCurrentDate = new Date();
     myCurrentDate.setHours(0,0,0,0);
 

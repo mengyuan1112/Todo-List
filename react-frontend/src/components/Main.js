@@ -30,7 +30,7 @@ const Main = ({name,onNameChange}) => {
     const [ currentDate,setCurrentDate] = useState(new Date());  //initalize the date tobe today.
     useEffect(() => {
       console.log(`currentDate:${currentDate},username:${name}`)
-      socket.on(`currentDate:${currentDate},username:${name}`,data=>{
+      socket.on(`username:${name},currentDate:${currentDate}`,data=>{
         //update todo, finished and shared list to monday.
           setTasks([]);
           setThingTodo([]);
@@ -46,6 +46,8 @@ const Main = ({name,onNameChange}) => {
 
 
     const addTask=(task)=>{
+      const sameTitle = tasks.find(t=>t.title === task.title);
+      if (sameTitle) return "error"
       setTasks([...tasks,task])
       currentDate.setHours(0,0,0,0,0);
       console.log({username:name,currentDate:currentDate, ...task})
@@ -113,7 +115,7 @@ const Main = ({name,onNameChange}) => {
       setSharedTasks([...sharedTasks,t])
       currentDate.setHours(0,0,0,0,0);
       console.log({currentDate:currentDate, ...t});
-      socket.emit("moveFromFinishToSharedList",{username:name,currentDate:currentDate, ...t})
+      socket.emit("moveFromFinishToSharedList",{username:name,currentDate:currentDate, ...t});
       setThingsFinished(thingsFinished-1)
       setShareThing(sharedThings+1)
     }
@@ -135,14 +137,15 @@ const Main = ({name,onNameChange}) => {
       e.setHours(0,0,0,0,0);
       console.log("SetNewDayTo:",e);
       socket.on(`username:${name},currentDate:${e}`,data=>{
-       // update todo, finished and shared list to monday.
-      //  setTasks([]);
-      //  setThingTodo([]);
-      //  setSharedTasks([]);
-      //  setThingsFinished(0)
-      //  setThingTodo(0)
-      //  setShareThing(0)
+       //update todo, finished and shared list to monday.
+       
       })
+       setTasks([]);
+       setThingTodo([]);
+       setSharedTasks([]);
+       setThingsFinished(0)
+       setThingTodo(0)
+       setShareThing(0)
      }
 
 
