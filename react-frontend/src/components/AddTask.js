@@ -25,6 +25,10 @@ const AddTask = (props) => {
           setError(true)
           setTitle("")
         }
+        setTitle("")
+        setContent("")
+        setDate("")
+        setTime("")
     }
     return (
         <Modal

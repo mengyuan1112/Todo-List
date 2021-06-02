@@ -3,7 +3,6 @@ import {Alert,Modal,Button,ListGroup} from 'react-bootstrap'
 import './ShowTaskContent.css'
 
 const ShowTaskContent = (props) => {
-    //const [toggleTitle,setToggleTitle] = useState(true);
     const [title,setTitle] =useState(props.task.title);
     const [newTitle,setNewTitle] = useState(props.task.title)
     const [toggleTitle,setToggleTitle] = useState(true);
@@ -22,26 +21,26 @@ const ShowTaskContent = (props) => {
       props.task.content = content
       props.task.date = date
       props.task.time = time
-      
+      setToggleDate(true)
+      setToggleContent(true)
+      setToggleTime(true)
       // user didn't change the title.
       if (newTitle === title){
+        setError(false)
         setToggleTitle(true)
         props.task.title = title
         props.editContent(newTitle, props.task)
-        setToggleDate(true)
-        setToggleContent(true)
-        setToggleTime(true)
         props.onHide()
       }
+      // user changed the title with no error.
       else if (props.editContent(newTitle, props.task)){
         props.task.title = newTitle
         setError(false)
         setToggleTitle(true)
-        setToggleDate(true)
-        setToggleContent(true)
-        setToggleTime(true)
         props.onHide()
       }
+
+      //user changed the title but title already existed.
       else{
         setToggleTitle(false)
         setError(true)
@@ -49,6 +48,7 @@ const ShowTaskContent = (props) => {
       }
     }
 
+    // This function will call the delete props and remove the task.
     const handleDelete = ()=>{
       props.deleteTask(props.task)
       props.onHide()
@@ -152,8 +152,10 @@ const ShowTaskContent = (props) => {
       </Modal.Body>
       <Modal.Footer>
         <Button size="sm" onClick={handleDelete} variant="danger"> Delete Task </Button>
+
         {(toggleTitle && toggleContent && toggleTime && toggleDate) ? null : 
         <Button variant="success" size="sm" onClick={handleSave}>Save Change</Button>}
+
         <Button size="sm" onClick={props.onHide}>Close</Button>
       </Modal.Footer>
     </Modal>

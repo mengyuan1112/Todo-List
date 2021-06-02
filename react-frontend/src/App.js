@@ -17,14 +17,17 @@ function App() {
   const [nickName,setNickName] = useState('');
   const [length,setLength] = useState(0)
   const history = useHistory();
+  const [expire,setExpire] = useState(false)
   useEffect(() => {
     axios.get('login').then(
       res => {
         console.log("This is the get request from login:\n",res)
         if (res.data.result === "Expired"){
           history.push('/home')
+          setExpire(true)
         }
         else{
+          setExpire(false)
           setName(res.data.username)
           setSelf_ticket(res.data.self_ticket)
           setNickName(res.data.name)
@@ -48,21 +51,21 @@ function App() {
             {name?(<Switch>
 
 
-              <Route exact path={`/:name/home`} component = {()=> <Home name={name} ticketLength={length} nickName={nickName}  onNameChange={onChange} thingsToDo={2}/>}/>
+              <Route exact path={`/:name/home`} component = {()=> <Home name={name} expire={expire} ticketLength={length} nickName={nickName}  onNameChange={onChange} thingsToDo={2}/>}/>
 
               <Route exact path={`/:name/register`} component={Register} />
               <Route exact path={`/:name/login`} component={()=> <Login name={name} onNameChange={onChange}/>} />
               <Route exact path={`/:name/main`} component={()=> <Main name={name} onNameChange={onChange}/>} />
               <Route exact path={`/:name/profile`} component={()=> <Profile name={name} onNameChange={onChange}/>} />
-              <Route exact path={`/:name/`} component = {()=> <Home name={name} nickName={nickName} onNameChange={onChange} />}/>
+              <Route exact path={`/:name/`} component = {()=> <Home name={name} expire={expire} ticketLength={length} nickName={nickName} onNameChange={onChange} />}/>
               </Switch>) 
             :(<Switch>
-              <Route exact path="/home" component = {()=> <Home name={name} nickName={nickName} ticketLength={length}  onNameChange={onChange} />}/>
+              <Route exact path="/home" component = {()=> <Home name={name} expire={expire} nickName={nickName} ticketLength={length}  onNameChange={onChange} />}/>
               <Route exact path="/register" component={Register} />
               <Route exact path="/login" component={()=> <Login name={name} onNameChange={onChange}/>} />
               <Route exact path="/main" component={()=> <Main name={name} onNameChange={onChange}/>} />
               <Route exact path="/profile" component={()=> <Profile name={name} onNameChange={onChange}/>} />
-              <Route exact path="/" component = {()=> <Home name={name} nickName={nickName} onNameChange={onChange} />}/>
+              <Route exact path="/" component = {()=> <Home name={name} expire={expire} ticketLength={length} nickName={nickName} onNameChange={onChange} />}/>
 
             </Switch>
               )}

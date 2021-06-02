@@ -10,7 +10,7 @@ const Task = ({task,onDelete,deleteTask,editContent}) => {
         <ListGroup.Item action onDoubleClick={()=>setModalShow(true)}>
             {task.title} 
             <FaCheck onClick={()=>onDelete(task)}
-            style={{float:'right', color:'green',cursor:'pointer',fontSize:'1.5rem'}}/> 
+            style={{float:'right', color:'green',cursor:'pointer',fontSize:'1.5rem'}}/>
         </ListGroup.Item>
         <ShowTaskContent
         deleteTask={deleteTask}

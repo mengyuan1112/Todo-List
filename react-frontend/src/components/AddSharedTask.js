@@ -25,6 +25,10 @@ const AddSharedTask = (props) => {
           setError(true)
           setTitle("")
         }
+        setTitle("")
+        setContent("")
+        setDate("")
+        setTime("")
           
     }
 

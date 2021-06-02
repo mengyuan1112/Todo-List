@@ -21,13 +21,22 @@ const ShowShareTaskContent = (props) => {
       props.task.content = content
       props.task.date = date
       props.task.time = time
-      if (props.editContent(newTitle, props.task)){
+      setToggleDate(true)
+      setToggleContent(true)
+      setToggleTime(true)
+       // user didn't change the title.
+       if (newTitle === title){
+        setError(false)
+        setToggleTitle(true)
+        props.task.title = title
+        props.editContent(newTitle, props.task)
+        props.onHide()
+      }
+      // user changed the title with no error.
+      else if (props.editContent(newTitle, props.task)){
         props.task.title = newTitle
         setError(false)
         setToggleTitle(true)
-        setToggleDate(true)
-        setToggleContent(true)
-        setToggleTime(true)
         props.onHide()
       }
       else{

@@ -1,11 +1,11 @@
 import React from 'react'
 import Button from 'react-bootstrap/Button';
 import {useHistory} from 'react-router-dom'
-import { Container,Row,Col} from 'react-bootstrap';
+import {Alert,Container,Row,Col} from 'react-bootstrap';
 import DayDisplay from './DayDisplay';
 import './Home.css'
 
-const Home = ({name,nickName,onNameChange,ticketLength}) => {
+const Home = ({name,nickName,onNameChange,ticketLength,expire}) => {
     const history = useHistory();
 
 
@@ -21,6 +21,7 @@ const Home = ({name,nickName,onNameChange,ticketLength}) => {
     }
         return (
             <Container fluid="sm">
+                {expire ? <Alert variant>Session expired, please login again</Alert>:null}
                 <br></br>
                 <br></br>
                 <br></br>
