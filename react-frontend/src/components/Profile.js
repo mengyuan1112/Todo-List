@@ -1,4 +1,3 @@
-
 import { Container,Col,Row,Form} from 'react-bootstrap';
 import React ,{useState,useRef,Component,useEffect} from "react"
 import {ListGroup,Card} from 'react-bootstrap'
@@ -39,7 +38,7 @@ const Profile = ({name,nickName,onNameChange}) => {
     const [emailPro,Getemail] = useState('');
     const [usernamePro,Getusername] = useState('');
     const [passwordPro, Getpassword] = useState('');
-    const [imagegPro, Getimage] = useState({});
+    //const [imagegPro, Getimage] = useState({});
 
     function kkk(){
         setShow1(false);    
@@ -49,7 +48,9 @@ const Profile = ({name,nickName,onNameChange}) => {
     useEffect(() => {
       axios.get(`/${name}/profile`).then(
         res => {
-            console.log(res)
+
+            console.log("The url is /name/profile",res)
+
             Getemail(res.data.email)
             Getusername(res.data.username)
             Getpassword(res.data.password)
@@ -71,11 +72,11 @@ const Profile = ({name,nickName,onNameChange}) => {
       useEffect(() => {
         axios.get(`/${name}/profile`,{responseType: 'arraybuffer'}).then(
           res => {
-            Getimage(Buffer.from(res.data, 'binary').toString('base64'))
+            Buffer.from(res.data, 'binary').toString('base64')
               //SetAvater(res.data.avater)
           },
          err => {
-            Getimage({})
+            
           }
   
       
@@ -113,17 +114,10 @@ const Profile = ({name,nickName,onNameChange}) => {
                     setShow(false);Setnicknamealert(true)
                 }
             })
-            .catch(err=>{ console.log(err) });
+            //.catch(err=>{ console.log(err) });
             
-            console.log(image.src);
+            console.log(image);
     }
-
-
-    
-  
-    
-  
-   
 
     const submitNickname= (e) =>{
     e.preventDefault();
@@ -257,7 +251,7 @@ const Profile = ({name,nickName,onNameChange}) => {
                     <Row>
                     <Col xs="5"><h5>Avatar</h5></Col>
                     <Col>
-                    <img className="Avatar" src={imagePro} alt="User avatar"/>
+                    <img className="Avatar" src={image} alt="User avatar"/>
                     {/*<Form.File id="exampleFormControlFile1" />*/}  
                     </Col>
                     </Row>
