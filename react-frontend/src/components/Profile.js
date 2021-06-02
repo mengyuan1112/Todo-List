@@ -1,4 +1,3 @@
-
 import { Container,Col,Row,Form} from 'react-bootstrap';
 import React ,{useState,useRef,Component,useEffect} from "react"
 import {ListGroup,Card} from 'react-bootstrap'
@@ -117,15 +116,8 @@ const Profile = ({name,nickName,onNameChange}) => {
             })
             //.catch(err=>{ console.log(err) });
             
-            console.log(image.src);
+            console.log(image);
     }
-
-
-    
-  
-    
-  
-   
 
     const submitNickname= (e) =>{
     e.preventDefault();
