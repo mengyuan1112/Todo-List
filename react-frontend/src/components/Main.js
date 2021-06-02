@@ -10,7 +10,7 @@ import DayNavbar from './DayNavbar'
 import Task from './Task'
 import io from 'socket.io-client';
 import FinishedTasks from './FinishedTasks';
-
+import axios from 'axios'
 import AddSharedTask from './AddSharedTask'
 import ShareTask from './ShareTask'
 
@@ -30,16 +30,30 @@ const Main = ({name,onNameChange}) => {
     const [ currentDate,setCurrentDate] = useState(new Date());  //initalize the date tobe today.
     useEffect(() => {
       console.log(`currentDate:${currentDate},username:${name}`)
-      socket.on(`username:${name},currentDate:${currentDate}`,data=>{
-        //update todo, finished and shared list to monday.
+      axios.get(`${name}/main`).then(
+        res => {
+          console.log(res)
+        },
+        err => {
+          console.log(err);
           setTasks([]);
           setThingTodo([]);
           setSharedTasks([]);
           setThingsFinished(0)
           setThingTodo(0)
           setShareThing(0)
+        })
+      // socket.emit("getData",{username:name,currentDate:currentDate})
+      // socket.on("getData",data=>{
+        //update todo, finished and shared list to today.
+          // setTasks([]);
+          // setThingTodo([]);
+          // setSharedTasks([]);
+          // setThingsFinished(0)
+          // setThingTodo(0)
+          // setShareThing(0)
 
-      });
+      // });
       //disconnect once done.
       // return () =>socket.disconnect();
       },[]);
@@ -136,16 +150,17 @@ const Main = ({name,onNameChange}) => {
       setCurrentDate(e);
       e.setHours(0,0,0,0,0);
       console.log("SetNewDayTo:",e);
-      socket.on(`username:${name},currentDate:${e}`,data=>{
-       //update todo, finished and shared list to monday.
+      socket.emit("getData",{username:name,currentDate:e})
+      socket.on("getData",data=>{
+       //update todo, finished and shared list to the setNewDay.
        
       })
-       setTasks([]);
-       setThingTodo([]);
-       setSharedTasks([]);
-       setThingsFinished(0)
-       setThingTodo(0)
-       setShareThing(0)
+      //  setTasks([]);
+      //  setThingTodo([]);
+      //  setSharedTasks([]);
+      //  setThingsFinished(0)
+      //  setThingTodo(0)
+      //  setShareThing(0)
      }
 
 
