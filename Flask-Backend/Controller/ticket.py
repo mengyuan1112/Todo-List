@@ -14,12 +14,13 @@ app = Flask(__name__)
 socketio = SocketIO(app, cors_allowed_origins="*")
 UserDB = db
 
+
 # print(date.today())
 
 
 @socketio.on("AddedTask", namespace='/main')
 def add_task(data):
-    # print(data)
+    print(data)
     user_info = UserDB.user.find_one({"username": data['username']})
     user, title, content, deadline_date, deadline_time, create_date, create_time = parsing_task(
         data)
@@ -129,9 +130,42 @@ def move_from_finish_to_todo(data):
     return
 
 
-# getData
-# EditTaskContent
+@socketio.on("getData", namespace='/main')
+def get_data(data):
+    user_info = UserDB.user.find_one({"username": data['username']})
+    day = data['currentDate']
+    self_ticket, complete_ticket, public_ticket = get_data_by_date(user_info, day)
+    res = {"todo": self_ticket, "finishedList": complete_ticket, "sharedList": public_ticket}
+    send(res, broadcast=False)
 
+
+@socketio.on("EditTaskContent", namespace='/main')
+def edit_task_content(data):
+    print(data)
+    user = data['username']
+    data_time_arr = data['currentDate'].split("T")
+    current_date = data_time_arr[0]
+    old_title = data['oldTitle']
+    new_title = data['title']
+    content = data['content']
+    deadline_date = data['date']
+    deadline_time = data['time']
+    self_ticket = UserDB.user.find_one({"username": user})['self_ticket']
+    self_ticket_arr = UserDB.user.find_one({"username": user})['self_ticket'][current_date]
+    for i in range(0, len(self_ticket_arr)):
+        if self_ticket_arr[i]['title'] == old_title:
+            self_ticket_arr[i]['title'] = new_title
+            if len(content) != 0:
+                self_ticket_arr[i]['content'] = content
+            if len(deadline_time) != 0:
+                self_ticket_arr[i]['time'] = deadline_time
+            if len(deadline_date) != 0:
+                self_ticket_arr[i]['date'] = deadline_date
+            break
+    self_ticket[current_date] = self_ticket_arr
+    UserDB.user.update_one({"username": user},
+                           {"$set": {"self_ticket": self_ticket}})
+    return
 
 
 def parsing_task(data):
@@ -154,6 +188,19 @@ def update_ticket_arr(create_date, ticket_arr, user):
     UserDB.user.update_one({"username": user},
                            {"$set": {"self_ticket": ticket_dic}})
     return
+
+
+def get_data_by_date(user_info, day):
+    self_ticket = {}
+    public_ticket = {}
+    complete_ticket = {}
+    if day in user_info['self_ticket'].keys():
+        self_ticket = user_info['self_ticket'][day]
+    if day in user_info['complete_ticket'].keys():
+        self_ticket = user_info['complete_ticket'][day]
+    if day in user_info['public_ticket'].keys():
+        self_ticket = user_info['public_ticket'][day]
+    return self_ticket, public_ticket, complete_ticket
 
 
 if __name__ == '__main__':
