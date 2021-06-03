@@ -36,7 +36,7 @@ const Login = ({name,onNameChange}) => {
     const onFailure = (res) => {
         console.log('[login Failed] res: ',res)
         onNameChange('')
-        setError("google/facebook login fail")
+        //setError("google/facebook login fail")
     }
 
 
