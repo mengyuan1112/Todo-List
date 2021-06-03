@@ -2,6 +2,7 @@ from flask import Flask
 from flask_cors import CORS
 from .logReg import logReg
 from .profile import profile
+from .tempGet import tempGet
 #from .ticket import ticket
 
 
@@ -9,6 +10,7 @@ app = Flask("__name__")
 
 app.register_blueprint(logReg)
 app.register_blueprint(profile)
+app.register_blueprint(tempGet)
 # app.register_blueprint(ticket)
 
 
