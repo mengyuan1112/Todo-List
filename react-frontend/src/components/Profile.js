@@ -8,7 +8,7 @@ import axios from 'axios';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal'
 import Changepassword from './Changepassword'
-import { Switch, Route, Link } from 'react-router-dom';
+import { Switch, Route, Link, useHistory } from 'react-router-dom';
 import { AiOutlineEdit } from "react-icons/ai";
 import { BiCheckCircle } from "react-icons/bi";
 
@@ -18,7 +18,7 @@ import Alert from 'react-bootstrap/Alert'
 
 
 
-const Profile = ({name,nickName,onNameChange}) => {
+const Profile = ({name,nickName,onNameChange,changeImage}) => {
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
@@ -44,11 +44,25 @@ const Profile = ({name,nickName,onNameChange}) => {
     const [imagePro, Getimage] = useState('');
 
 
+    const submitAvater =(e)=>{
+      e.preventDefault();
+      Getimage(image.src)
+      axios.post( `http://localhost:5000/${name}/profile/icon`,{icon:image.src}).then(
+          (response)=>{
+              if (response.data.result === "Pass"){
+                  setShow2(false);Seticonalert(true)
+              }
+          })
+      //axios.get(`${name}/profile/icon`)
+          //.catch(err=>{ console.log(err) });
+          changeImage(image.src)
+  }
+
+
     useEffect(() => {
       axios.get(`/${name}/profile`).then(
         res => {
 
-            console.log("The url is /name/profile",res)
 
             Getemail(res.data.email)
             Getusername(res.data.username)
@@ -69,7 +83,7 @@ const Profile = ({name,nickName,onNameChange}) => {
         }
 
     
-      )},[])
+      )},[submitAvater])
 
       
     const [newpasswordPro,Setnewpassword] = useState('');
@@ -78,7 +92,8 @@ const Profile = ({name,nickName,onNameChange}) => {
     const [newnameError, SetnewnameErr]=  useState('');
     const [confirmPasswordPro,setConfirmPasswordPro] = useState('');
     const [image,uploadedImage] = useState([]);
-
+    const history = useHistory();
+    const [error,setError] = useState(false)
     //const uploadedImage = React.useRef(null);
     const imageUploader = React.useRef(null);
 
@@ -87,6 +102,13 @@ const Profile = ({name,nickName,onNameChange}) => {
         if (file) {
           const reader = new FileReader();
           image.file = file;
+          if (image.file.size>1000000){
+            setError(true);
+          }
+          else{
+            setError(false)
+          }
+          console.log(image.file)
           reader.onload = e => {
             image.src = e.target.result;
           };
@@ -96,28 +118,13 @@ const Profile = ({name,nickName,onNameChange}) => {
     
     
 
-    const submitAvater =(e)=>{
-        e.preventDefault();
-        Getimage(image.src)
-        axios.post( `http://localhost:5000/${name}/profile/icon`,{icon:image.src}).then(
-            (response)=>{
-                console.log(response);
-                if (response.data.result === "Pass"){
-                    setShow2(false);Seticonalert(true)
-                }
-            })
-            //.catch(err=>{ console.log(err) });
-            
-           console.log(image);
-    }
-
+ 
     const submitNickname= (e) =>{
     e.preventDefault();
     console.log("hhhhh")
     axios.post(`http://localhost:5000/${name}/profile/nickname`,{newName:newnickname }).then(
 
     (response)=>{
-        console.log(response);
         if (response.data.result === "Pass"){
             setShow(false);Setnicknamealert(true)
         }
@@ -204,7 +211,6 @@ const Profile = ({name,nickName,onNameChange}) => {
           <BiCheckCircle/>Congratulations! Your Avater was successfully changed.
         </p>
         </Alert>}
-        
 
         <br></br>
         <br></br>
@@ -351,11 +357,11 @@ const Profile = ({name,nickName,onNameChange}) => {
 
       <Modal show={show2} onHide={handleClose2}>
         <Modal.Header closeButton>
-          <Modal.Title>Modal heading</Modal.Title>
+          <Modal.Title>Upload Icon</Modal.Title>
         </Modal.Header>
         <form onSubmit={submitAvater}>
         <Modal.Body>
-            
+        {error? <Alert variant="danger">The image must be less than 2 MB</Alert> : <p>the image is good</p>}
        <div
       style={{
         display: "flex",

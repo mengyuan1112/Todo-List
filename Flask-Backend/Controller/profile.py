@@ -57,7 +57,6 @@ def change_nickname(user_name):
 @profile.route('/<user_name>/profile/icon', methods=['POST'])
 def change_icon(user_name):
     data = request.get_json()
-    print(str(data))
     new_icon = data['icon']
     UserDB.user.update_one({"username": user_name},
                            {"$set": {"icon": new_icon}})
