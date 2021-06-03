@@ -29,20 +29,21 @@ const Main = ({name,onNameChange}) => {
     const [sharedThings, setShareThing] = useState(0);  //number of shared task
     const [ currentDate,setCurrentDate] = useState(new Date());  //initalize the date tobe today.
     useEffect(() => {
-      console.log(`currentDate:${currentDate},username:${name}`)
-      axios.get(`${name}/main`).then(
-        res => {
-          console.log(res)
-        },
-        err => {
-          console.log(err);
-          setTasks([]);
-          setThingTodo([]);
-          setSharedTasks([]);
-          setThingsFinished(0)
-          setThingTodo(0)
-          setShareThing(0)
-        })
+      if (name){
+        axios.get(`${name}/main`).then(
+          res => {
+            console.log(res)
+          },
+          err => {
+            console.log(err);
+            setTasks([]);
+            setThingTodo([]);
+            setSharedTasks([]);
+            setThingsFinished(0)
+            setThingTodo(0)
+            setShareThing(0)
+          })
+      }
       //disconnect once done.
       // return () =>socket.disconnect();
       },[]);
