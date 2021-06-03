@@ -14,7 +14,7 @@ import axios from 'axios'
 import AddSharedTask from './AddSharedTask'
 import ShareTask from './ShareTask'
 
-const endPoint = "http://localhost:2000/main";
+const endPoint = "http://localhost:5000/main";
 const socket = io.connect(endPoint);
 
 
