@@ -1,6 +1,6 @@
 # if websocket is not connect try to uninstall socket then install again
 
-
+from datetime import date
 from flask import Flask
 from flask_socketio import SocketIO, send
 
@@ -13,6 +13,8 @@ app = Flask(__name__)
 # app.config['SECRET_KEY'] = 'secret!'
 socketio = SocketIO(app, cors_allowed_origins="*")
 UserDB = db
+
+# print(date.today())
 
 
 @socketio.on("AddedTask", namespace='/main')
@@ -125,6 +127,10 @@ def move_from_finish_to_todo(data):
     UserDB.user.update_one({"username": user},
                            {"$set": {"self_ticket": {create_date: ticket_arr}}})
     return
+
+
+# getData
+# EditTaskContent
 
 
 
