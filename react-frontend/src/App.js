@@ -22,17 +22,17 @@ function App() {
     axios.get('login').then(
       res => {
         console.log("This is the get request from login:\n",res)
-        if (res.data.result === "Expired"){
-          history.push('/home')
-          setExpire(true)
-        }
-        else{
+        //if (res.data.result === "Expired"){
+        //  setExpire(true)
+        //history.push('/login')
+        
+        //else{
           setExpire(false)
           setName(res.data.username)
           setSelf_ticket(res.data.self_ticket)
           setNickName(res.data.name)
-          setLength(res.data.self_ticket.length)
-        }
+        //  setLength(res.data.self_ticket.length)
+        
       },
       err => {
         console.log(err);
@@ -54,7 +54,7 @@ function App() {
               <Route exact path={`/:name/home`} component = {()=> <Home name={name} expire={expire} ticketLength={length} nickName={nickName}  onNameChange={onChange} thingsToDo={2}/>}/>
 
               <Route exact path={`/:name/register`} component={Register} />
-              <Route exact path={`/:name/login`} component={()=> <Login name={name} onNameChange={onChange}/>} />
+              <Route exact path={`/:name/login`} component={()=> <Login name={name} expire={expire} onNameChange={onChange}/>} />
               <Route exact path={`/:name/main`} component={()=> <Main name={name} onNameChange={onChange}/>} />
 
               <Route exact path={`/:name/profile`} component={()=> <Profile name={name} onNameChange={onChange}/>} />
@@ -64,7 +64,7 @@ function App() {
             :(<Switch>
               <Route exact path="/home" component = {()=> <Home name={name} expire={expire} nickName={nickName} ticketLength={length}  onNameChange={onChange} />}/>
               <Route exact path="/register" component={Register} />
-              <Route exact path="/login" component={()=> <Login name={name} onNameChange={onChange}/>} />
+              <Route exact path="/login" component={()=> <Login expire={expire} name={name} onNameChange={onChange}/>} />
               <Route exact path="/main" component={()=> <Main name={name} onNameChange={onChange}/>} />
 
               <Route exact path="/profile" component={()=> <Profile name={name} onNameChange={onChange}/>} />

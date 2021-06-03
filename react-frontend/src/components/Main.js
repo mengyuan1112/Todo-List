@@ -33,6 +33,8 @@ const Main = ({name,onNameChange}) => {
         axios.get(`${name}/main`).then(
           res => {
             console.log(res)
+            // setTasks(res.data.todo)
+            // setFinishedTask(res.data.finishedList)
           },
           err => {
             console.log(err);
