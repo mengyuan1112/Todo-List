@@ -5,7 +5,7 @@ import {Alert,Container,Row,Col} from 'react-bootstrap';
 import DayDisplay from './DayDisplay';
 import './Home.css'
 
-const Home = ({name,nickName,onNameChange,ticketLength,expire}) => {
+const Home = ({name,nickName,onNameChange,ticketLength}) => {
     const history = useHistory();
 
 
@@ -21,7 +21,6 @@ const Home = ({name,nickName,onNameChange,ticketLength,expire}) => {
     }
         return (
             <Container fluid="sm">
-                {expire ? <Alert variant>Session expired, please login again</Alert>:null}
                 <br></br>
                 <br></br>
                 <br></br>

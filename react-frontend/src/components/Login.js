@@ -1,4 +1,4 @@
-import { Container,Row,Form,Button,Col } from 'react-bootstrap';
+import { Alert,Container,Row,Form,Button,Col } from 'react-bootstrap';
 import { Link,Route,Switch,useHistory } from 'react-router-dom';
 import Home from './Home';
 import Main from './Main';
@@ -10,7 +10,7 @@ import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props
 import { ImFacebook2 } from "react-icons/im"
 import GoogleLogin from 'react-google-login';
 
-const Login = ({name,onNameChange}) => {
+const Login = ({name,onNameChange,expire}) => {
     const [username,setUsername] = useState('');
     const [password,setPassword] = useState('');
     const [error,setError] = useState('');
@@ -93,6 +93,7 @@ const Login = ({name,onNameChange}) => {
             <br></br>
             <h1>Login</h1>
             <hr></hr>
+            {expire ? <Alert variant>Session expired, please login again</Alert>:null}
             {name ? (<Link to= {`/${name}/home`} />) : (<p style={{color:'red'}} >{error}</p>)}
             <Form onSubmit={login}>
             <Form.Group>
