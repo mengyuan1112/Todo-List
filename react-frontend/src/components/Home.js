@@ -33,7 +33,7 @@ const Home = ({name,nickName,onNameChange,ticketLength}) => {
                     <br></br>
                     <h1 className="display-3">Welcome!</h1>
                     {name ? 
-                    ( <h2 className="display-4">{name}</h2>): <br></br>}
+                    ( <h2 className="display-4">{nickName}</h2>): <br></br>}
                     <br></br>
                     <br></br>
                     <Col><p className="lead">You still have {ticketLength} things to do today</p></Col>

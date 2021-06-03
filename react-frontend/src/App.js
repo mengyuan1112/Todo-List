@@ -16,28 +16,52 @@ function App() {
   const [self_ticket,setSelf_ticket] = useState([]);
   const [nickName,setNickName] = useState('');
   const [length,setLength] = useState(0)
-  const history = useHistory();
   const [expire,setExpire] = useState(false)
+  const [img,setImg] = useState('')
+  const history = useHistory();
+
   useEffect(() => {
     axios.get('login').then(
       res => {
         console.log("This is the get request from login:\n",res)
-        //if (res.data.result === "Expired"){
-        //  setExpire(true)
-        //history.push('/login')
-        
+
+        // if (res.data.result === "Expired"){
+        //   history.push('/home')
+        //   setExpire(true)
+        // }
+
         //else{
           setExpire(false)
           setName(res.data.username)
           setSelf_ticket(res.data.self_ticket)
           setNickName(res.data.name)
-        //  setLength(res.data.self_ticket.length)
-        
+
+       // }
+
       },
       err => {
         console.log(err);
+
+        setName('')
+        history.push('/home')
       })
-    },[])
+      getImage();
+    },[name])
+
+    const getImage=()=>{
+      if (name){
+        axios.get(`${name}/profile`).then((res)=>{
+          console.log("I'm in the getImage")
+          setImg(res.data.icon)
+        })
+        .catch(error=>console.log(error))
+      }
+    }
+
+    const changeImage=(e)=>{
+      setImg(e)
+    }
+
 
     function onChange(newName) {
       setName(newName)
@@ -45,7 +69,7 @@ function App() {
 
     return (
         <div className="App">
-          <Navigation name={name} onNameChange={onChange}/>
+          <Navigation name={name} onNameChange={onChange} img={img}/>
           <div>
 
             {name?(<Switch>
@@ -57,7 +81,7 @@ function App() {
               <Route exact path={`/:name/login`} component={()=> <Login name={name} expire={expire} onNameChange={onChange}/>} />
               <Route exact path={`/:name/main`} component={()=> <Main name={name} onNameChange={onChange}/>} />
 
-              <Route exact path={`/:name/profile`} component={()=> <Profile name={name} onNameChange={onChange}/>} />
+              <Route exact path={`/:name/profile`} component={()=> <Profile name={name} changeImage={changeImage} onNameChange={onChange}/>} />
               <Route exact path={`/:name/`} component = {()=> <Home name={name} expire={expire} ticketLength={length} nickName={nickName} onNameChange={onChange} />}/>
 
               </Switch>) 
@@ -67,7 +91,7 @@ function App() {
               <Route exact path="/login" component={()=> <Login expire={expire} name={name} onNameChange={onChange}/>} />
               <Route exact path="/main" component={()=> <Main name={name} onNameChange={onChange}/>} />
 
-              <Route exact path="/profile" component={()=> <Profile name={name} onNameChange={onChange}/>} />
+              <Route exact path="/profile" component={()=> <Profile name={name} changeImage={changeImage} onNameChange={onChange}/>} />
               <Route exact path="/" component = {()=> <Home name={name} expire={expire} ticketLength={length} nickName={nickName} onNameChange={onChange} />}/>
 
 
