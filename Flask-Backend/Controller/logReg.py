@@ -148,4 +148,3 @@ def check_token(token):
         return response
     except jwt.exceptions.ExpiredSignatureError:
         return {"result": "Expired"}
-

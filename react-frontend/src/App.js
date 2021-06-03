@@ -17,6 +17,7 @@ function App() {
   const [self_ticket,setSelf_ticket] = useState([]);
   const [nickName,setNickName] = useState('');
   const [length,setLength] = useState(0)
+  const [img,setImg] = useState('')
   useEffect(() => {
     axios.get('login').then(
       res => {
@@ -29,8 +30,19 @@ function App() {
         console.log(err);
         setName('')
         history.push('/home')
+      })
+      getImage();
+    },[name])
+
+    const getImage=()=>{
+      if (name){
+        axios.get(`${name}/profile`).then((res)=>{
+          console.log("I'm in the getImage")
+          setImg(res.data.icon)
+        })
+        .catch(error=>console.log(error))
       }
-    )},[])
+    }
 
     function onChange(newName) {
       setName(newName)
@@ -38,7 +50,7 @@ function App() {
 
     return (
         <div className="App">
-          <Navigation name={name} onNameChange={onChange}/>
+          <Navigation name={name} onNameChange={onChange} img={img}/>
           <div>
 
             {name?(<Switch>

@@ -7,7 +7,7 @@ import ListGroup from 'react-bootstrap/ListGroup'
 
 
 // This will create the navbar.
-const Navigation=({name,onNameChange})=>{
+const Navigation=({name,onNameChange,img})=>{
     const history = useHistory();
     const dropdownRef = useRef(null);
     const [isActive,setIsActive]  = useState (false); 
@@ -64,7 +64,7 @@ const Navigation=({name,onNameChange})=>{
 
         ?(<div className="menu-container">
             <button onClick={onClick} className="menu-trigger">
-                <img className="photo" src={hhh} alt="User avatar" />
+                <img className="photo" src={img} alt="User avatar" />
             </button>
             <nav ref={dropdownRef} className={`menu ${isActive ? 'active' : 'inactive'}`}>
 
