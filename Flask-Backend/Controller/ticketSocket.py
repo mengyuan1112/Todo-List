@@ -5,40 +5,37 @@ from flask import Flask
 from flask_socketio import SocketIO, send
 from .app import socketio
 from pymongo import MongoClient
+from .database import UserDB, TicketDB, GoogleDB, ImageDB
 
-client = MongoClient('localhost', 27017)
-db = client.Todo_list
+# client = MongoClient('localhost', 27017)
+# db = client.Todo_list
+#
+# app = Flask(__name__)
+# UserDB = db
 
-app = Flask(__name__)
-# app.config['SECRET_KEY'] = 'secret!'
-# socketio = SocketIO(app, cors_allowed_origins="*")
-UserDB = db
-
-
-# print(date.today())
 
 
 @socketio.on("AddedTask", namespace='/main')
 def add_task(data):
     print(data)
-    user_info = UserDB.user.find_one({"username": data['username']})
+    ticket_info = TicketDB.find_one({"username": data['username']})
     user, title, content, deadline_date, deadline_time, create_date, create_time = parsing_task(
         data)
 
     ticket = {"create_time": create_time, "title": title, "content": content,
               "date": deadline_date, "time": deadline_time}
-    self_ticket = user_info['self_ticket']  # {}
+    self_ticket = ticket_info['self_ticket']  # {}
 
     if create_date in self_ticket.keys():
         ticket_arr = self_ticket[create_date]
         ticket_arr.append(ticket)
         ticket_dic = {create_date: ticket_arr}
-        UserDB.user.update_one({"username": data['username']},
-                               {"$set": {"self_ticket": ticket_dic}})
+        TicketDB.update_one({"username": data['username']},
+                            {"$set": {"self_ticket": ticket_dic}})
     else:
         ticket_dic = {create_date: [ticket]}
-        UserDB.user.update_one({"username": data['username']},
-                               {"$set": {"self_ticket": ticket_dic}})
+        TicketDB.update_one({"username": data['username']},
+                            {"$set": {"self_ticket": ticket_dic}})
     # database - self_ticket: {date: [{},{},{}]}
     send(data, broadcast=False)
 
@@ -47,8 +44,8 @@ def add_task(data):
 def delete_task(data):
     user, title, content, deadline_date, deadline_time, create_date, create_time = parsing_task(
         data)
-    user_info = UserDB.user.find_one({"username": user})
-    self_ticket = user_info['self_ticket']
+    ticket_info = TicketDB.find_one({"username": user})
+    self_ticket = ticket_info['self_ticket']
     ticket_arr = self_ticket[create_date]
     for i in range(0, len(ticket_arr)):
         if ticket_arr[i]['title'] == title:
@@ -61,30 +58,30 @@ def delete_task(data):
 @socketio.on("deleteTaskFromFinished", namespace='/main')
 def delete_task_from_finished(data):
     user, title, content, deadline_date, deadline_time, create_date, create_time = parsing_task(data)
-    user_info = UserDB.user.find_one({"username": user})
-    complete_arr = user_info['complete_ticket'][create_date]
+    ticket_info = TicketDB.find_one({"username": user})
+    complete_arr = ticket_info['complete_ticket'][create_date]
     for i in range(0, len(complete_arr)):
         if complete_arr[i]["title"] == title:
             del complete_arr[i]
             break
     if len(complete_arr) == 0:
-        complete_ticket = user_info['complete_ticket']
+        complete_ticket = ticket_info['complete_ticket']
         complete_ticket.pop(create_date)
-        UserDB.user.update_one({"username": user},
-                               {"$set": {"complete_ticket": complete_ticket}})
+        TicketDB.update_one({"username": user},
+                            {"$set": {"complete_ticket": complete_ticket}})
         return
-    UserDB.user.update_one({"username": user},
-                           {"$set": {"complete_ticket": {create_date: complete_arr}}})
+    TicketDB.update_one({"username": user},
+                        {"$set": {"complete_ticket": {create_date: complete_arr}}})
     return
 
 
 @socketio.on("moveFromToDoToFinish", namespace='/main')
 def move_from_todo_to_finish(data):
     user, title, content, deadline_date, deadline_time, create_date, create_time = parsing_task(data)
-    user_info = UserDB.user.find_one({"username": user})
-    self_ticket = user_info['self_ticket']
+    ticket_info = TicketDB.find_one({"username": user})
+    self_ticket = ticket_info['self_ticket']
     ticket_arr = self_ticket[create_date]
-    complete_ticket = user_info['complete_ticket']  # {}
+    complete_ticket = ticket_info['complete_ticket']  # {}
 
     for i in range(0, len(ticket_arr)):
         if ticket_arr[i]['title'] == title:
@@ -92,11 +89,11 @@ def move_from_todo_to_finish(data):
                 # database - self_ticket: {date: [{},{},{}]}
                 complete_arr = complete_ticket[create_date]
                 complete_arr.append(ticket_arr[i])
-                UserDB.user.update_one({"username": user},
-                                       {"$set": {"complete_ticket": {create_date: complete_arr[i]}}})
+                TicketDB.update_one({"username": user},
+                                    {"$set": {"complete_ticket": {create_date: complete_arr[i]}}})
             else:
-                UserDB.user.update_one({"username": user},
-                                       {"$set": {"complete_ticket": {create_date: [ticket_arr[i]]}}})
+                TicketDB.update_one({"username": user},
+                                    {"$set": {"complete_ticket": {create_date: [ticket_arr[i]]}}})
 
             del ticket_arr[i]
             update_ticket_arr(create_date, ticket_arr, user)
@@ -107,32 +104,32 @@ def move_from_todo_to_finish(data):
 @socketio.on("moveFromFinishToTodo", namespace='/main')
 def move_from_finish_to_todo(data):
     user, title, content, deadline_date, deadline_time, create_date, create_time = parsing_task(data)
-    user_info = UserDB.user.find_one({"username": user})
-    complete_arr = user_info['complete_ticket'][create_date]
+    ticket_info = TicketDB.find_one({"username": user})
+    complete_arr = ticket_info['complete_ticket'][create_date]
     ticket_arr = []
-    if create_date in user_info['self_ticket'].keys():
-        ticket_arr = user_info['self_ticket'][create_date]
+    if create_date in ticket_info['self_ticket'].keys():
+        ticket_arr = ticket_info['self_ticket'][create_date]
     for i in range(0, len(complete_arr)):
         if complete_arr[i]["title"] == title:
             ticket_arr.append(complete_arr[i])
             del complete_arr[i]
             break
     if len(complete_arr) == 0:
-        complete_dic = UserDB.user.find_one({"username": user})['complete_ticket']
+        complete_dic = TicketDB.find_one({"username": user})['complete_ticket']
         complete_dic.pop(create_date)
-        UserDB.user.update_one({"username": user},
-                               {"$set": {"complete_ticket": complete_dic}})
+        TicketDB.update_one({"username": user},
+                            {"$set": {"complete_ticket": complete_dic}})
     else:
-        UserDB.user.update_one({"username": user},
-                               {"$set": {"complete_ticket": {create_date: complete_arr}}})
-    UserDB.user.update_one({"username": user},
-                           {"$set": {"self_ticket": {create_date: ticket_arr}}})
+        TicketDB.update_one({"username": user},
+                            {"$set": {"complete_ticket": {create_date: complete_arr}}})
+    TicketDB.update_one({"username": user},
+                        {"$set": {"self_ticket": {create_date: ticket_arr}}})
     return
 
 
 @socketio.on("getData", namespace='/main')
 def get_data(data):
-    user_info = UserDB.user.find_one({"username": data['username']})
+    user_info = TicketDB.find_one({"username": data['username']})
     day = data['currentDate']
     self_ticket, complete_ticket, public_ticket = get_data_by_date(user_info, day)
     res = {"todo": self_ticket, "finishedList": complete_ticket, "sharedList": public_ticket}
@@ -150,8 +147,8 @@ def edit_task_content(data):
     content = data['content']
     deadline_date = data['date']
     deadline_time = data['time']
-    self_ticket = UserDB.user.find_one({"username": user})['self_ticket']
-    self_ticket_arr = UserDB.user.find_one({"username": user})['self_ticket'][current_date]
+    self_ticket = TicketDB.find_one({"username": user})['self_ticket']
+    self_ticket_arr = TicketDB.find_one({"username": user})['self_ticket'][current_date]
     for i in range(0, len(self_ticket_arr)):
         if self_ticket_arr[i]['title'] == old_title:
             self_ticket_arr[i]['title'] = new_title
@@ -163,9 +160,23 @@ def edit_task_content(data):
                 self_ticket_arr[i]['date'] = deadline_date
             break
     self_ticket[current_date] = self_ticket_arr
-    UserDB.user.update_one({"username": user},
-                           {"$set": {"self_ticket": self_ticket}})
+    TicketDB.update_one({"username": user},
+                        {"$set": {"self_ticket": self_ticket}})
     return
+
+
+@socketio.on("AddedSharedTask", namespace='/main')
+
+
+
+@socketio.on("deleteTaskFromShareList", namespace='/main')
+
+
+@socketio.on("moveFromFinishToSharedList", namespace='/main')
+
+
+@socketio.on("EditSharedTaskContent", namespace='/main')
+
 
 
 def parsing_task(data):
@@ -179,13 +190,13 @@ def parsing_task(data):
 
 def update_ticket_arr(create_date, ticket_arr, user):
     if len(ticket_arr) == 0:
-        self_ticket = UserDB.user.find_one({"username": user})['self_ticket']
+        self_ticket = TicketDB.find_one({"username": user})['self_ticket']
         self_ticket.pop(create_date)
-        UserDB.user.update_one({"username": user},
-                               {"$set": {"self_ticket": self_ticket}})
+        TicketDB.update_one({"username": user},
+                            {"$set": {"self_ticket": self_ticket}})
         return
     ticket_dic = {create_date: ticket_arr}
-    UserDB.user.update_one({"username": user},
+    TicketDB.update_one({"username": user},
                            {"$set": {"self_ticket": ticket_dic}})
     return
 
@@ -203,6 +214,6 @@ def get_data_by_date(user_info, day):
     return self_ticket, public_ticket, complete_ticket
 
 
-if __name__ == '__main__':
-    print("websocket is running")
-    socketio.run(app, host="localhost", port=2000)
+# if __name__ == '__main__':
+#     print("websocket is running")
+#     socketio.run(app, host="localhost", port=2000)
