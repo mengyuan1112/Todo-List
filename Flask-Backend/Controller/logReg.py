@@ -48,7 +48,7 @@ def register():
     salt = os.urandom(32)
     salt_password = hashlib.pbkdf2_hmac(
         'sha256', data['password'].encode('utf-8'), salt, 100000)
-    default_user_icon = base64.b64encode(open("defaultUser.jpg", "rb").read())
+    default_user_icon = base64.b64encode(open("defaultUser.jpg", "rb").read()).decode('utf-8')
     user_document = {"username": data['username'], "name": data['username'], "salt_password": salt_password,
                      "email": data['email'], "salt": salt}
     ticket_document = {"username": data['username'], "self_ticket": {}, "complete_ticket": {}, "public_ticket": {}}
@@ -149,9 +149,10 @@ def check_token(token):
         form = jwt.decode(token, key, algorithms="HS256")
         username = form['iss']
         user = UserDB.find_one({"username": username})
+        ticket = TicketDB.find_one({"username": username})
         response = {"username": user['username'], "name": user['name'],
-                    "email": user['email'], "self_ticket": user['self_ticket'],
-                    "public_ticket": user['public_ticket']}
+                    "email": user['email'], "self_ticket": ticket['self_ticket'],
+                    "public_ticket": ticket['public_ticket'], "complete_ticket": ticket['complete_ticket']}
         return response
     except jwt.exceptions.ExpiredSignatureError:
         return {"result": "Expired"}
