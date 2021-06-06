@@ -67,11 +67,10 @@ const Login = ({name,onNameChange,expire}) => {
         .then(response=>{
                 console.log(response)
                 if (response.data.result === 'Pass'){
-                    //  I also need to store the cookie here.
                     console.log('[Regular login passed]',response);
                     localStorage.setItem('token',response.data.token);
-                    onNameChange(response.data.name)
-                    history.push("/"+response.data.name+'/home')
+                    onNameChange(response.data.username)
+                    history.push(`/${username}/home`)
                 }
                 else{
                     console.log(response.data);
@@ -93,7 +92,6 @@ const Login = ({name,onNameChange,expire}) => {
             <br></br>
             <h1>Login</h1>
             <hr></hr>
-            {expire ? <Alert variant>Session expired, please login again</Alert>:null}
             {name ? (<Link to= {`/${name}/home`} />) : (<p style={{color:'red'}} >{error}</p>)}
             <Form onSubmit={login}>
             <Form.Group>
