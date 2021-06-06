@@ -9,7 +9,7 @@ from google.oauth2 import id_token
 from google.auth.transport import requests
 from flask import request, jsonify
 from flask import Blueprint
-from .database import db
+from .database import UserDB, TicketDB, GoogleDB, ImageDB
 
 logReg = Blueprint('logReg', __name__)
 """
@@ -21,7 +21,7 @@ logReg = Blueprint('logReg', __name__)
     DB document [username, name, salt_password, email, salt, self_ticket, public_ticket]
 """
 # app.config['MONGO_URI'] = "mongodb://localhost:27017/Todo_list"
-UserDB = db
+# UserDB = db
 # GoogleDB = PyMongo(app, uri="mongodb://localhost:27017/Todo_list")
 
 
@@ -40,19 +40,22 @@ def register():
         return jsonify({"result": "The password is not satisfied categories"})
     elif not re.search(regex, data['email']):
         return jsonify({"result": "The email is not valid"})
-    elif UserDB.user.find_one({"email": data['email']}) is not None:
+    elif UserDB.find_one({"email": data['email']}) is not None:
         return jsonify({"result": "The email already existed please sign in or change to another email"})
-    elif UserDB.user.find_one({"username": data['username']}) is not None:
+    elif UserDB.find_one({"username": data['username']}) is not None:
         return jsonify({"result": "Username is already exist please enter different one"})
     # reference: https://nitratine.net/blog/post/how-to-hash-passwords-in-python/
     salt = os.urandom(32)
     salt_password = hashlib.pbkdf2_hmac(
         'sha256', data['password'].encode('utf-8'), salt, 100000)
     default_user_icon = base64.b64encode(open("defaultUser.jpg", "rb").read())
-    user_document = {"username": data['username'], "name": data['username'], "icon": default_user_icon, "salt_password": salt_password,
-                     "email": data['email'], "salt": salt,
-                     "self_ticket": {}, "complete_ticket": {}, "public_ticket": {}}
-    UserDB.user.insert_one(user_document)
+    user_document = {"username": data['username'], "name": data['username'], "salt_password": salt_password,
+                     "email": data['email'], "salt": salt}
+    ticket_document = {"username": data['username'], "self_ticket": {}, "complete_ticket": {}, "public_ticket": {}}
+    image_document = {"username": data['username'], "icon": default_user_icon}
+    UserDB.insert_one(user_document)
+    TicketDB.insert_one(ticket_document)
+    ImageDB.insert_one(image_document)
     return jsonify({"result": "Pass"})
 
 
@@ -97,7 +100,7 @@ def login():
             if user is not None:
                 return jsonify({"result": "Pass"})
         password = data['password']
-        query = UserDB.user.find_one({"username": data['username']})
+        query = UserDB.find_one({"username": data['username']})
         if query is None:
             return jsonify({"result": "The user is not existed"})
         elif query['username'] == data['username']:
@@ -114,7 +117,7 @@ def google_login():
     token = request.get_json()['token']
     try:
         id_info = id_token.verify_oauth2_token(token, requests.Request(), None)
-        UserDB.googleUser.insert_one(id_info)
+        GoogleDB.insert_one(id_info)
         first_name = id_info['family_name']
         last_name = id_info['given_name']
         response = {'result': "successful",
@@ -126,7 +129,7 @@ def google_login():
 
 
 def return_user(cookie):
-    query = UserDB.user.find_one({'cookies': cookie})
+    query = UserDB.find_one({'cookies': cookie})
     if query is None:
         return None
     else:
@@ -145,7 +148,7 @@ def check_token(token):
     try:
         form = jwt.decode(token, key, algorithms="HS256")
         username = form['iss']
-        user = UserDB.user.find_one({"username": username})
+        user = UserDB.find_one({"username": username})
         response = {"username": user['username'], "name": user['name'],
                     "email": user['email'], "self_ticket": user['self_ticket'],
                     "public_ticket": user['public_ticket']}
