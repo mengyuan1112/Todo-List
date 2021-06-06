@@ -5,3 +5,4 @@ TicketDB = db.ticket
 UserDB = db.user
 GoogleDB = db.google
 ImageDB = db.image
+FriendsDB = db.friend
