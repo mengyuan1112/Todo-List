@@ -5,7 +5,7 @@ import {Alert,Container,Row,Col} from 'react-bootstrap';
 import DayDisplay from './DayDisplay';
 import './Home.css'
 
-const Home = ({name,nickName,onNameChange,ticketLength}) => {
+const Home = ({name,nickName,expire,onNameChange,ticketLength,changeNickName}) => {
     const history = useHistory();
 
 

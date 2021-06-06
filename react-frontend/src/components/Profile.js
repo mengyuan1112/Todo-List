@@ -18,7 +18,7 @@ import Alert from 'react-bootstrap/Alert'
 
 
 
-const Profile = ({name,nickName,onNameChange,changeImage}) => {
+const Profile = ({name,onNameChange,changeImage,changeNickName}) => {
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
@@ -42,7 +42,8 @@ const Profile = ({name,nickName,onNameChange,changeImage}) => {
     const [usernamePro,Getusername] = useState('');
     const [passwordPro, Getpassword] = useState('');
     const [imagePro, Getimage] = useState('');
-
+    const [nickName,setNickName] = useState('');
+    const [newnickname, Setnewname] = useState('');
 
     const submitAvater =(e)=>{
       e.preventDefault();
@@ -63,13 +64,13 @@ const Profile = ({name,nickName,onNameChange,changeImage}) => {
       axios.get(`/${name}/profile`).then(
         res => {
 
-
+            setNickName(res.data.name)
             Getemail(res.data.email)
             Getusername(res.data.username)
             Getpassword(res.data.password)
             Getimage(res.data.icon)
-            
-            
+            Setnewname(res.data.name)
+            changeNickName(res.data.name)
             //SetAvater(res.data.avater)
         },
        err => {
@@ -83,12 +84,11 @@ const Profile = ({name,nickName,onNameChange,changeImage}) => {
         }
 
     
-      )},[submitAvater])
+      )},[])
 
       
     const [newpasswordPro,Setnewpassword] = useState('');
     const [newpasswordErr,SetnewpasswordErr] = useState('');
-    const [newnickname, Setnewname] = useState(nickName);
     const [newnameError, SetnewnameErr]=  useState('');
     const [confirmPasswordPro,setConfirmPasswordPro] = useState('');
     const [image,uploadedImage] = useState([]);
@@ -122,6 +122,7 @@ const Profile = ({name,nickName,onNameChange,changeImage}) => {
     const submitNickname= (e) =>{
     e.preventDefault();
     console.log("hhhhh")
+    changeNickName(newnickname)
     axios.post(`http://localhost:5000/${name}/profile/nickname`,{newName:newnickname }).then(
 
     (response)=>{
@@ -402,7 +403,7 @@ const Profile = ({name,nickName,onNameChange,changeImage}) => {
 
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" type="submit" onClick={handleClose2}>
+          <Button variant="secondary" onClick={handleClose2}>
             Close
           </Button>
           <Button variant="primary" type="submit" onClick={handleClose2}>

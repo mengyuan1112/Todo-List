@@ -60,7 +60,8 @@ def delete_task(data):
 
 @socketio.on("deleteTaskFromFinished", namespace='/main')
 def delete_task_from_finished(data):
-    user, title, content, deadline_date, deadline_time, create_date, create_time = parsing_task(data)
+    user, title, content, deadline_date, deadline_time, create_date, create_time = parsing_task(
+        data)
     user_info = UserDB.user.find_one({"username": user})
     complete_arr = user_info['complete_ticket'][create_date]
     for i in range(0, len(complete_arr)):
@@ -80,7 +81,8 @@ def delete_task_from_finished(data):
 
 @socketio.on("moveFromToDoToFinish", namespace='/main')
 def move_from_todo_to_finish(data):
-    user, title, content, deadline_date, deadline_time, create_date, create_time = parsing_task(data)
+    user, title, content, deadline_date, deadline_time, create_date, create_time = parsing_task(
+        data)
     user_info = UserDB.user.find_one({"username": user})
     self_ticket = user_info['self_ticket']
     ticket_arr = self_ticket[create_date]
@@ -106,7 +108,8 @@ def move_from_todo_to_finish(data):
 
 @socketio.on("moveFromFinishToTodo", namespace='/main')
 def move_from_finish_to_todo(data):
-    user, title, content, deadline_date, deadline_time, create_date, create_time = parsing_task(data)
+    user, title, content, deadline_date, deadline_time, create_date, create_time = parsing_task(
+        data)
     user_info = UserDB.user.find_one({"username": user})
     complete_arr = user_info['complete_ticket'][create_date]
     ticket_arr = []
@@ -118,7 +121,8 @@ def move_from_finish_to_todo(data):
             del complete_arr[i]
             break
     if len(complete_arr) == 0:
-        complete_dic = UserDB.user.find_one({"username": user})['complete_ticket']
+        complete_dic = UserDB.user.find_one({"username": user})[
+            'complete_ticket']
         complete_dic.pop(create_date)
         UserDB.user.update_one({"username": user},
                                {"$set": {"complete_ticket": complete_dic}})
@@ -134,8 +138,10 @@ def move_from_finish_to_todo(data):
 def get_data(data):
     user_info = UserDB.user.find_one({"username": data['username']})
     day = data['currentDate']
-    self_ticket, complete_ticket, public_ticket = get_data_by_date(user_info, day)
-    res = {"todo": self_ticket, "finishedList": complete_ticket, "sharedList": public_ticket}
+    self_ticket, complete_ticket, public_ticket = get_data_by_date(
+        user_info, day)
+    res = {"todo": self_ticket, "finishedList": complete_ticket,
+           "sharedList": public_ticket}
     send(res, broadcast=False)
 
 
@@ -151,7 +157,8 @@ def edit_task_content(data):
     deadline_date = data['date']
     deadline_time = data['time']
     self_ticket = UserDB.user.find_one({"username": user})['self_ticket']
-    self_ticket_arr = UserDB.user.find_one({"username": user})['self_ticket'][current_date]
+    self_ticket_arr = UserDB.user.find_one({"username": user})[
+        'self_ticket'][current_date]
     for i in range(0, len(self_ticket_arr)):
         if self_ticket_arr[i]['title'] == old_title:
             self_ticket_arr[i]['title'] = new_title
@@ -191,9 +198,9 @@ def update_ticket_arr(create_date, ticket_arr, user):
 
 
 def get_data_by_date(user_info, day):
-    self_ticket = {}
-    public_ticket = {}
-    complete_ticket = {}
+    self_ticket = []
+    public_ticket = []
+    complete_ticket = []
     if day in user_info['self_ticket'].keys():
         self_ticket = user_info['self_ticket'][day]
     if day in user_info['complete_ticket'].keys():

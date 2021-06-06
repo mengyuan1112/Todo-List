@@ -34,7 +34,10 @@ const AddSharedTask = (props) => {
 
     const addFriend=()=>{
         console.log("add friend button clicked.")
-    }
+    } 
+
+
+
     return (
         <Modal
         show={props.show} 
