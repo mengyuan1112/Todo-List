@@ -18,7 +18,9 @@ import Alert from 'react-bootstrap/Alert'
 
 
 
-const Profile = ({name,onNameChange,changeImage}) => {
+
+const Profile = ({name,onNameChange,changeImage,changeNickName}) => {
+
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
@@ -46,8 +48,9 @@ const Profile = ({name,onNameChange,changeImage}) => {
     const [usernamePro,Getusername] = useState('');
     const [passwordPro, Getpassword] = useState('');
     const [imagePro, Getimage] = useState('');
+
+    const [nickName,setNickName] = useState('');
     const [newnickname, Setnewname] = useState('');
-    
 
 
     const submitAvater =(e)=>{
@@ -69,14 +72,14 @@ const Profile = ({name,onNameChange,changeImage}) => {
       axios.get(`/${name}/profile`).then(
         res => {
 
-
+            setNickName(res.data.name)
             Getemail(res.data.email)
             Getusername(res.data.username)
             Getpassword(res.data.password)
             Setnewname(res.data.name)
             Getimage(res.data.icon)
-            
-            
+            Setnewname(res.data.name)
+            changeNickName(res.data.name)
             //SetAvater(res.data.avater)
         },
        err => {
@@ -91,12 +94,12 @@ const Profile = ({name,onNameChange,changeImage}) => {
         }
 
     
-      )},[submitAvater])
+      )},[])
 
       
     const [newpasswordPro,Setnewpassword] = useState('');
     const [newpasswordErr,SetnewpasswordErr] = useState('');
-   
+
     const [newnameError, SetnewnameErr]=  useState('');
     const [confirmPasswordPro,setConfirmPasswordPro] = useState('');
     const [image,uploadedImage] = useState([]);
@@ -130,6 +133,7 @@ const Profile = ({name,onNameChange,changeImage}) => {
     const submitNickname= (e) =>{
     e.preventDefault();
     console.log("hhhhh")
+    changeNickName(newnickname)
     axios.post(`http://localhost:5000/${name}/profile/nickname`,{newName:newnickname }).then(
 
     (response)=>{
@@ -410,7 +414,11 @@ const Profile = ({name,onNameChange,changeImage}) => {
 
         </Modal.Body>
         <Modal.Footer>
+
           <Button variant="secondary" onClick={()=>{setShow2(false);setError(false)}}>
+
+          {/*<Button variant="secondary" onClick={handleClose2}>*/}
+
             Close
           </Button>
           {error

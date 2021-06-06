@@ -29,12 +29,30 @@ const Main = ({name,onNameChange}) => {
     const [sharedThings, setShareThing] = useState(0);  //number of shared task
     const [ currentDate,setCurrentDate] = useState(new Date());  //initalize the date tobe today.
     useEffect(() => {
-      if (name){
         axios.get(`${name}/main`).then(
           res => {
             console.log(res)
-            // setTasks(res.data.todo)
-            // setFinishedTask(res.data.finishedList)
+            console.log((res.data.todo).length)
+            // if((res.data.todo[0]).length!==0){
+            //   console.log(res.data.todo)
+            //   setTasks(res.data.todo)
+            //   setThingTodo(res.data.todo[0].length)
+            // }
+            // if ((res.data.sharedList).length!==0){
+            //   setSharedTasks(res.data.sharedList)
+            //   setShareThing(~~(Object.keys(res.data.sharedList).length/5))
+            // }
+            // if ((res.data.finishedList).length!==0){
+            //   if (res.data.finishedList[0]){
+            //     console.log(res.data.finishedList[0])
+            //     setFinishedTask(res.data.finishedList[0])
+            //     setThingsFinished((res.data.finishedList[0]).length)
+            //   }
+            //   else {
+            //     console.log(res.data.finishedList)
+            //     setFinishedTask([res.data.finishedList])
+            //   }
+            // }
           },
           err => {
             console.log(err);
@@ -45,7 +63,6 @@ const Main = ({name,onNameChange}) => {
             setThingTodo(0)
             setShareThing(0)
           })
-      }
       //disconnect once done.
       // return () =>socket.disconnect();
       },[]);
@@ -196,7 +213,7 @@ const Main = ({name,onNameChange}) => {
       socket.emit("getData",{username:name,currentDate:e})
       socket.on("getData",data=>{
        //update todo, finished and shared list to the setNewDay.
-       
+       console.log(data)
       })
       //  setTasks([]);
       //  setThingTodo([]);
