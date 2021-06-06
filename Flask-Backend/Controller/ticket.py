@@ -11,6 +11,7 @@ ticket = Blueprint("ticket", __name__)
 @ticket.route("/<username>/main", methods=['GET'])
 def hello(username):
     today = str(date.today())
+
     ticket_info = TicketDB.find_one({"username": username})
     today_self_ticket = {}
     if today in ticket_info['self_ticket'].keys():
@@ -25,4 +26,5 @@ def hello(username):
         today_self_ticket = ticket_info['public_ticket'][today]
 
     document = {"todo": today_self_ticket, "finishedList": today_complete_ticket, "sharedList": today_shared_ticket}
+
     return jsonify(document)
