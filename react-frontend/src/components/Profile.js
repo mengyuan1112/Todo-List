@@ -18,7 +18,7 @@ import Alert from 'react-bootstrap/Alert'
 
 
 
-const Profile = ({name,nickName,onNameChange,changeImage}) => {
+const Profile = ({name,onNameChange,changeImage}) => {
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
@@ -35,6 +35,10 @@ const Profile = ({name,nickName,onNameChange,changeImage}) => {
     const [nicknamealert, Setnicknamealert] = useState(false);
     const [passwordalert, Setpasswordalert] = useState(false);
     const [iconalert, Seticonalert] = useState(false);
+    const [iconalertInside, SeticonalertInside] = useState(true);
+    const alertInsideShow=() => SeticonalertInside(true)
+    const alertInsideClose=() => SeticonalertInside(false)
+
 
 
 
@@ -42,6 +46,8 @@ const Profile = ({name,nickName,onNameChange,changeImage}) => {
     const [usernamePro,Getusername] = useState('');
     const [passwordPro, Getpassword] = useState('');
     const [imagePro, Getimage] = useState('');
+    const [newnickname, Setnewname] = useState('');
+    
 
 
     const submitAvater =(e)=>{
@@ -67,6 +73,7 @@ const Profile = ({name,nickName,onNameChange,changeImage}) => {
             Getemail(res.data.email)
             Getusername(res.data.username)
             Getpassword(res.data.password)
+            Setnewname(res.data.name)
             Getimage(res.data.icon)
             
             
@@ -77,6 +84,7 @@ const Profile = ({name,nickName,onNameChange,changeImage}) => {
           Getemail('');
           Getusername('')
           Getpassword('')
+          Setnewname('')
           Getimage('')
           
          
@@ -88,7 +96,7 @@ const Profile = ({name,nickName,onNameChange,changeImage}) => {
       
     const [newpasswordPro,Setnewpassword] = useState('');
     const [newpasswordErr,SetnewpasswordErr] = useState('');
-    const [newnickname, Setnewname] = useState(nickName);
+   
     const [newnameError, SetnewnameErr]=  useState('');
     const [confirmPasswordPro,setConfirmPasswordPro] = useState('');
     const [image,uploadedImage] = useState([]);
@@ -102,7 +110,7 @@ const Profile = ({name,nickName,onNameChange,changeImage}) => {
         if (file) {
           const reader = new FileReader();
           image.file = file;
-          if (image.file.size>1000000){
+          if (image.file.size>2000000){
             setError(true);
           }
           else{
@@ -361,7 +369,7 @@ const Profile = ({name,nickName,onNameChange,changeImage}) => {
         </Modal.Header>
         <form onSubmit={submitAvater}>
         <Modal.Body>
-        {error? <Alert variant="danger">The image must be less than 2 MB</Alert> : <p>the image is good</p>}
+        {error? <Alert show={alertInsideShow} variant="danger">The image must be less than 2 MB</Alert> : <p>the image is good</p>}
        <div
       style={{
         display: "flex",
@@ -402,12 +410,13 @@ const Profile = ({name,nickName,onNameChange,changeImage}) => {
 
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" type="submit" onClick={handleClose2}>
+          <Button variant="secondary" onClick={()=>{setShow2(false);setError(false)}}>
             Close
           </Button>
-          <Button variant="primary" type="submit" onClick={handleClose2}>
-            Save Changes
-          </Button>
+          {error
+          ?(<Button variant="primary">Save Changes</Button>)
+          :(<Button variant="primary" type="submit" onClick={handleClose2}>Save Changes</Button>)
+          }
         </Modal.Footer>
         </form>
       </Modal>
