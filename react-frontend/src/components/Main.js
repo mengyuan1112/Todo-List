@@ -29,40 +29,46 @@ const Main = ({name,onNameChange}) => {
     const [sharedThings, setShareThing] = useState(0);  //number of shared task
     const [ currentDate,setCurrentDate] = useState(new Date());  //initalize the date tobe today.
     useEffect(() => {
+
         axios.get(`${name}/main`).then(
-          res => {
-            console.log(res)
-            console.log((res.data.todo).length)
-            // if((res.data.todo[0]).length!==0){
-            //   console.log(res.data.todo)
-            //   setTasks(res.data.todo)
-            //   setThingTodo(res.data.todo[0].length)
-            // }
-            // if ((res.data.sharedList).length!==0){
-            //   setSharedTasks(res.data.sharedList)
-            //   setShareThing(~~(Object.keys(res.data.sharedList).length/5))
-            // }
-            // if ((res.data.finishedList).length!==0){
-            //   if (res.data.finishedList[0]){
-            //     console.log(res.data.finishedList[0])
-            //     setFinishedTask(res.data.finishedList[0])
-            //     setThingsFinished((res.data.finishedList[0]).length)
-            //   }
-            //   else {
-            //     console.log(res.data.finishedList)
-            //     setFinishedTask([res.data.finishedList])
-            //   }
-            // }
-          },
-          err => {
-            console.log(err);
-            setTasks([]);
-            setThingTodo([]);
-            setSharedTasks([]);
-            setThingsFinished(0)
-            setThingTodo(0)
-            setShareThing(0)
-          })
+            res => {
+              console.log(res)
+                  console.log((res.data.todo).length)
+                  if(typeof (res.data.todo).length !== 'undefined'){
+                    console.log((res.data.todo).length)
+                    setTasks(res.data.todo)
+                    setThingTodo(res.data.todo.length)
+                  }
+                  if (typeof (res.data.todo).length === 'undefined') {
+                    setTasks([res.data.todo])
+                    setThingTodo(1)
+                  }
+                  if (typeof (res.data.sharedList).length !== 'undefined')
+                    setSharedTasks(res.data.sharedList)
+                    setShareThing(res.data.sharedList.length)
+                  if (typeof (res.data.sharedList).length === 'undefined') {
+                    setSharedTasks([res.data.sharedList])
+                    setShareThing(1)
+                  }
+                  if (typeof (res.data.finishedList).length !== 'undefined')
+                    setFinishedTask(res.data.finishedList)
+                    setThingsFinished(res.data.finishedList.length)
+                  if (typeof (res.data.finishedList).length === 'undefined') {
+                    setFinishedTask([res.data.finishedList])
+                    setThingsFinished(1)
+                  }  else {
+                       console.log(res.data)
+                  }
+                
+                // err => {
+                //   console.log(err);
+                //   setTasks([]);
+                //   setThingTodo([]);
+                //   setSharedTasks([]);
+                //   setThingsFinished(0)
+                //   setThingTodo(0)
+                //   setShareThing(0)
+            })
       //disconnect once done.
       // return () =>socket.disconnect();
       },[]);
@@ -213,6 +219,7 @@ const Main = ({name,onNameChange}) => {
       socket.emit("getData",{username:name,currentDate:e})
       socket.on("getData",data=>{
        //update todo, finished and shared list to the setNewDay.
+       console.log("This is the socketio recieved data from getData:")
        console.log(data)
       })
       //  setTasks([]);
