@@ -79,7 +79,7 @@ const Main = ({name,onNameChange}) => {
       if (sameTitle) return false
       setTasks([...tasks,task])
       currentDate.setHours(0,0,0,0,0);
-      console.log({username:name,currentDate:currentDate, ...task})
+      // console.log({username:name,currentDate:currentDate, ...task})
       socket.emit("AddedTask",{username:name,currentDate:currentDate, ...task});
       setThingTodo(thingsToDo+1)
       socket.on("AddedTask",data=>{
@@ -131,7 +131,8 @@ const Main = ({name,onNameChange}) => {
     
     const deleteTaskFromFinished =(t)=>{
       setFinishedTask(finishedTask.filter((task)=> task.title !== t.title ))
-      setThingsFinished(thingsFinished-1)
+      setThingsFinished(thingsFinished-1);
+      console.log(currentDate, t)
       socket.emit("deleteTaskFromFinished",{username:name,currentDate:currentDate,...t})
     }
 

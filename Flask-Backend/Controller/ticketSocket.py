@@ -57,7 +57,7 @@ def delete_task(data):
 
 @socketio.on("deleteTaskFromFinished", namespace='/main')
 def delete_task_from_finished(data):
-
+    print(data)
     user, title, content, deadline_date, deadline_time, create_date, create_time = parsing_task(data)
     ticket_info = TicketDB.find_one({"username": user})
     complete_arr = ticket_info['complete_ticket'][create_date]
