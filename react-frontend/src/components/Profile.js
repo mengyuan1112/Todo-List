@@ -47,7 +47,7 @@ const Profile = ({name,onNameChange,changeImage,changeNickName}) => {
 
     const submitAvater =(e)=>{
       e.preventDefault();
-      Getimage(image.src)
+      Getimage(image.src);
       axios.post( `http://localhost:5000/${name}/profile/icon`,{icon:image.src}).then(
           (response)=>{
               if (response.data.result === "Pass"){
@@ -63,7 +63,7 @@ const Profile = ({name,onNameChange,changeImage,changeNickName}) => {
     useEffect(() => {
       axios.get(`/${name}/profile`).then(
         res => {
-
+            console.log(res)
             setNickName(res.data.name)
             Getemail(res.data.email)
             Getusername(res.data.username)
@@ -71,6 +71,7 @@ const Profile = ({name,onNameChange,changeImage,changeNickName}) => {
             Getimage(res.data.icon)
             Setnewname(res.data.name)
             changeNickName(res.data.name)
+            console.log()
             //SetAvater(res.data.avater)
         },
        err => {
