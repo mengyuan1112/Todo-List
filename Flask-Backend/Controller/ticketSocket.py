@@ -92,9 +92,11 @@ def move_from_todo_to_finish(data):
             if create_date in complete_ticket.keys():
                 # database - self_ticket: {date: [{},{},{}]}
                 complete_arr = complete_ticket[create_date]
+                print("this is: " + str(complete_arr))
                 complete_arr.append(ticket_arr[i])
+                print("this is updated: " + str(complete_arr))
                 TicketDB.update_one({"username": user},
-                                    {"$set": {"complete_ticket": {create_date: complete_arr[i]}}})
+                                    {"$set": {"complete_ticket": {create_date: complete_arr}}})
             else:
                 TicketDB.update_one({"username": user},
                                     {"$set": {"complete_ticket": {create_date: [ticket_arr[i]]}}})
@@ -209,7 +211,7 @@ def update_ticket_arr(create_date, ticket_arr, user):
         return
     ticket_dic = {create_date: ticket_arr}
     TicketDB.update_one({"username": user},
-                           {"$set": {"self_ticket": ticket_dic}})
+                        {"$set": {"self_ticket": ticket_dic}})
     return
 
 
