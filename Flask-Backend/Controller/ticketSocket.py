@@ -2,7 +2,7 @@
 
 from datetime import date
 from flask import Flask
-from flask_socketio import SocketIO, send
+from flask_socketio import SocketIO, send, emit
 from .app import socketio
 from pymongo import MongoClient
 from .database import UserDB, TicketDB, GoogleDB, ImageDB
@@ -17,7 +17,7 @@ from .database import UserDB, TicketDB, GoogleDB, ImageDB
 
 @socketio.on("AddedTask", namespace='/main')
 def add_task(data):
-    print(data)
+    print("this is TODO DEL: " + str(data))
     ticket_info = TicketDB.find_one({"username": data['username']})
     user, title, content, deadline_date, deadline_time, create_date, create_time = parsing_task(
         data)
@@ -37,11 +37,12 @@ def add_task(data):
         TicketDB.update_one({"username": data['username']},
                             {"$set": {"self_ticket": ticket_dic}})
     # database - self_ticket: {date: [{},{},{}]}
-    send(data, broadcast=False)
+    emit('AddedTask', data, broadcast=False)
 
 
 @socketio.on("deleteTaskFromTodo", namespace='/main')
 def delete_task(data):
+    print("this is TODO DEL: " + str(data))
     user, title, content, deadline_date, deadline_time, create_date, create_time = parsing_task(
         data)
     ticket_info = TicketDB.find_one({"username": user})
@@ -57,7 +58,7 @@ def delete_task(data):
 
 @socketio.on("deleteTaskFromFinished", namespace='/main')
 def delete_task_from_finished(data):
-    print(data)
+    print("this is finished DEL: " + str(data))
     user, title, content, deadline_date, deadline_time, create_date, create_time = parsing_task(data)
     ticket_info = TicketDB.find_one({"username": user})
     complete_arr = ticket_info['complete_ticket'][create_date]
@@ -145,7 +146,7 @@ def get_data(data):
         user_info, day)
     res = {"todo": self_ticket, "finishedList": complete_ticket,
            "sharedList": public_ticket}
-    send(res, broadcast=False)
+    emit('getData', res, broadcast=False)
 
 
 @socketio.on("EditTaskContent", namespace='/main')

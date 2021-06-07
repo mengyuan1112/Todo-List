@@ -33,6 +33,7 @@ const Main = ({name,onNameChange}) => {
         axios.get(`${name}/main`).then(
             res => {
               console.log(res)
+                console.log("after GET date is: " + currentDate)
                   console.log((res.data.todo).length)
                   if(typeof (res.data.todo).length !== 'undefined'){
                     console.log((res.data.todo).length)
@@ -82,9 +83,9 @@ const Main = ({name,onNameChange}) => {
       // console.log({username:name,currentDate:currentDate, ...task})
       socket.emit("AddedTask",{username:name,currentDate:currentDate, ...task});
       setThingTodo(thingsToDo+1)
-      socket.on("AddedTask",data=>{
+      socket.on('AddedTask',data=>{
         //update todo, finished and shared list to the setNewDay.
-        console.log(data)
+        console.log("this is from server" + data)
        })
       return true
     }
@@ -132,6 +133,7 @@ const Main = ({name,onNameChange}) => {
     const deleteTaskFromFinished =(t)=>{
       setFinishedTask(finishedTask.filter((task)=> task.title !== t.title ))
       setThingsFinished(thingsFinished-1);
+      currentDate.setHours(0,0,0,0,0);
       console.log(currentDate, t)
       socket.emit("deleteTaskFromFinished",{username:name,currentDate:currentDate,...t})
     }
