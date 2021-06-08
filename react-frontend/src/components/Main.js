@@ -33,6 +33,7 @@ const Main = ({name,onNameChange}) => {
         axios.get(`${name}/main`).then(
             res => {
               console.log(res)
+                console.log("after GET date is: " + currentDate)
                   console.log((res.data.todo).length)
                   if(typeof (res.data.todo).length !== 'undefined'){
                     console.log((res.data.todo).length)
@@ -79,12 +80,12 @@ const Main = ({name,onNameChange}) => {
       if (sameTitle) return false
       setTasks([...tasks,task])
       currentDate.setHours(0,0,0,0,0);
-      console.log({username:name,currentDate:currentDate, ...task})
-      socket.emit("AddedTask",{username:name,currentDate:currentDate, ...task});
+      // console.log({username:name,currentDate:currentDate, ...task})
+      socket.emit("AddedTask",{username:name,currentDate:currentDate.toISOString(), ...task});
       setThingTodo(thingsToDo+1)
-      socket.on("AddedTask",data=>{
+      socket.on('AddedTask',data=>{
         //update todo, finished and shared list to the setNewDay.
-        console.log(data)
+        console.log("this is from server" + data)
        })
       return true
     }
@@ -126,13 +127,17 @@ const Main = ({name,onNameChange}) => {
     const deleteTaskFromTodo = (t) =>{
       setTasks(tasks.filter((task)=> task.title !== t.title ))
       setThingTodo(thingsToDo-1)
-      socket.emit("deleteTaskFromTodo",{username:name,currentDate:currentDate,...t})
+        currentDate.setHours(0,0,0,0,0);
+      socket.emit("deleteTaskFromTodo",{username:name,currentDate:currentDate.toISOString(),...t})
     }
     
     const deleteTaskFromFinished =(t)=>{
       setFinishedTask(finishedTask.filter((task)=> task.title !== t.title ))
-      setThingsFinished(thingsFinished-1)
+      setThingsFinished(thingsFinished-1);
+      currentDate.setHours(0,0,0,0,0);
+        console.log("this is current date: "+ currentDate, t)
       socket.emit("deleteTaskFromFinished",{username:name,currentDate:currentDate,...t})
+
     }
 
     const deleteTaskFromShareList = (t)=>{
@@ -219,8 +224,31 @@ const Main = ({name,onNameChange}) => {
       socket.emit("getData",{username:name,currentDate:e})
       socket.on("getData",data=>{
        //update todo, finished and shared list to the setNewDay.
-       console.log("This is the socketio recieved data from getData:")
-       console.log(data)
+       if(typeof (data.todo).length !== 'undefined'){
+        console.log((data.todo).length)
+        setTasks(data.todo)
+        setThingTodo(data.todo.length)
+      }
+      if (typeof (data.todo).length === 'undefined') {
+        setTasks([data.todo])
+        setThingTodo(1)
+      }
+      if (typeof (data.sharedList).length !== 'undefined')
+        setSharedTasks(data.sharedList)
+        setShareThing(data.sharedList.length)
+      if (typeof (data.sharedList).length === 'undefined') {
+        setSharedTasks([data.sharedList])
+        setShareThing(1)
+      }
+      if (typeof (data.finishedList).length !== 'undefined')
+        setFinishedTask(data.finishedList)
+        setThingsFinished(data.finishedList.length)
+      if (typeof (data.finishedList).length === 'undefined') {
+        setFinishedTask([data.finishedList])
+        setThingsFinished(1)
+      }  else {
+           console.log(data)
+      }
       })
       //  setTasks([]);
       //  setThingTodo([]);

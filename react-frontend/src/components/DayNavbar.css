@@ -29,9 +29,9 @@
   padding: 15px 5px;
   margin: 10px 0px;
   border-radius: 50%;
-  font-size: 13px;
+  font-size: 15px;
   color: rgb(255, 255, 255);
-  font-weight: bold;
+  font-weight: bolder;
 }
 
 .navBarToday {
@@ -42,12 +42,12 @@
   width: 13%;
   border-radius: 70%;
   text-align: center;
-  font-size: 17px;
+  font-size: 20px;
   border: 1px solid rgb(104, 174, 192);
   font-family: "KoHo", sans-serif;
   background-color: rgb(46, 97, 190);
-  color: white;
-  font-weight: bold;
+  color: rgb(245, 245, 245);
+  font-weight: bolder;
 }
 
 .navBarDay {

@@ -2,7 +2,7 @@
 
 from datetime import date
 from flask import Flask
-from flask_socketio import SocketIO, send
+from flask_socketio import SocketIO, send, emit
 from .app import socketio
 from pymongo import MongoClient
 from .database import UserDB, TicketDB, GoogleDB, ImageDB
@@ -14,10 +14,9 @@ from .database import UserDB, TicketDB, GoogleDB, ImageDB
 # UserDB = db
 
 
-
+# Done
 @socketio.on("AddedTask", namespace='/main')
 def add_task(data):
-    print(data)
     ticket_info = TicketDB.find_one({"username": data['username']})
     user, title, content, deadline_date, deadline_time, create_date, create_time = parsing_task(
         data)
@@ -29,19 +28,20 @@ def add_task(data):
     if create_date in self_ticket.keys():
         ticket_arr = self_ticket[create_date]
         ticket_arr.append(ticket)
-        ticket_dic = {create_date: ticket_arr}
+        self_ticket[create_date]= ticket_arr
         TicketDB.update_one({"username": data['username']},
-                            {"$set": {"self_ticket": ticket_dic}})
+                            {"$set": {"self_ticket": self_ticket}})
     else:
-        ticket_dic = {create_date: [ticket]}
+        self_ticket[create_date] = [ticket]
         TicketDB.update_one({"username": data['username']},
-                            {"$set": {"self_ticket": ticket_dic}})
+                            {"$set": {"self_ticket": self_ticket}})
     # database - self_ticket: {date: [{},{},{}]}
-    send(data, broadcast=False)
+    emit('AddedTask', data, broadcast=False)
 
-
+# Done
 @socketio.on("deleteTaskFromTodo", namespace='/main')
 def delete_task(data):
+    print("this is TODO DEL: " + str(data))
     user, title, content, deadline_date, deadline_time, create_date, create_time = parsing_task(
         data)
     ticket_info = TicketDB.find_one({"username": user})
@@ -54,29 +54,29 @@ def delete_task(data):
             break
     send(data, broadcast=False)
 
-
+# Done
 @socketio.on("deleteTaskFromFinished", namespace='/main')
 def delete_task_from_finished(data):
-
+    # print("this is finished DEL: " + str(data))
     user, title, content, deadline_date, deadline_time, create_date, create_time = parsing_task(data)
     ticket_info = TicketDB.find_one({"username": user})
     complete_arr = ticket_info['complete_ticket'][create_date]
-
+    complete_ticket = ticket_info['complete_ticket']
     for i in range(0, len(complete_arr)):
         if complete_arr[i]["title"] == title:
             del complete_arr[i]
             break
     if len(complete_arr) == 0:
-        complete_ticket = ticket_info['complete_ticket']
         complete_ticket.pop(create_date)
         TicketDB.update_one({"username": user},
                             {"$set": {"complete_ticket": complete_ticket}})
         return
+    complete_ticket[create_date] = complete_arr
     TicketDB.update_one({"username": user},
-                        {"$set": {"complete_ticket": {create_date: complete_arr}}})
+                        {"$set": {"complete_ticket": complete_ticket}})
     return
 
-
+# Done
 @socketio.on("moveFromToDoToFinish", namespace='/main')
 def move_from_todo_to_finish(data):
 
@@ -84,8 +84,8 @@ def move_from_todo_to_finish(data):
     ticket_info = TicketDB.find_one({"username": user})
     self_ticket = ticket_info['self_ticket']
 
-    ticket_arr = self_ticket[create_date]
-    complete_ticket = ticket_info['complete_ticket']  # {}
+    ticket_arr = self_ticket[create_date]  # current day's array
+    complete_ticket = ticket_info['complete_ticket']  # entire complete ticket {}
 
     for i in range(0, len(ticket_arr)):
         if ticket_arr[i]['title'] == title:
@@ -93,62 +93,70 @@ def move_from_todo_to_finish(data):
                 # database - self_ticket: {date: [{},{},{}]}
                 complete_arr = complete_ticket[create_date]
                 complete_arr.append(ticket_arr[i])
+                complete_ticket[create_date] = complete_arr
                 TicketDB.update_one({"username": user},
-                                    {"$set": {"complete_ticket": {create_date: complete_arr[i]}}})
+                                    {"$set": {"complete_ticket":  complete_ticket}})
             else:
+                complete_ticket[create_date] = [ticket_arr[i]]
                 TicketDB.update_one({"username": user},
-                                    {"$set": {"complete_ticket": {create_date: [ticket_arr[i]]}}})
+                                    {"$set": {"complete_ticket": complete_ticket}})
 
             del ticket_arr[i]
             update_ticket_arr(create_date, ticket_arr, user)
             break
     return
 
-
+# Done
 @socketio.on("moveFromFinishToTodo", namespace='/main')
 def move_from_finish_to_todo(data):
 
     user, title, content, deadline_date, deadline_time, create_date, create_time = parsing_task(data)
     ticket_info = TicketDB.find_one({"username": user})
-    complete_arr = ticket_info['complete_ticket'][create_date]
-
-    ticket_arr = []
+    complete_arr = ticket_info['complete_ticket'][create_date]  # current date complete_array
+    complete_ticket = ticket_info['complete_ticket']
+    self_ticket = ticket_info['self_ticket']
+    ticket_arr = [] # current date to do array
     if create_date in ticket_info['self_ticket'].keys():
         ticket_arr = ticket_info['self_ticket'][create_date]
+
+    # update current date complete array and to do array
     for i in range(0, len(complete_arr)):
         if complete_arr[i]["title"] == title:
             ticket_arr.append(complete_arr[i])
             del complete_arr[i]
             break
+
     if len(complete_arr) == 0:
-
-        complete_dic = TicketDB.find_one({"username": user})['complete_ticket']
-
-        complete_dic.pop(create_date)
+        complete_ticket.pop(create_date)
         TicketDB.update_one({"username": user},
-                            {"$set": {"complete_ticket": complete_dic}})
+                            {"$set": {"complete_ticket": complete_ticket}})
     else:
+        complete_ticket[create_date] = complete_arr
         TicketDB.update_one({"username": user},
-                            {"$set": {"complete_ticket": {create_date: complete_arr}}})
+                            {"$set": {"complete_ticket": complete_ticket}})
+    self_ticket[create_date] = ticket_arr
     TicketDB.update_one({"username": user},
-                        {"$set": {"self_ticket": {create_date: ticket_arr}}})
+                        {"$set": {"self_ticket": self_ticket}})
     return
 
 
 @socketio.on("getData", namespace='/main')
 def get_data(data):
+    # print(data)
     user_info = TicketDB.find_one({"username": data['username']})
-    day = data['currentDate']
+    # print("this is from db: " + str(user_info))
+    data_time_arr = data['currentDate'].split("T")
+    create_date = data_time_arr[0]
     self_ticket, complete_ticket, public_ticket = get_data_by_date(
-        user_info, day)
+        user_info, create_date)
     res = {"todo": self_ticket, "finishedList": complete_ticket,
            "sharedList": public_ticket}
-    send(res, broadcast=False)
+    emit('getData', res, broadcast=False)
 
 
 @socketio.on("EditTaskContent", namespace='/main')
 def edit_task_content(data):
-    print(data)
+    # print(data)
     user = data['username']
     data_time_arr = data['currentDate'].split("T")
     current_date = data_time_arr[0]
@@ -201,29 +209,31 @@ def parsing_task(data):
 
 
 def update_ticket_arr(create_date, ticket_arr, user):
+    self_ticket = TicketDB.find_one({"username": user})['self_ticket']
     if len(ticket_arr) == 0:
-        self_ticket = TicketDB.find_one({"username": user})['self_ticket']
         self_ticket.pop(create_date)
         TicketDB.update_one({"username": user},
                             {"$set": {"self_ticket": self_ticket}})
         return
-    ticket_dic = {create_date: ticket_arr}
+    # ticket_dic = {create_date: ticket_arr}
+    self_ticket[create_date] = ticket_arr
     TicketDB.update_one({"username": user},
-                           {"$set": {"self_ticket": ticket_dic}})
+                        {"$set": {"self_ticket": self_ticket}})
     return
 
 
 def get_data_by_date(user_info, day):
+    # print("the day is: " + str(day))
     self_ticket = []
     public_ticket = []
     complete_ticket = []
     if day in user_info['self_ticket'].keys():
         self_ticket = user_info['self_ticket'][day]
     if day in user_info['complete_ticket'].keys():
-        self_ticket = user_info['complete_ticket'][day]
+        complete_ticket = user_info['complete_ticket'][day]
     if day in user_info['public_ticket'].keys():
-        self_ticket = user_info['public_ticket'][day]
-    return self_ticket, public_ticket, complete_ticket
+        public_ticket = user_info['public_ticket'][day]
+    return self_ticket, complete_ticket,  public_ticket
 
 
 # if __name__ == '__main__':
