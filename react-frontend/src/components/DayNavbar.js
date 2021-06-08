@@ -161,6 +161,7 @@ const DayNavbar = (props) => {
            setClickThur(false)
            setClickFri(false)
            setClickSat(false)
+           props.setNewDay(new Date());
            }} >today</Button>
         </div>
         
