@@ -224,8 +224,31 @@ const Main = ({name,onNameChange}) => {
       socket.emit("getData",{username:name,currentDate:e})
       socket.on("getData",data=>{
        //update todo, finished and shared list to the setNewDay.
-       console.log("This is the socketio recieved data from getData:")
-       console.log(data)
+       if(typeof (data.todo).length !== 'undefined'){
+        console.log((data.todo).length)
+        setTasks(data.todo)
+        setThingTodo(data.todo.length)
+      }
+      if (typeof (data.todo).length === 'undefined') {
+        setTasks([data.todo])
+        setThingTodo(1)
+      }
+      if (typeof (data.sharedList).length !== 'undefined')
+        setSharedTasks(data.sharedList)
+        setShareThing(data.sharedList.length)
+      if (typeof (data.sharedList).length === 'undefined') {
+        setSharedTasks([data.sharedList])
+        setShareThing(1)
+      }
+      if (typeof (data.finishedList).length !== 'undefined')
+        setFinishedTask(data.finishedList)
+        setThingsFinished(data.finishedList.length)
+      if (typeof (data.finishedList).length === 'undefined') {
+        setFinishedTask([data.finishedList])
+        setThingsFinished(1)
+      }  else {
+           console.log(data)
+      }
       })
       //  setTasks([]);
       //  setThingTodo([]);
