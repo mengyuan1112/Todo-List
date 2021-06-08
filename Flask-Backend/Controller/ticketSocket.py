@@ -17,7 +17,7 @@ from .database import UserDB, TicketDB, GoogleDB, ImageDB
 
 @socketio.on("AddedTask", namespace='/main')
 def add_task(data):
-    print("this is TODO DEL: " + str(data))
+    print("this is TODO: " + str(data))
     ticket_info = TicketDB.find_one({"username": data['username']})
     user, title, content, deadline_date, deadline_time, create_date, create_time = parsing_task(
         data)
