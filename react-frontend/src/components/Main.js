@@ -81,7 +81,7 @@ const Main = ({name,onNameChange}) => {
       setTasks([...tasks,task])
       currentDate.setHours(0,0,0,0,0);
       // console.log({username:name,currentDate:currentDate, ...task})
-      socket.emit("AddedTask",{username:name,currentDate:currentDate, ...task});
+      socket.emit("AddedTask",{username:name,currentDate:currentDate.toISOString(), ...task});
       setThingTodo(thingsToDo+1)
       socket.on('AddedTask',data=>{
         //update todo, finished and shared list to the setNewDay.
@@ -127,15 +127,17 @@ const Main = ({name,onNameChange}) => {
     const deleteTaskFromTodo = (t) =>{
       setTasks(tasks.filter((task)=> task.title !== t.title ))
       setThingTodo(thingsToDo-1)
-      socket.emit("deleteTaskFromTodo",{username:name,currentDate:currentDate,...t})
+        currentDate.setHours(0,0,0,0,0);
+      socket.emit("deleteTaskFromTodo",{username:name,currentDate:currentDate.toISOString(),...t})
     }
     
     const deleteTaskFromFinished =(t)=>{
       setFinishedTask(finishedTask.filter((task)=> task.title !== t.title ))
       setThingsFinished(thingsFinished-1);
       currentDate.setHours(0,0,0,0,0);
-      console.log(currentDate, t)
+        console.log("this is current date: "+ currentDate, t)
       socket.emit("deleteTaskFromFinished",{username:name,currentDate:currentDate,...t})
+
     }
 
     const deleteTaskFromShareList = (t)=>{
