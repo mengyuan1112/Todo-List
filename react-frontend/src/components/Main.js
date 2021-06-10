@@ -23,13 +23,15 @@ const Main = ({name,onNameChange}) => {
     const [modalForShared,setModalForShared] = useState(false);
     const [tasks, setTasks] = useState([]);
     const [finishedTask,setFinishedTask] = useState([]);
+    const [shareFinishedTask,setShareFinishedTask] = useState([]);
     const [sharedTasks, setSharedTasks] = useState([]);
     const [thingsFinished,setThingsFinished] = useState(0); //number of thing finished
     const [thingsToDo,setThingTodo]= useState(0); // number of thing todo
     const [sharedThings, setShareThing] = useState(0);  //number of shared task
     const [ currentDate,setCurrentDate] = useState(new Date());  //initalize the date tobe today.
     useEffect(() => {
-
+        //send username to backend once user land in main page.
+        //send a get request for user data.
         axios.get(`${name}/main`).then(
             res => {
               console.log(res)
@@ -83,10 +85,6 @@ const Main = ({name,onNameChange}) => {
       // console.log({username:name,currentDate:currentDate, ...task})
       socket.emit("AddedTask",{username:name,currentDate:currentDate.toISOString(), ...task});
       setThingTodo(thingsToDo+1)
-      socket.on('AddedTask',data=>{
-        //update todo, finished and shared list to the setNewDay.
-        console.log("this is from server" + data)
-       })
       return true
     }
 
