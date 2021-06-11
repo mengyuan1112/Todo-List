@@ -1,6 +1,6 @@
 import Navigation from './components/Navigation'
 import React ,{useState,useEffect} from 'react'
-import { Switch, Route,useHistory} from 'react-router-dom';
+import { Switch, Route,useHistory, Redirect} from 'react-router-dom';
 import Home from './components/Home';
 import Register from './components/Register';
 import Login from './components/Login';
@@ -25,7 +25,7 @@ function App() {
       res => {
         console.log("This is the get request from app.JS\n",res)
         if (res.data.result === "Expired"){
-          setName('') 
+          
           setExpire(true)
         }
         else{
@@ -89,6 +89,7 @@ function App() {
 
             </Switch>
               )}
+              {expire && name ? <Redirect to="/login"/>:null}
           </div>
         </div>
       );

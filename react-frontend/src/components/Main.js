@@ -62,16 +62,7 @@ const Main = ({name,onNameChange}) => {
                   }  else {
                        console.log(res.data)
                   }
-                
-                // err => {
-                //   console.log(err);
-                //   setTasks([]);
-                //   setThingTodo([]);
-                //   setSharedTasks([]);
-                //   setThingsFinished(0)
-                //   setThingTodo(0)
-                //   setShareThing(0)
-            })
+                })
       //disconnect once done.
       // return () =>socket.disconnect();
       },[]);
