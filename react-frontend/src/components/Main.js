@@ -13,6 +13,7 @@ import FinishedTasks from './FinishedTasks';
 import axios from 'axios'
 import AddSharedTask from './AddSharedTask'
 import ShareTask from './ShareTask'
+import ReactCardFlip from 'react-card-flip';
 
 const endPoint = "http://localhost:5000/main";
 const socket = io.connect(endPoint);
@@ -28,7 +29,12 @@ const Main = ({name,onNameChange}) => {
     const [thingsFinished,setThingsFinished] = useState(0); //number of thing finished
     const [thingsToDo,setThingTodo]= useState(0); // number of thing todo
     const [sharedThings, setShareThing] = useState(0);  //number of shared task
-    const [ currentDate,setCurrentDate] = useState(new Date());  //initalize the date tobe today.
+    const [currentDate,setCurrentDate] = useState(new Date());  //initalize the date tobe today.
+    const [finishedShareTask,setFinishedShareTask] = useState([])
+    const [thingsFinishedShareTask,setThingsFinishedShareTask] = useState(0)
+
+    const [isFlipped,setIsFlipped] = useState(false)
+
     useEffect(() => {
         //send username to backend once user land in main page.
         //send a get request for user data.
@@ -66,7 +72,9 @@ const Main = ({name,onNameChange}) => {
       //disconnect once done.
       // return () =>socket.disconnect();
       },[]);
-
+     const clickedFinished=()=>{
+        setIsFlipped(!isFlipped)
+      }
 
     const addTask=(task)=>{
       const sameTitle = tasks.find(t=>t.title === task.title);
@@ -211,6 +219,10 @@ const Main = ({name,onNameChange}) => {
     <ShareTask key={task.title} editContent = {editShareTaskContent} task = {task}  taskStatus={shareTaskStatus} deleteTask={deleteTaskFromShareList}/>
     );
 
+    const sharedTasks_finish_list = finishedShareTask.map((task) =>
+    <ShareTask key={task.title} editContent = {editShareTaskContent} task = {task}  taskStatus={shareTaskStatus} deleteTask={deleteTaskFromShareList}/>
+    );
+
     const setNewDay = (e) =>{
       setCurrentDate(e);
       e.setHours(0,0,0,0,0);
@@ -275,11 +287,19 @@ const Main = ({name,onNameChange}) => {
         {/* This is the container for Finished */}
         <Card>
           <Card.Body className="CardBody">
-            <Card.Title>Finished ({thingsFinished})</Card.Title>
-            <hr/>
+            <ReactCardFlip isFlipped={isFlipped} flipDirection="horizontal">
+            <div>
+              <Card.Title onClick={clickedFinished}>Finished - Self Task ({thingsFinished})</Card.Title>
+              <hr/>
+              {finish_list}
+            </div>
 
-            {finish_list}
-
+            <div>
+              <Card.Title onClick={clickedFinished}>Finished - Shared Task ({thingsFinishedShareTask})</Card.Title>
+              <hr/>
+              {sharedTasks_finish_list}
+            </div>
+          </ReactCardFlip>
           </Card.Body>
         </Card>
 

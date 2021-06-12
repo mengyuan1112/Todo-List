@@ -31,7 +31,6 @@ function App() {
         else{
           setExpire(false)
           setName(res.data.username)
-          setSelf_ticket(res.data.self_ticket)
           setNickName(res.data.name)
        }
       },
