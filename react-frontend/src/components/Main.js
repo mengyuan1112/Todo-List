@@ -119,10 +119,20 @@ const Main = ({name,onNameChange}) => {
       if (status){
         //setShareThing(sharedThings-1)
         socket.emit("finishedShareTask",{useraname:name,currentDate:currentDate,t})
+        socket.on("finishedShareTask",data=>{
+          console.log(data);
+          // TODO: I will need to check if all the share user have finished the task, if so, move the task to finish.
+          // Else, do nothing.
+        })
       }
       else{
         //setShareThing(sharedThings+1)
-        socket.emit("undoFinishedShareTask",{useraname:name,currentDate:currentDate,t})
+        socket.emit("undoFinishedShareTask",{useraname:name,currentDate:currentDate,t});
+        socket.on("undoFinishedShareTask",data=>{
+          console.log(data);
+          //TODO: If the task is on Finished, move back to shared List,
+          //Else: do nothing.
+        })
       }
     }
 
