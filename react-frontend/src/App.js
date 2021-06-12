@@ -25,8 +25,8 @@ function App() {
       res => {
         console.log("This is the get request from app.JS\n",res)
         if (res.data.result === "Expired"){
-          
           setExpire(true)
+          return <Redirect to="/home"/>
         }
         else{
           setExpire(false)

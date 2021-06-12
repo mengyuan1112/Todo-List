@@ -73,7 +73,7 @@ const Main = ({name,onNameChange}) => {
       if (sameTitle) return false
       setTasks([...tasks,task])
       currentDate.setHours(0,0,0,0,0);
-      // console.log({username:name,currentDate:currentDate, ...task})
+      console.log({username:name,currentDate:currentDate, ...task})
       socket.emit("AddedTask",{username:name,currentDate:currentDate.toISOString(), ...task});
       setThingTodo(thingsToDo+1)
       return true
@@ -244,12 +244,6 @@ const Main = ({name,onNameChange}) => {
            console.log(data)
       }
       })
-      //  setTasks([]);
-      //  setThingTodo([]);
-      //  setSharedTasks([]);
-      //  setThingsFinished(0)
-      //  setThingTodo(0)
-      //  setShareThing(0)
      }
 
 
@@ -303,9 +297,6 @@ const Main = ({name,onNameChange}) => {
         </Card>
       </CardDeck>
       </div>
-      <Switch>
-        <Route exact path="/addTask" component={AddTask}/> 
-      </Switch>
       </>
     )
 }

@@ -8,7 +8,7 @@ const AddTask = (props) => {
     const [date,setDate] = useState('')
     const [time,setTime] = useState('')
     const [error,setError] = useState(false)
-    const [range,setRange] = useState(1)
+    const [range,setRange] = useState("1")
 
     var myCurrentDate = new Date();
     myCurrentDate.setHours(0,0,0,0,0);
@@ -17,7 +17,7 @@ const AddTask = (props) => {
         // props.addtask({title,content,date,time});
         e.preventDefault();
         setError(false)
-        if (props.addtask({title:title,content:content,date:date,time:time})){
+        if (props.addtask({title:title,content:content,date:date,time:time,prority:range})){
           //add task sucess
           props.onHide();
         }
@@ -95,7 +95,8 @@ const AddTask = (props) => {
             <Form.Group as={Row} className="mb-3">
               <Form.Label column sm="3">Prority </Form.Label>
               <Col sm="9">
-                <input type="range" className="custom-range" min="1"
+                <input type="range" className="custom-range" 
+                min="1"
                 max="5"
                 step="1"
                 value={range}

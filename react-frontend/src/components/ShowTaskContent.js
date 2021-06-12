@@ -16,6 +16,9 @@ const ShowTaskContent = (props) => {
     const [toggleDate,setToggleDate] = useState(true);
     const [date,setDate] = useState(props.task.date);
 
+    const [toggleRange,setToggleRange] = useState(true);
+    const [range,setRange] = useState(props.task.range);
+
     const [toggleTime,setToggleTime] = useState(true);
     const [time,setTime] = useState(props.task.time);
     const [error,setError] = useState(false);
@@ -24,9 +27,11 @@ const ShowTaskContent = (props) => {
       props.task.content = content
       props.task.date = date
       props.task.time = time
+      props.task.range = range
       setToggleDate(true)
       setToggleContent(true)
       setToggleTime(true)
+      setToggleRange(true)
       // user didn't change the title.
       if (newTitle === title){
         setError(false)
@@ -153,12 +158,36 @@ const ShowTaskContent = (props) => {
                   />)
                   }
               </li>
+              
+              <li> prority:
+                <MdModeEdit onClick={()=>setToggleRange(!toggleRange)} style={{float:'right'}}/>
+                  {toggleRange ? (<span>{range}</span>):
+                  (<input type='range' value={range} onChange={(e)=>{setRange(e.target.value)}}
+                  min="1"  max="5"  step="1"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      setToggleRange(true)
+                      e.preventDefault()
+                      e.stopPropagation()
+                      setRange(e.target.value)
+                      props.task.range = range
+                      handleSave()
+                    }
+                    else if (e.key === 'Escape'){
+                      setToggleRange(true)
+                      e.preventDefault()
+                      e.stopPropagation()
+                    }}}
+                  />)
+                  }
+              </li>
+
           </ul>
       </Modal.Body>
       <Modal.Footer>
         <Button size="sm" onClick={handleDelete} variant="danger"> Delete Task </Button>
 
-        {(toggleTitle && toggleContent && toggleTime && toggleDate) ? null : 
+        {(toggleTitle && toggleContent && toggleTime && toggleDate && toggleRange) ? null : 
         <Button variant="success" size="sm" onClick={handleSave}>Save Change</Button>}
 
         <Button size="sm" onClick={props.onHide}>Close</Button>
