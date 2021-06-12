@@ -59,9 +59,9 @@ const AddSharedTask = (props) => {
                 <Form.Control as="select" multiple htmlSize={3} required onChange={(e) => 
               setSharedWith([].slice.call(e.target.selectedOptions).map(item => item.value)) }>
                   {/* TODO: needed to get the friend list from server and display it here. */}
-                    <option>friend 1 </option>  
-                    <option>friend 2 </option>
-                    <option>friend 3 </option>
+                    <option>friend1</option>  
+                    <option>friend2</option>
+                    <option>friend3</option>
                 </Form.Control>
                 </Col>
 

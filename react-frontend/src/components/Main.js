@@ -87,8 +87,13 @@ const Main = ({name,onNameChange}) => {
       console.log({username:name,currentDate:currentDate, ...task});
       socket.emit("AddedSharedTask",{username:name,currentDate:currentDate, ...task});
       setShareThing(sharedThings+1);
+      socket.on("AddedSharedTask",data=>{
+        console.log(data);
+      })
       return true
     }
+
+
 
     const moveToFinish = (t) =>{
       setTasks(tasks.filter((task)=> task.title !== t.title ))

@@ -8,7 +8,7 @@ const AddTask = (props) => {
     const [date,setDate] = useState('')
     const [time,setTime] = useState('')
     const [error,setError] = useState(false)
-    const [range,setRange] = useState(3)
+    const [range,setRange] = useState(1)
 
     var myCurrentDate = new Date();
     myCurrentDate.setHours(0,0,0,0,0);
