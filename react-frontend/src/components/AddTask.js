@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import {Alert,Modal,Button,Form,Row,Col} from 'react-bootstrap'
-import { FaTemperatureLow } from 'react-icons/fa'
 
 
 const AddTask = (props) => {
@@ -9,6 +8,8 @@ const AddTask = (props) => {
     const [date,setDate] = useState('')
     const [time,setTime] = useState('')
     const [error,setError] = useState(false)
+    const [range,setRange] = useState(3)
+
     var myCurrentDate = new Date();
     myCurrentDate.setHours(0,0,0,0,0);
 
@@ -89,6 +90,28 @@ const AddTask = (props) => {
                           handleSubmitTask(e);
                         }}}/> 
                 </Col>
+            </Form.Group>
+
+            <Form.Group as={Row} className="mb-3">
+              <Form.Label column sm="3">Prority </Form.Label>
+              <Col sm="9">
+                <input type="range" className="custom-range" min="1"
+                max="5"
+                step="1"
+                value={range}
+                list="tickMark"
+                onChange={(e)=>{
+                setRange(e.target.value)
+                console.log(e.target.value)
+                }}/>
+              </Col>
+            <datalist id="tickMark">
+                  <option label="1" value="1"/>
+                  <option label="2" value="2"/>
+                  <option label="3" value="3"/>
+                  <option label="4" value="4"/>
+                  <option label="5" value="5"/>
+            </datalist>
             </Form.Group>
         </Modal.Body>
         <Modal.Footer>
