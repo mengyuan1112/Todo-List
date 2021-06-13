@@ -14,7 +14,7 @@ import io from 'socket.io-client';
 const endPoint = "http://localhost:5000/login";
 const socket = io.connect(endPoint);
 
-const Login = ({name,onNameChange,expire}) => {
+const Login = ({name,onNameChange,expire,changeNickName}) => {
     const [username,setUsername] = useState('');
     const [password,setPassword] = useState('');
     const [error,setError] = useState('');
@@ -77,7 +77,8 @@ const Login = ({name,onNameChange,expire}) => {
                     localStorage.setItem('token',response.data.token);
                     socket.emit("onlineUser",{username:response.data.username})
                     onNameChange(response.data.username)
-                    history.push(`${username}/home`)
+                    changeNickName(response.data.name)
+                    history.push(`${response.data.username}/home`)
                 }
                 else{
                     console.log(response.data);
@@ -141,6 +142,9 @@ const Login = ({name,onNameChange,expire}) => {
             </div>
         </Col>
         </Row>
+        {/* <Switch>
+            <Route exact path={`/${name}/home`} component={<Home/>}/>
+        </Switch> */}
     </Container>
     )
 }

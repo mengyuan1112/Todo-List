@@ -114,7 +114,7 @@ def login():
             if new_salt_password != query['salt_password']:
                 return jsonify({"result": "Password is wrong"})
         token = gen_jwt(data['username'])
-    return jsonify({"result": "Pass", "token": token, "username": query['username']})
+    return jsonify({"result": "Pass", "token": token, "username": query['username'],"name": query['name']})
 
 
 @logReg.route("/google/login", methods=['POST'])

@@ -6,9 +6,8 @@ import DayDisplay from './DayDisplay';
 import './Home.css'
 
 const Home = ({name,nickName,expire,onNameChange,ticketLength,changeNickName}) => {
+    
     const history = useHistory();
-
-
 
     const handleClick =()=>{
         console.log("clicked start planning")
