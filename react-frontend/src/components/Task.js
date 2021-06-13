@@ -26,7 +26,7 @@ const Task = ({task,onDelete,deleteTask,editContent}) => {
         else{
             setColor('blue')
         }
-    }, [task.range])
+    }, [task])
     const [modalShow, setModalShow] = React.useState(false);
     return (
     <ListGroup variant="flush" >

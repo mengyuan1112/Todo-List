@@ -299,13 +299,13 @@ const Main = ({name,onNameChange}) => {
           <Card.Body className="CardBody">
             <ReactCardFlip isFlipped={isFlipped} flipDirection="horizontal">
             <div>
-              <Card.Title onClick={clickedFinished}>Finished - Self Task ({thingsFinished})</Card.Title>
+              <Card.Title onClick={clickedFinished}>Finished-Self ({thingsFinished})</Card.Title>
               <hr/>
               {finish_list}
             </div>
 
             <div>
-              <Card.Title onClick={clickedFinished}>Finished - Shared Task ({thingsFinishedShareTask})</Card.Title>
+              <Card.Title onClick={clickedFinished}>Finished-Share({thingsFinishedShareTask})</Card.Title>
               <hr/>
               {sharedTasks_finish_list}
             </div>

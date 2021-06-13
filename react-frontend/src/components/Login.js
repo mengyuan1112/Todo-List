@@ -77,7 +77,7 @@ const Login = ({name,onNameChange,expire}) => {
                     localStorage.setItem('token',response.data.token);
                     socket.emit("onlineUser",{username:response.data.username})
                     onNameChange(response.data.username)
-                    history.push(`/${username}/home`)
+                    history.push(`${username}/home`)
                 }
                 else{
                     console.log(response.data);
@@ -97,6 +97,7 @@ const Login = ({name,onNameChange,expire}) => {
         <Col xs={5}>
             <br></br>
             <br></br>
+            {/* {expire ? <Alert variant="danger">Your session have expired.Please Login again</Alert>:null} */}
             <h1>Login</h1>
             <hr></hr>
             {name ? (<Link to= {`/${name}/home`} />) : (<p style={{color:'red'}} >{error}</p>)}

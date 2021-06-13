@@ -23,10 +23,11 @@ function App() {
   useEffect(() => {
     axios.get('login').then(
       res => {
-        console.log("This is the get request from app.JS\n",res)
+        console.log("This is the get request from login (app.js) \n",res)
         if (res.data.result === "Expired"){
+          setName("");
+          console.log("The user have expired cookie. Redirect to login page.")
           setExpire(true)
-          return <Redirect to="/home"/>
         }
         else{
           setExpire(false)
@@ -72,12 +73,12 @@ function App() {
           <Navigation name={name} onNameChange={onChange} img={img}/>
           <div>
 
-            {name?(<Switch>
+            {(name && !expire) ?(<Switch>
 
               <Route exact path={`/:name/home`} component = {()=> <Home name={name} expire={expire} ticketLength={length} nickName={nickName} changeNickName={changeNickName}  onNameChange={onChange} thingsToDo={2}/>}/>
               <Route exact path={`/:name/main`} component={()=> <Main name={name} onNameChange={onChange}/>} />
               <Route exact path={`/:name/profile`} component={()=> <Profile name={name} changeNickName={changeNickName} changeImage={changeImage} onNameChange={onChange}/>} />
-              <Route exact path={`/:name/`} component = {()=> <Home name={name} expire={expire} ticketLength={length} nickName={nickName} onNameChange={onChange} />}/>
+              <Route exact path={`/:name`} component = {()=> <Home name={name} expire={expire} ticketLength={length} nickName={nickName} onNameChange={onChange} />}/>
 
               </Switch>) 
             :(<Switch>
@@ -88,7 +89,6 @@ function App() {
 
             </Switch>
               )}
-              {expire && name ? <Redirect to="/login"/>:null}
           </div>
         </div>
       );

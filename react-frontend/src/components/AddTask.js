@@ -17,7 +17,7 @@ const AddTask = (props) => {
         // props.addtask({title,content,date,time});
         e.preventDefault();
         setError(false)
-        if (props.addtask({title:title,content:content,date:date,time:time,prority:range})){
+        if (props.addtask({title:title,content:content,date:date,time:time,range:range})){
           //add task sucess
           props.onHide();
         }
@@ -30,6 +30,7 @@ const AddTask = (props) => {
         setContent("")
         setDate("")
         setTime("")
+        setRange("")
     }
     return (
         <Modal
