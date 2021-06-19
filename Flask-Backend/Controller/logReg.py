@@ -51,7 +51,7 @@ def register():
     salt_password = hashlib.pbkdf2_hmac(
         'sha256', data['password'].encode('utf-8'), salt, 100000)
     default_user_icon = base64.b64encode(open("defaultUser.jpg", "rb").read())
-    print(default_user_icon)
+
     user_document = {"username": data['username'], "name": data['username'], "salt_password": salt_password,
                      "email": data['email'], "salt": salt}
     ticket_document = {"username": data['username'], "self_ticket": {}, "complete_ticket": {}, "public_ticket": {}}
@@ -143,7 +143,7 @@ def return_user(cookie):
 
 def gen_jwt(username):
     issue_time = datetime.datetime.utcnow()
-    token = jwt.encode({"iss": username, "iat": issue_time, "exp": issue_time + datetime.timedelta(minutes=180)},
+    token = jwt.encode({"iss": username, "iat": issue_time, "exp": issue_time + datetime.timedelta(minutes=30)},
                        key,
                        algorithm="HS256")
     return token
