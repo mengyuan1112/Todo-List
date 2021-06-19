@@ -107,13 +107,6 @@ const AddTask = (props) => {
                 console.log(e.target.value)
                 }}/>
               </Col>
-            <datalist id="tickMark">
-                  <option label="1" value="1"/>
-                  <option label="2" value="2"/>
-                  <option label="3" value="3"/>
-                  <option label="4" value="4"/>
-                  <option label="5" value="5"/>
-            </datalist>
             </Form.Group>
         </Modal.Body>
         <Modal.Footer>

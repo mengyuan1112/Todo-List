@@ -142,9 +142,9 @@ const Login = ({name,onNameChange,expire,changeNickName}) => {
             </div>
         </Col>
         </Row>
-        {/* <Switch>
+        <Switch>
             <Route exact path={`/${name}/home`} component={<Home/>}/>
-        </Switch> */}
+        </Switch> 
     </Container>
     )
 }

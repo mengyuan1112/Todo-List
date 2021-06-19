@@ -283,7 +283,7 @@ const Main = ({name,onNameChange}) => {
       <CardDeck style={{margin:'5px 10px'}}>
 
         {/* This is the container for Things to do */}
-        <Card>
+        <Card className="mainContainer">
           <Card.Body className="CardBody">
             <Card.Title>ToDo ({thingsToDo})</Card.Title>
             <hr/>
@@ -296,7 +296,7 @@ const Main = ({name,onNameChange}) => {
         </Card>
 
         {/* This is the container for Finished */}
-        <Card>
+        <Card className="mainContainer">
           <Card.Body className="CardBody">
             <ReactCardFlip isFlipped={isFlipped} flipDirection="horizontal">
             <div>
@@ -315,7 +315,7 @@ const Main = ({name,onNameChange}) => {
         </Card>
 
         {/* This is the container for shared List. */}
-        <Card>
+        <Card className="mainContainer">
           <Card.Body className="CardBody">
             <Card.Title>Shared List ({sharedThings})</Card.Title>
             <hr/>
