@@ -14,6 +14,7 @@ import axios from 'axios'
 import AddSharedTask from './AddSharedTask'
 import ShareTask from './ShareTask'
 import ReactCardFlip from 'react-card-flip';
+import { GrSort } from "react-icons/gr";
 
 const endPoint = "http://localhost:5000/main";
 const socket = io.connect(endPoint);
@@ -32,7 +33,7 @@ const Main = ({name,onNameChange}) => {
     const [currentDate,setCurrentDate] = useState(new Date());  //initalize the date tobe today.
     const [finishedShareTask,setFinishedShareTask] = useState([])
     const [thingsFinishedShareTask,setThingsFinishedShareTask] = useState(0)
-
+    const [showSortBox,setShowBox] = useState(false);
     const [isFlipped,setIsFlipped] = useState(false)
 
     useEffect(() => {
@@ -268,6 +269,10 @@ const Main = ({name,onNameChange}) => {
       }
       })
      }
+     const setSort=()=>{
+       console.log("Set Sort is clicked.");
+       setShowBox(!showSortBox);
+     }
 
 
 
@@ -285,8 +290,20 @@ const Main = ({name,onNameChange}) => {
         {/* This is the container for Things to do */}
         <Card className="mainContainer">
           <Card.Body className="CardBody">
-            <Card.Title>ToDo ({thingsToDo})</Card.Title>
-            <hr/>
+            <Card.Title>
+              ToDo ({thingsToDo})
+              <GrSort style={{float:"right",cursor:'pointer'}} onClick={setSort} />
+              {showSortBox ? 
+                <nav>
+                  <ListGroup>
+                    <ListGroup.Item >Sort by prority </ListGroup.Item>
+                    <ListGroup.Item >Sort by create date </ListGroup.Item>
+                    <ListGroup.Item> Sort by deadline</ListGroup.Item>
+                </ListGroup>
+                </nav>:null
+              }
+              <hr/>
+              </Card.Title>
             <AddTask name={name} addtask={addTask} show={modalShow} onHide={() => setModalShow(false)}/>
             
             {todo_list}
@@ -300,14 +317,18 @@ const Main = ({name,onNameChange}) => {
           <Card.Body className="CardBody">
             <ReactCardFlip isFlipped={isFlipped} flipDirection="horizontal">
             <div>
-              <Card.Title onClick={clickedFinished}>Finished-Self ({thingsFinished})</Card.Title>
-              <hr/>
+              <Card.Title onClick={clickedFinished}>
+                Finish-Self ({thingsFinished})
+                <hr/>
+              </Card.Title>
               {finish_list}
             </div>
 
             <div>
-              <Card.Title onClick={clickedFinished}>Finished-Share({thingsFinishedShareTask})</Card.Title>
-              <hr/>
+              <Card.Title onClick={clickedFinished}>
+                Finish-Share({thingsFinishedShareTask})
+                <hr/>
+              </Card.Title>
               {sharedTasks_finish_list}
             </div>
           </ReactCardFlip>
@@ -317,9 +338,12 @@ const Main = ({name,onNameChange}) => {
         {/* This is the container for shared List. */}
         <Card className="mainContainer">
           <Card.Body className="CardBody">
-            <Card.Title>Shared List ({sharedThings})</Card.Title>
-            <hr/>
-            <AddSharedTask addtask={addSharedTask} show={modalForShared} onHide={() => setModalForShared(false)}/>
+            <Card.Title>
+              Shared List ({sharedThings})
+              <GrSort style={{float:"right",cursor:'pointer'}}/>
+              <hr/>
+            </Card.Title>
+            <AddSharedTask addtask={addSharedTask} name={name} show={modalForShared} onHide={() => setModalForShared(false)}/>
             {shared_list}
             <Button onClick={() => setModalForShared(true)} variant="light">+</Button>
             <Card.Text>

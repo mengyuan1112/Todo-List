@@ -1,6 +1,5 @@
 import React,{useState,useEffect} from 'react'
 import { FaCheck } from 'react-icons/fa'
-
 import {ListGroup} from 'react-bootstrap'
 import { VscCircleFilled } from "react-icons/vsc";
 import ShowTaskContent from './ShowTaskContent'

@@ -16,6 +16,8 @@ const ShowShareTaskContent = (props) => {
     const [toggleTime,setToggleTime] = useState(true);
     const [time,setTime] = useState(props.task.time);
     const [error,setError] = useState(false);
+
+    const [createdBy,setCreatedBy] = useState(props.task.createdBy)
     
     const handleSave = () =>{
       props.task.content = content
@@ -148,6 +150,10 @@ const ShowShareTaskContent = (props) => {
                     }}}
                   />)
                   }
+              </li>
+              
+              <li>
+                Created By: <span>{createdBy}</span>
               </li>
           </ul>
       </Modal.Body>
