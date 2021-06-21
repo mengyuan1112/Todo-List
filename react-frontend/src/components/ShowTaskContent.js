@@ -1,6 +1,9 @@
 import React,{useState} from 'react'
 import {Alert,Modal,Button,ListGroup} from 'react-bootstrap'
 import './ShowTaskContent.css'
+import { MdModeEdit } from "react-icons/md";
+
+
 
 const ShowTaskContent = (props) => {
     const [title,setTitle] =useState(props.task.title);
@@ -69,7 +72,8 @@ const ShowTaskContent = (props) => {
       <Modal.Body>
         {error? <Alert variant="danger">Duplicated title. Please try again.</Alert>:null}
           <ul>
-            <li onDoubleClick={()=>setToggleTitle(false)}>Title :
+            <li>Title :
+            <MdModeEdit onClick={()=>setToggleTitle(!toggleTitle)} style={{float:'right'}}/>
             {toggleTitle ? (<span>{newTitle}</span>):
                 (<input type='text' value={newTitle} onChange={(e)=>{setNewTitle(e.target.value)}}
                 onKeyDown={(e) => {
@@ -86,7 +90,8 @@ const ShowTaskContent = (props) => {
                   }}}
                 />  )}
                 </li>
-              <li onDoubleClick={()=>setToggleContent(false)}>Content: 
+              <li>Content: 
+              <MdModeEdit onClick={()=>setToggleContent(!toggleContent)} style={{float:'right'}}/>
                 {toggleContent ? (<span>{content}</span>):
                 (<input type='text' value={content} onChange={(e)=>{setContent(e.target.value)}}
                 onKeyDown={(e) => {
@@ -106,8 +111,8 @@ const ShowTaskContent = (props) => {
                 />)
                 }
               </li>
-              <li onDoubleClick={()=>setToggleDate(false)}>
-                  Date: 
+              <li> Date: 
+                <MdModeEdit onClick={()=>setToggleDate(!toggleDate)} style={{float:'right'}}/>
                   {toggleDate ? (<span>{date}</span>):
                   (<input type='date' value={date} onChange={(e)=>{setDate(e.target.value)}}
                   onKeyDown={(e) => {
@@ -127,8 +132,8 @@ const ShowTaskContent = (props) => {
                   />)
                   }
               </li>
-              <li onDoubleClick={()=>setToggleTime(false)}>
-                  Time:
+              <li> Time:
+                <MdModeEdit onClick={()=>setToggleTime(!toggleTime)} style={{float:'right'}}/>
                   {toggleTime ? (<span>{time}</span>):
                   (<input type='time' value={time} onChange={(e)=>{setTime(e.target.value)}}
                   onKeyDown={(e) => {
