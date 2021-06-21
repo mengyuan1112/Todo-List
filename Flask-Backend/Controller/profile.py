@@ -60,5 +60,7 @@ def change_icon(user_name):
     data = request.get_json()
     new_icon = data['icon']
     ImageDB.update_one({"username": user_name},
+
                        {"$set": {"icon": new_icon}})
     return jsonify({"result": "Pass"})
+
