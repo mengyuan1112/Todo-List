@@ -46,6 +46,23 @@ const Personal = ({name,onNameChange,changeImage}) => {
           }
         )},[])
 
+    const [friendNumber,SetfriendNumber]= useState(0);
+
+    useEffect(() => {
+        axios.get(`/${name}/personal`).then(
+          res => {
+              SetfriendNumber(res.data.number)
+             
+              //SetAvater(res.data.avater)
+          },
+         err => {
+            console.log(err);
+            Getusername('')
+            Getimage('')
+           
+          }
+        )},[])
+
     const [friends,Setfriends] = useState([]);
     const [searchName,SetsearchName] = useState('');
     const [friendName,SetfriendName] = useState('');
@@ -58,17 +75,20 @@ const Personal = ({name,onNameChange,changeImage}) => {
         // console.log()
         //friendName.preventDefault();
         //addFriends({friendName:friendName,friendPhoto:friendPhoto,friendStatus:friendStatus})
-        
-        socket.emit("Addedfriend",{username:name, searchName:searchName, ...friend});
+        Setfriends([...friends,friend])
+        SetfriendNumber(friendNumber+1)
+        socket.emit("Addedfriend",{username:name, friendName:friendName, ...friend});
         socket.on('Addedfriend',data=>{
             
             
             console.log("this is from server" + data)
             if(data.result=="pass"){
                 Setfriends([...friends,friend])
+                SetfriendNumber(friendNumber+1)
                 //SetfriendPhoto(data.photo)
                 //SetStatus(data.status)
                 //setShow(false)
+                
                 
             }
             else if(data.result=="already added"){
@@ -82,32 +102,30 @@ const Personal = ({name,onNameChange,changeImage}) => {
             }
 
             })
-        return false
+            
+        return true
         }
         
 
     const handleSubmit=(e)=>{
+        
         // props.addtask({title,content,date,time});
         e.preventDefault();
         setError(false)
         if(addFriends({friendName:friendName,friendPhoto:friendPhoto,friendStatus:friendStatus})){
-            //setShow(false)
+            setShow(false)
         }
         else{
             setError(true)
         }
-        //SetfriendName(friendName)
-        
-       
-        
-       
-        
         
 
     }
     
-    const deleteFriend = (friend) =>{
-        socket.emit("Deletefriend",{username:name,  ...friend})
+    const deleteFriend = (f) =>{
+        Setfriends(friends.filter((friend)=> friend.friendName!== f.friendName ))
+        SetfriendNumber(friendNumber-1)
+        socket.emit("Deletefriend",{username:name,  ...f})
         }
     
 
@@ -131,12 +149,13 @@ const Personal = ({name,onNameChange,changeImage}) => {
             </Card>
             <Card>
                 <Card.Body >
-                    <Card.Title> My Friends</Card.Title>
+                    <Card.Title> My Friends ({friendNumber})</Card.Title>
                     <ListGroup variant="flush">
                        <ListGroup.Item>
                         <Button  variant="light"  onClick={handleShow}><CgUserAdd/></Button>
                          Add new friends
                         </ListGroup.Item>
+                        
                     </ListGroup>
                     {friend_list}
                     </Card.Body>
@@ -150,7 +169,7 @@ const Personal = ({name,onNameChange,changeImage}) => {
                     <Form.Group as={Row} className="mb-3" controlId="formPlaintextPassword">
                     <Col sm="10">
                     <Form.Control  placeholder="Search by username" size="sm" style={{borderRadius:'10px'}} onChange={(e)=>{
-                        SetsearchName(e.target.value)}}/>
+                        SetfriendName(e.target.value)}}/>
                     </Col>
                     <Button variant="outline-secondary" type="submit" >Add</Button>
                     </Form.Group>
