@@ -31,7 +31,6 @@ const Task = ({task,onDelete,deleteTask,editContent}) => {
     return (
     <ListGroup variant="flush" >
         <ListGroup.Item action onDoubleClick={()=>setModalShow(true)}>
-        <VscCircleFilled style={{float:'left', marginRight:'1rem', color:color,fontSize:'1rem'}}/>
             {task.title} 
             <FaCheck onClick={()=>onDelete(task)}
             style={{float:'right', color:'green',cursor:'pointer',fontSize:'1.5rem'}}/>
