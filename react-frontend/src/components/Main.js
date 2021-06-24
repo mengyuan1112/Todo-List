@@ -1,7 +1,7 @@
 
 import React,{useState,useEffect} from 'react'
 import Logout from './Logout'
-import {Col,CardDeck,Row,Button,ListGroup,Card} from 'react-bootstrap';
+import {Col,CardDeck,Row,Button,Dropdown,Card} from 'react-bootstrap';
 import './Main.css'
 import { Switch, Route,useParams} from 'react-router-dom';
 import AddTask from './AddTask'
@@ -14,6 +14,8 @@ import axios from 'axios'
 import AddSharedTask from './AddSharedTask'
 import ShareTask from './ShareTask'
 import ReactCardFlip from 'react-card-flip';
+import { GrSort } from "react-icons/gr";
+import SortList from './SortList';
 
 const endPoint = "http://localhost:5000/main";
 const socket = io.connect(endPoint);
@@ -32,7 +34,7 @@ const Main = ({name,onNameChange}) => {
     const [currentDate,setCurrentDate] = useState(new Date());  //initalize the date tobe today.
     const [finishedShareTask,setFinishedShareTask] = useState([])
     const [thingsFinishedShareTask,setThingsFinishedShareTask] = useState(0)
-
+    const [showSortBox,setShowBox] = useState(false);
     const [isFlipped,setIsFlipped] = useState(false)
 
     useEffect(() => {
@@ -268,6 +270,10 @@ const Main = ({name,onNameChange}) => {
       }
       })
      }
+     const setSort=()=>{
+       console.log("Set Sort is clicked.");
+       setShowBox(!showSortBox);
+     }
 
 
 
@@ -284,9 +290,17 @@ const Main = ({name,onNameChange}) => {
 
         {/* This is the container for Things to do */}
         <Card>
-          <Card.Body className="CardBody">
-            <Card.Title>ToDo ({thingsToDo})</Card.Title>
-            <hr/>
+          <Card.Body className="mainContainer">
+            <Card.Title>
+              ToDo ({thingsToDo})
+              <Dropdown variant="none" style={{float:"right"}}>
+              <Dropdown.Toggle display="hidden" variant="none" id="dropdown-basic" size="sm">
+              <GrSort/>
+              </Dropdown.Toggle>
+              <SortList/>
+              </Dropdown>
+              <hr/>
+              </Card.Title>
             <AddTask name={name} addtask={addTask} show={modalShow} onHide={() => setModalShow(false)}/>
             
             {todo_list}
@@ -296,18 +310,22 @@ const Main = ({name,onNameChange}) => {
         </Card>
 
         {/* This is the container for Finished */}
-        <Card>
-          <Card.Body className="CardBody">
+        <Card >
+          <Card.Body className="mainContainer">
             <ReactCardFlip isFlipped={isFlipped} flipDirection="horizontal">
             <div>
-              <Card.Title onClick={clickedFinished}>Finished-Self ({thingsFinished})</Card.Title>
-              <hr/>
+              <Card.Title onClick={clickedFinished}>
+                Finish-Self ({thingsFinished})
+                <hr/>
+              </Card.Title>
               {finish_list}
             </div>
 
             <div>
-              <Card.Title onClick={clickedFinished}>Finished-Share({thingsFinishedShareTask})</Card.Title>
-              <hr/>
+              <Card.Title onClick={clickedFinished}>
+                Finish-Share({thingsFinishedShareTask})
+                <hr/>
+              </Card.Title>
               {sharedTasks_finish_list}
             </div>
           </ReactCardFlip>
@@ -316,10 +334,18 @@ const Main = ({name,onNameChange}) => {
 
         {/* This is the container for shared List. */}
         <Card>
-          <Card.Body className="CardBody">
-            <Card.Title>Shared List ({sharedThings})</Card.Title>
-            <hr/>
-            <AddSharedTask addtask={addSharedTask} show={modalForShared} onHide={() => setModalForShared(false)}/>
+          <Card.Body className="mainContainer">
+            <Card.Title>
+              Shared List ({sharedThings})
+              <Dropdown variant="none" style={{float:"right"}}>
+              <Dropdown.Toggle display="hidden" variant="none" id="dropdown-basic" size="sm">
+              <GrSort/>
+              </Dropdown.Toggle>
+              <SortList/>
+              </Dropdown>
+              <hr/>
+            </Card.Title>
+            <AddSharedTask addtask={addSharedTask} name={name} show={modalForShared} onHide={() => setModalForShared(false)}/>
             {shared_list}
             <Button onClick={() => setModalForShared(true)} variant="light">+</Button>
             <Card.Text>
