@@ -1,7 +1,7 @@
 
 import React,{useState,useEffect} from 'react'
 import Logout from './Logout'
-import {Col,CardDeck,Row,Button,ListGroup,Card} from 'react-bootstrap';
+import {Col,CardDeck,Row,Button,Dropdown,Card} from 'react-bootstrap';
 import './Main.css'
 import { Switch, Route,useParams} from 'react-router-dom';
 import AddTask from './AddTask'
@@ -15,6 +15,7 @@ import AddSharedTask from './AddSharedTask'
 import ShareTask from './ShareTask'
 import ReactCardFlip from 'react-card-flip';
 import { GrSort } from "react-icons/gr";
+import SortList from './SortList';
 
 const endPoint = "http://localhost:5000/main";
 const socket = io.connect(endPoint);
@@ -288,20 +289,16 @@ const Main = ({name,onNameChange}) => {
       <CardDeck style={{margin:'5px 10px'}}>
 
         {/* This is the container for Things to do */}
-        <Card className="mainContainer">
-          <Card.Body className="CardBody">
+        <Card>
+          <Card.Body className="mainContainer">
             <Card.Title>
               ToDo ({thingsToDo})
-              <GrSort style={{float:"right",cursor:'pointer'}} onClick={setSort} />
-              {showSortBox ? 
-                <nav>
-                  <ListGroup>
-                    <ListGroup.Item >Sort by prority </ListGroup.Item>
-                    <ListGroup.Item >Sort by create date </ListGroup.Item>
-                    <ListGroup.Item> Sort by deadline</ListGroup.Item>
-                </ListGroup>
-                </nav>:null
-              }
+              <Dropdown variant="none" style={{float:"right"}}>
+              <Dropdown.Toggle display="hidden" variant="none" id="dropdown-basic" size="sm">
+              <GrSort/>
+              </Dropdown.Toggle>
+              <SortList/>
+              </Dropdown>
               <hr/>
               </Card.Title>
             <AddTask name={name} addtask={addTask} show={modalShow} onHide={() => setModalShow(false)}/>
@@ -313,8 +310,8 @@ const Main = ({name,onNameChange}) => {
         </Card>
 
         {/* This is the container for Finished */}
-        <Card className="mainContainer">
-          <Card.Body className="CardBody">
+        <Card >
+          <Card.Body className="mainContainer">
             <ReactCardFlip isFlipped={isFlipped} flipDirection="horizontal">
             <div>
               <Card.Title onClick={clickedFinished}>
@@ -336,11 +333,16 @@ const Main = ({name,onNameChange}) => {
         </Card>
 
         {/* This is the container for shared List. */}
-        <Card className="mainContainer">
-          <Card.Body className="CardBody">
+        <Card>
+          <Card.Body className="mainContainer">
             <Card.Title>
               Shared List ({sharedThings})
-              <GrSort style={{float:"right",cursor:'pointer'}}/>
+              <Dropdown variant="none" style={{float:"right"}}>
+              <Dropdown.Toggle display="hidden" variant="none" id="dropdown-basic" size="sm">
+              <GrSort/>
+              </Dropdown.Toggle>
+              <SortList/>
+              </Dropdown>
               <hr/>
             </Card.Title>
             <AddSharedTask addtask={addSharedTask} name={name} show={modalForShared} onHide={() => setModalForShared(false)}/>
