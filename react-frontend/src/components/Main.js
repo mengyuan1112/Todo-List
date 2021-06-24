@@ -97,9 +97,10 @@ const Main = ({name,onNameChange}) => {
       console.log({username:name,currentDate:currentDate, ...task});
       socket.emit("AddedSharedTask",{username:name,currentDate:currentDate, ...task});
       setShareThing(sharedThings+1);
-
       socket.on("AddedSharedTask",data=>{
         console.log("This is from added shared task: ",data);
+        setSharedTasks([...sharedTasks,data])
+        setThingsFinishedShareTask(sharedTasks.length)
       })
       return true
     }
@@ -221,7 +222,7 @@ const Main = ({name,onNameChange}) => {
     }
 
     const todo_list = tasks.map((task) =>
-        <Task key={task.title} editContent = {editTaskContent} task = {task}  onDelete={moveToFinish} deleteTask={deleteTaskFromTodo}/>
+      <Task key={task.title} editContent = {editTaskContent} task = {task}  onDelete={moveToFinish} deleteTask={deleteTaskFromTodo}/>
     );  
 
     const finish_list = finishedTask.map((task)=>
@@ -269,10 +270,6 @@ const Main = ({name,onNameChange}) => {
            console.log(data)
       }
       })
-     }
-     const setSort=()=>{
-       console.log("Set Sort is clicked.");
-       setShowBox(!showSortBox);
      }
 
 
