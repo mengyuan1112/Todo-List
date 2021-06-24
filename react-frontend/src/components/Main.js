@@ -13,6 +13,7 @@ import FinishedTasks from './FinishedTasks';
 import axios from 'axios'
 import AddSharedTask from './AddSharedTask'
 import ShareTask from './ShareTask'
+import ReactCardFlip from 'react-card-flip';
 
 const endPoint = "http://localhost:5000/main";
 const socket = io.connect(endPoint);
@@ -23,13 +24,20 @@ const Main = ({name,onNameChange}) => {
     const [modalForShared,setModalForShared] = useState(false);
     const [tasks, setTasks] = useState([]);
     const [finishedTask,setFinishedTask] = useState([]);
+    const [shareFinishedTask,setShareFinishedTask] = useState([]);
     const [sharedTasks, setSharedTasks] = useState([]);
     const [thingsFinished,setThingsFinished] = useState(0); //number of thing finished
     const [thingsToDo,setThingTodo]= useState(0); // number of thing todo
     const [sharedThings, setShareThing] = useState(0);  //number of shared task
-    const [ currentDate,setCurrentDate] = useState(new Date());  //initalize the date tobe today.
-    useEffect(() => {
+    const [currentDate,setCurrentDate] = useState(new Date());  //initalize the date tobe today.
+    const [finishedShareTask,setFinishedShareTask] = useState([])
+    const [thingsFinishedShareTask,setThingsFinishedShareTask] = useState(0)
 
+    const [isFlipped,setIsFlipped] = useState(false)
+
+    useEffect(() => {
+        //send username to backend once user land in main page.
+        //send a get request for user data.
         axios.get(`${name}/main`).then(
             res => {
               console.log(res)
@@ -60,33 +68,22 @@ const Main = ({name,onNameChange}) => {
                   }  else {
                        console.log(res.data)
                   }
-                
-                // err => {
-                //   console.log(err);
-                //   setTasks([]);
-                //   setThingTodo([]);
-                //   setSharedTasks([]);
-                //   setThingsFinished(0)
-                //   setThingTodo(0)
-                //   setShareThing(0)
-            })
+                })
       //disconnect once done.
       // return () =>socket.disconnect();
       },[]);
-
+     const clickedFinished=()=>{
+        setIsFlipped(!isFlipped)
+      }
 
     const addTask=(task)=>{
       const sameTitle = tasks.find(t=>t.title === task.title);
       if (sameTitle) return false
       setTasks([...tasks,task])
       currentDate.setHours(0,0,0,0,0);
-      // console.log({username:name,currentDate:currentDate, ...task})
+      console.log({username:name,currentDate:currentDate, ...task})
       socket.emit("AddedTask",{username:name,currentDate:currentDate.toISOString(), ...task});
       setThingTodo(thingsToDo+1)
-      socket.on('AddedTask',data=>{
-        //update todo, finished and shared list to the setNewDay.
-        console.log("this is from server" + data)
-       })
       return true
     }
 
@@ -98,8 +95,14 @@ const Main = ({name,onNameChange}) => {
       console.log({username:name,currentDate:currentDate, ...task});
       socket.emit("AddedSharedTask",{username:name,currentDate:currentDate, ...task});
       setShareThing(sharedThings+1);
+
+      socket.on("AddedSharedTask",data=>{
+        console.log("This is from added shared task: ",data);
+      })
       return true
     }
+
+
 
     const moveToFinish = (t) =>{
       setTasks(tasks.filter((task)=> task.title !== t.title ))
@@ -117,10 +120,20 @@ const Main = ({name,onNameChange}) => {
       if (status){
         //setShareThing(sharedThings-1)
         socket.emit("finishedShareTask",{useraname:name,currentDate:currentDate,t})
+        socket.on("finishedShareTask",data=>{
+          console.log(data);
+          // TODO: I will need to check if all the share user have finished the task, if so, move the task to finish.
+          // Else, do nothing.
+        })
       }
       else{
         //setShareThing(sharedThings+1)
-        socket.emit("undoFinishedShareTask",{useraname:name,currentDate:currentDate,t})
+        socket.emit("undoFinishedShareTask",{useraname:name,currentDate:currentDate,t});
+        socket.on("undoFinishedShareTask",data=>{
+          console.log(data);
+          //TODO: If the task is on Finished, move back to shared List,
+          //Else: do nothing.
+        })
       }
     }
 
@@ -217,6 +230,10 @@ const Main = ({name,onNameChange}) => {
     <ShareTask key={task.title} editContent = {editShareTaskContent} task = {task}  taskStatus={shareTaskStatus} deleteTask={deleteTaskFromShareList}/>
     );
 
+    const sharedTasks_finish_list = finishedShareTask.map((task) =>
+    <ShareTask key={task.title} editContent = {editShareTaskContent} task = {task}  taskStatus={shareTaskStatus} deleteTask={deleteTaskFromShareList}/>
+    );
+
     const setNewDay = (e) =>{
       setCurrentDate(e);
       e.setHours(0,0,0,0,0);
@@ -250,12 +267,6 @@ const Main = ({name,onNameChange}) => {
            console.log(data)
       }
       })
-      //  setTasks([]);
-      //  setThingTodo([]);
-      //  setSharedTasks([]);
-      //  setThingsFinished(0)
-      //  setThingTodo(0)
-      //  setShareThing(0)
      }
 
 
@@ -287,11 +298,19 @@ const Main = ({name,onNameChange}) => {
         {/* This is the container for Finished */}
         <Card>
           <Card.Body className="CardBody">
-            <Card.Title>Finished ({thingsFinished})</Card.Title>
-            <hr/>
+            <ReactCardFlip isFlipped={isFlipped} flipDirection="horizontal">
+            <div>
+              <Card.Title onClick={clickedFinished}>Finished-Self ({thingsFinished})</Card.Title>
+              <hr/>
+              {finish_list}
+            </div>
 
-            {finish_list}
-
+            <div>
+              <Card.Title onClick={clickedFinished}>Finished-Share({thingsFinishedShareTask})</Card.Title>
+              <hr/>
+              {sharedTasks_finish_list}
+            </div>
+          </ReactCardFlip>
           </Card.Body>
         </Card>
 
@@ -309,9 +328,6 @@ const Main = ({name,onNameChange}) => {
         </Card>
       </CardDeck>
       </div>
-      <Switch>
-        <Route exact path="/addTask" component={AddTask}/> 
-      </Switch>
       </>
     )
 }

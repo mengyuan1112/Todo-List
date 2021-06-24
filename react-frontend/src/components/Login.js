@@ -9,8 +9,12 @@ import './Login.css';
 import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props'
 import { ImFacebook2 } from "react-icons/im"
 import GoogleLogin from 'react-google-login';
+import io from 'socket.io-client';
 
-const Login = ({name,onNameChange,expire}) => {
+const endPoint = "http://localhost:5000/login";
+const socket = io.connect(endPoint);
+
+const Login = ({name,onNameChange,expire,changeNickName}) => {
     const [username,setUsername] = useState('');
     const [password,setPassword] = useState('');
     const [error,setError] = useState('');
@@ -23,6 +27,7 @@ const Login = ({name,onNameChange,expire}) => {
         axios.post('google/login',{token: response.tokenObj.id_token, name: response.profileObj.name})
         .then(res=>{
             onNameChange(response.profileObj.name)
+            socket.emit("onlineUser",{username:response.profileObj.name});
             localStorage.setItem('token',response.tokenObj.id_token);
             console.log(res)
         })
@@ -44,6 +49,7 @@ const Login = ({name,onNameChange,expire}) => {
     const responseFacebook = (response) => {
         onNameChange(response.name)
         localStorage.setItem('token',response.accessToken);
+        socket.emit("onlineUser",{username:response.name})
         console.log('[Login sucess from Facebook] ',response)
         //given: acessesToken,id,name,userID;
         //send the acessToken to backend.
@@ -69,8 +75,10 @@ const Login = ({name,onNameChange,expire}) => {
                 if (response.data.result === 'Pass'){
                     console.log('[Regular login passed]',response);
                     localStorage.setItem('token',response.data.token);
+                    socket.emit("onlineUser",{username:response.data.username})
                     onNameChange(response.data.username)
-                    history.push(`/${username}/home`)
+                    changeNickName(response.data.name)
+                    history.push(`${response.data.username}/home`)
                 }
                 else{
                     console.log(response.data);
@@ -90,6 +98,7 @@ const Login = ({name,onNameChange,expire}) => {
         <Col xs={5}>
             <br></br>
             <br></br>
+            {/* {expire ? <Alert variant="danger">Your session have expired.Please Login again</Alert>:null} */}
             <h1>Login</h1>
             <hr></hr>
             {name ? (<Link to= {`/${name}/home`} />) : (<p style={{color:'red'}} >{error}</p>)}
@@ -133,6 +142,9 @@ const Login = ({name,onNameChange,expire}) => {
             </div>
         </Col>
         </Row>
+        {/* <Switch>
+            <Route exact path={`/${name}/home`} component={<Home/>}/>
+        </Switch> */}
     </Container>
     )
 }

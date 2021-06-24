@@ -8,7 +8,7 @@ import { useDetectOutsideClick } from "./useDetectOutsideClick";
 
 
 // This will create the navbar.
-const Navigation=({name,onNameChange,img})=>{
+const Navigation=({name,onNameChange,img,changeNickName})=>{
     const history = useHistory();
     const dropdownRef = useRef(null);
     const [isActive,setIsActive]  = useState (false); 
@@ -18,6 +18,7 @@ const Navigation=({name,onNameChange,img})=>{
         setExpanded(false)
         localStorage.clear()
         onNameChange('')
+        changeNickName("")
         history.push('/home')
     };
     
