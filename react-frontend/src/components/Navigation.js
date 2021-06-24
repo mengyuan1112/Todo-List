@@ -4,6 +4,7 @@ import {useHistory} from 'react-router-dom'
 import './Navigation.css'
 import hhh from '../1.png';
 import ListGroup from 'react-bootstrap/ListGroup'
+import { useDetectOutsideClick } from "./useDetectOutsideClick";
 
 
 // This will create the navbar.
@@ -11,6 +12,7 @@ const Navigation=({name,onNameChange,img,changeNickName})=>{
     const history = useHistory();
     const dropdownRef = useRef(null);
     const [isActive,setIsActive]  = useState (false); 
+    //const [isActive, setIsActive] = useDetectOutsideClick(dropdownRef, false);
     const [expanded, setExpanded] = useState(false);    //This is used to set to close the navbar when user onclick.
     const logout =()=>{
         setExpanded(false)
@@ -22,6 +24,7 @@ const Navigation=({name,onNameChange,img,changeNickName})=>{
     
     
     const onClick = () => setIsActive(!isActive);
+    
     let hreflink=""
     if (name){
         hreflink='/'+name
@@ -71,7 +74,9 @@ const Navigation=({name,onNameChange,img,changeNickName})=>{
 
                 <ListGroup>
                     <ListGroup.Item action href={`${hreflink}/profile`}>Profile </ListGroup.Item>
+                    <ListGroup.Item action href={`${hreflink}/personal`}>Personal </ListGroup.Item>
                     <ListGroup.Item action onClick={logout}> Logout </ListGroup.Item>
+                    
                 </ListGroup>
 
             </nav>
