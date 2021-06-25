@@ -78,7 +78,7 @@ const Login = ({name,onNameChange,expire,changeNickName}) => {
                     // socket.emit("onlineUser",{username:response.data.username})
                     onNameChange(response.data.username)
                     changeNickName(response.data.name)
-                    history.push(`${response.data.username}/home`)
+                    history.push(`/${response.data.username}/home`)
                 }
                 else{
                     console.log(response.data);

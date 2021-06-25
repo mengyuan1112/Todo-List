@@ -78,14 +78,9 @@ function App() {
             <Switch>
               <Route exact path={`/:name/home`} component = {()=> <Home name={name} expire={expire} ticketLength={length} nickName={nickName} changeNickName={changeNickName}  onNameChange={onChange} thingsToDo={2}/>}/>
               <Route exact path={`/:name/main`} component={()=> <Main name={name} onNameChange={onChange}/>} />
-
               <Route exact path={`/:name/personal`} component={()=><Personal name={name} onNameChange={onChange}/>}/>
-              
-
               <Route exact path={`/:name/profile`} component={()=> <Profile name={name} changeNickName={changeNickName} changeImage={changeImage} onNameChange={onChange}/>} />
-
               <Route exact path={`/:name/`} component = {()=> <Home name={name} expire={expire} ticketLength={length} nickName={nickName} onNameChange={onChange} />}/>
-
               </Switch>) 
             :(<Switch>
               <Route exact path="/home" component = {()=> <Home name={name} changeNickName={changeNickName} expire={expire} nickName={nickName} ticketLength={length}  onNameChange={onChange} />}/>
