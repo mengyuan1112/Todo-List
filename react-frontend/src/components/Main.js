@@ -36,6 +36,7 @@ const Main = ({name,onNameChange}) => {
     const [thingsFinishedShareTask,setThingsFinishedShareTask] = useState(0)
     const [showSortBox,setShowBox] = useState(false);
     const [isFlipped,setIsFlipped] = useState(false)
+    const [sort,setSort] = useState('default');
 
     useEffect(() => {
         //send username to backend once user land in main page.
@@ -221,9 +222,13 @@ const Main = ({name,onNameChange}) => {
       return true
     }
 
-    const todo_list = tasks.map((task) =>
-      <Task key={task.title} editContent = {editTaskContent} task = {task}  onDelete={moveToFinish} deleteTask={deleteTaskFromTodo}/>
-    );  
+    const sortByDate = tasks.sort((a,b)=>(a.date > b.date)? 1:-1).map(
+      (task) => <Task key={task.title} editContent = {editTaskContent} task = {task}  onDelete={moveToFinish} deleteTask={deleteTaskFromTodo}/>)
+    const sortByRange = tasks.sort((a,b)=>(a.range < b.range)? 1:-1).map((task) =>
+    <Task key={task.title} editContent = {editTaskContent} task = {task}  onDelete={moveToFinish} deleteTask={deleteTaskFromTodo}/>)
+    const sortByDefault = tasks.map((task) =>
+    <Task key={task.title} editContent = {editTaskContent} task = {task}  onDelete={moveToFinish} deleteTask={deleteTaskFromTodo}/>)
+
 
     const finish_list = finishedTask.map((task)=>
       <FinishedTasks key={task.title} editContent = {editTaskContent} task={task} backShareList={moveBackShareList} backTodo={moveBackTodo} deleteTask={deleteTaskFromFinished}/>
@@ -272,7 +277,10 @@ const Main = ({name,onNameChange}) => {
       })
      }
 
-
+    const setSortBy=(e)=>{
+      console.log("setSortBy:",e);
+      setSort(e);
+    }
 
     return (
       <>
@@ -294,13 +302,15 @@ const Main = ({name,onNameChange}) => {
               <Dropdown.Toggle display="hidden" variant="none" id="dropdown-basic" size="sm">
               <GrSort/>
               </Dropdown.Toggle>
-              <SortList/>
+              <SortList setSortBy={setSortBy} />
               </Dropdown>
               <hr/>
               </Card.Title>
             <AddTask name={name} addtask={addTask} show={modalShow} onHide={() => setModalShow(false)}/>
             
-            {todo_list}
+            {sort === "date" ? sortByDate:null}
+            {sort === "range" ? sortByRange:null}
+            {sort === "default" ? sortByDefault:null}
 
             <Button onClick={() => setModalShow(true)} variant="light">+</Button>
           </Card.Body>
