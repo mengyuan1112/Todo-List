@@ -1,11 +1,9 @@
 # if websocket is not connect try to uninstall socket then install again
 
-from datetime import date
-from flask import Flask
+
 from flask_socketio import SocketIO, send, emit
 from .app import socketio
-from pymongo import MongoClient
-from .database import UserDB, TicketDB, GoogleDB, ImageDB
+from .database import TicketDB
 
 # client = MongoClient('localhost', 27017)
 # db = client.Todo_list

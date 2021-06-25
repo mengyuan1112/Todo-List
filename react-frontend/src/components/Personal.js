@@ -14,7 +14,7 @@ import FriendList from './FriendList'
 
 import io from 'socket.io-client'
 import axios from 'axios';
-const endPoint = "http://localhost:5000/main";
+const endPoint = "http://localhost:5000/friends";
 
 const socket = io.connect(endPoint);
 
@@ -59,7 +59,7 @@ const Personal = ({name,onNameChange,changeImage}) => {
         //friendName.preventDefault();
         //addFriends({friendName:friendName,friendPhoto:friendPhoto,friendStatus:friendStatus})
         
-        socket.emit("Addedfriend",{username:name, searchName:searchName, ...friend});
+        socket.emit("Addedfriend",{username:name, searchName:searchName, ...friend}, console.log("hello"));
         socket.on('Addedfriend',data=>{
             
             
