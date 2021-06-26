@@ -1,5 +1,5 @@
 import { Alert,Container,Row,Form,Button,Col } from 'react-bootstrap';
-import { Link,Route,Switch,useHistory } from 'react-router-dom';
+import { Link,Redirect,Route,Switch,useHistory } from 'react-router-dom';
 import Home from './Home';
 import Main from './Main';
 import Register from './Register';
@@ -79,7 +79,9 @@ const Login = ({name,onNameChange,expire,changeNickName}) => {
                     onNameChange(response.data.username)
                     changeNickName(response.data.name)
                     setNickName(response.data.name);
+                    // return <Redirect to={"/"+response.data.username+"/home"}/>
                     history.push(`/${response.data.username}/home`)
+                    window.location.reload(false);
                 }
                 else{
                     console.log(response.data);
