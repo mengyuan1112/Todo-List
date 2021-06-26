@@ -17,6 +17,7 @@ import io from 'socket.io-client';
 const Login = ({name,onNameChange,expire,changeNickName}) => {
     const [username,setUsername] = useState('');
     const [password,setPassword] = useState('');
+    const [nickName,setNickName] = useState('')
     const [error,setError] = useState('');
     const history = useHistory();
 
@@ -75,9 +76,9 @@ const Login = ({name,onNameChange,expire,changeNickName}) => {
                 if (response.data.result === 'Pass'){
                     console.log('[Regular login passed]',response);
                     localStorage.setItem('token',response.data.token);
-                    // socket.emit("onlineUser",{username:response.data.username})
                     onNameChange(response.data.username)
                     changeNickName(response.data.name)
+                    setNickName(response.data.name);
                     history.push(`/${response.data.username}/home`)
                 }
                 else{
@@ -142,9 +143,7 @@ const Login = ({name,onNameChange,expire,changeNickName}) => {
             </div>
         </Col>
         </Row>
-        {/* <Switch>
-            <Route exact path={`/${name}/home`} component={<Home/>}/>
-        </Switch>  */}
+            <Route exact path={`/${name}/home`} component = {()=> <Home name={name} expire={expire} nickName={nickName} changeNickName={changeNickName}  onNameChange={onNameChange} thingsToDo={2}/>}/>
     </Container>
     )
 }

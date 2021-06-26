@@ -1,6 +1,6 @@
 import Navigation from './components/Navigation'
 import React ,{useState,useEffect} from 'react'
-import { Switch, Route,useHistory, Redirect} from 'react-router-dom';
+import { Switch, Route,useHistory} from 'react-router-dom';
 import Home from './components/Home';
 import Register from './components/Register';
 import Login from './components/Login';
@@ -14,7 +14,6 @@ import axios from 'axios';
 
 function App() {
   const [name,setName] = useState('');
-  const [self_ticket,setSelf_ticket] = useState([]);
   const [nickName,setNickName] = useState('');
   const [length,setLength] = useState(0)
   const [expire,setExpire] = useState(false)
@@ -26,16 +25,18 @@ function App() {
       res => {
         console.log("This is the get request from login (app.js) \n",res)
         if (res.data.result === "Expired"){
+          console.log("The user have expired cookie. Setting the name and cookie to be empty.")
           setName("");
-          console.log("The user have expired cookie. Redirect to login page.")
+          localStorage.clear();
           setExpire(true)
           setNickName("")
+          history.push('/home')
         }
         else{
-          setExpire(false)
-          setName(res.data.username)
-          setNickName(res.data.name)
-       }
+        setExpire(false)
+        setName(res.data.username)
+        setNickName(res.data.name)
+      }
       },
       err => {
         console.log(err);
@@ -70,10 +71,8 @@ function App() {
     }
 
     return (
-        <div className="App">
+        <>
           <Navigation name={name} onNameChange={onChange} img={img} changeNickName={changeNickName} />
-          <div>
-
             {(name && !expire) ?(
             <Switch>
               <Route exact path={`/:name/home`} component = {()=> <Home name={name} expire={expire} ticketLength={length} nickName={nickName} changeNickName={changeNickName}  onNameChange={onChange} thingsToDo={2}/>}/>
@@ -90,8 +89,7 @@ function App() {
 
             </Switch>
               )}
-          </div>
-        </div>
+        </>
       );
   }
 
