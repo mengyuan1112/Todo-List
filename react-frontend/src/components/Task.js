@@ -3,7 +3,7 @@ import { FaCheck } from 'react-icons/fa'
 import {ListGroup} from 'react-bootstrap'
 import { VscCircleFilled } from "react-icons/vsc";
 import ShowTaskContent from './ShowTaskContent'
-
+import { AiTwotoneBell } from "react-icons/ai";
 const Task = ({task,onDelete,deleteTask,editContent}) => {
     const [color,setColor] = useState('');
     useEffect(() => {
@@ -30,6 +30,7 @@ const Task = ({task,onDelete,deleteTask,editContent}) => {
     return (
     <ListGroup variant="flush" >
         <ListGroup.Item action onDoubleClick={()=>setModalShow(true)}>
+            <AiTwotoneBell style={{color:color}}/>
             {task.title} 
             <FaCheck onClick={()=>onDelete(task)}
             style={{float:'right', color:'green',cursor:'pointer',fontSize:'1.5rem'}}/>
