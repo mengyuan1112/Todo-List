@@ -37,6 +37,7 @@ const Main = ({name,onNameChange}) => {
     const [showSortBox,setShowBox] = useState(false);
     const [isFlipped,setIsFlipped] = useState(false)
     const [sort,setSort] = useState('default');
+    const [shareSort,setShareSort] = useState('default')
 
     useEffect(() => {
         //send username to backend once user land in main page.
@@ -222,6 +223,10 @@ const Main = ({name,onNameChange}) => {
       return true
     }
 
+    const setShareListSort = (e)=>{
+      setShareSort(e);
+    }
+
     const sortByDate = tasks.sort((a,b)=>(a.date > b.date)? 1:-1).map(
       (task) => <Task key={task.title} editContent = {editTaskContent} task = {task}  onDelete={moveToFinish} deleteTask={deleteTaskFromTodo}/>)
     const sortByRange = tasks.sort((a,b)=>(a.range < b.range)? 1:-1).map((task) =>
@@ -229,18 +234,26 @@ const Main = ({name,onNameChange}) => {
     const sortByDefault = tasks.map((task) =>
     <Task key={task.title} editContent = {editTaskContent} task = {task}  onDelete={moveToFinish} deleteTask={deleteTaskFromTodo}/>)
 
+    
+    const shareSortByDate = sharedTasks.sort((a,b)=>(a.date > b.date)? 1:-1).map(
+      (task) => <ShareTask key={task.title} editContent = {editShareTaskContent} task = {task}  taskStatus={shareTaskStatus} deleteTask={deleteTaskFromShareList}/>)
+
+    const shareSortByRange = sharedTasks.sort((a,b)=>(a.range < b.range)? 1:-1).map((task) =>
+    <ShareTask key={task.title} editContent = {editShareTaskContent} task = {task}  taskStatus={shareTaskStatus} deleteTask={deleteTaskFromShareList}/>)
+
+    const shareSortByDefault = sharedTasks.map((task) =>
+    <ShareTask key={task.title} editContent = {editShareTaskContent} task = {task}  taskStatus={shareTaskStatus} deleteTask={deleteTaskFromShareList}/>
+    );
 
     const finish_list = finishedTask.map((task)=>
       <FinishedTasks key={task.title} editContent = {editTaskContent} task={task} backShareList={moveBackShareList} backTodo={moveBackTodo} deleteTask={deleteTaskFromFinished}/>
     );
 
-    const shared_list = sharedTasks.map((task) =>
-    <ShareTask key={task.title} editContent = {editShareTaskContent} task = {task}  taskStatus={shareTaskStatus} deleteTask={deleteTaskFromShareList}/>
-    );
-
     const sharedTasks_finish_list = finishedShareTask.map((task) =>
     <ShareTask key={task.title} editContent = {editShareTaskContent} task = {task}  taskStatus={shareTaskStatus} deleteTask={deleteTaskFromShareList}/>
     );
+
+
 
     const setNewDay = (e) =>{
       setCurrentDate(e);
@@ -278,7 +291,6 @@ const Main = ({name,onNameChange}) => {
      }
 
     const setSortBy=(e)=>{
-      console.log("setSortBy:",e);
       setSort(e);
     }
 
@@ -348,12 +360,14 @@ const Main = ({name,onNameChange}) => {
               <Dropdown.Toggle display="hidden" variant="none" id="dropdown-basic" size="sm">
               <GrSort/>
               </Dropdown.Toggle>
-              <SortList/>
+              <SortList setSortBy={setShareListSort}/>
               </Dropdown>
               <hr/>
             </Card.Title>
             <AddSharedTask addtask={addSharedTask} name={name} show={modalForShared} onHide={() => setModalForShared(false)}/>
-            {shared_list}
+            {shareSort === "date" ? shareSortByDate:null}
+            {shareSort === "range" ? shareSortByRange:null}
+            {shareSort === "default" ? shareSortByDefault:null}
             <Button onClick={() => setModalForShared(true)} variant="light">+</Button>
             <Card.Text>
             </Card.Text>

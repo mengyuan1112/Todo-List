@@ -7,25 +7,29 @@ import { AiTwotoneBell } from "react-icons/ai";
 const Task = ({task,onDelete,deleteTask,editContent}) => {
     const [color,setColor] = useState('');
     useEffect(() => {
-        if (task.range === "1"){
+        setNewColor(task.range);
+    }, [color])
+
+    const setNewColor = (e)=>{
+        if (e === "1"){
             setColor('blue');
         }
-        else if (task.range === "2"){
+        else if (e === "2"){
             setColor('green');
         }
-        else if (task.range === "3"){
+        else if (e === "3"){
             setColor("yellow")
         }
-        else if (task.range === "4"){
+        else if (e === "4"){
             setColor("orange")
         }
-        else if (task.range === "5"){
+        else if (e === "5"){
             setColor("red")
         }
         else{
             setColor('blue')
         }
-    }, [task])
+    }
     const [modalShow, setModalShow] = React.useState(false);
     return (
     <ListGroup variant="flush" >
@@ -36,6 +40,7 @@ const Task = ({task,onDelete,deleteTask,editContent}) => {
             style={{float:'right', color:'green',cursor:'pointer',fontSize:'1.5rem'}}/>
         </ListGroup.Item>
         <ShowTaskContent
+        setNewColor= {setNewColor}
         deleteTask={deleteTask}
         task={task}
         editContent={editContent}
