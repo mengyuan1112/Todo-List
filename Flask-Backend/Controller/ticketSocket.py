@@ -20,8 +20,7 @@ clients = {}
 
 @socketio.on("onlineUser", namespace='/main')
 def online_user(data):
-    if data['username'] not in clients:
-        clients[data["username"]] = request.sid
+    clients[data["username"]] = request.sid
     join_room(request.sid)
     print("The username", data["username"],
           " has join.Their SID is : ", request.sid)
