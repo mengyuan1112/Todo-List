@@ -20,7 +20,6 @@ import SortList from './SortList';
 const endPoint = "http://localhost:5000/main";
 const socket = io.connect(endPoint);
 
-
 const Main = ({name,onNameChange}) => {
     const [modalShow, setModalShow] = useState(false);
     const [modalForShared,setModalForShared] = useState(false);
@@ -42,6 +41,7 @@ const Main = ({name,onNameChange}) => {
     useEffect(() => {
         //send username to backend once user land in main page.
         //send a get request for user data.
+        socket.emit("onlineUser",{username:name})
         axios.get(`${name}/main`).then(
             res => {
               console.log(res)
@@ -99,13 +99,13 @@ const Main = ({name,onNameChange}) => {
       console.log({username:name,currentDate:currentDate, ...task});
       socket.emit("AddedSharedTask",{username:name,currentDate:currentDate, ...task});
       setShareThing(sharedThings+1);
-      socket.on("AddedSharedTask",data=>{
-        console.log("This is from added shared task: ",data);
-        setSharedTasks([...sharedTasks,data])
-        setThingsFinishedShareTask(sharedTasks.length)
-      })
       return true
     }
+    socket.on("receviedShareTask",data=>{
+      console.log("This is from added shared task: ",data);
+      setSharedTasks([...sharedTasks,data]);
+      setShareThing(sharedThings+1);
+    })
 
 
 
