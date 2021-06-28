@@ -1,5 +1,5 @@
 import { Alert,Container,Row,Form,Button,Col } from 'react-bootstrap';
-import { Link,Route,Switch,useHistory } from 'react-router-dom';
+import { Link,Redirect,Route,Switch,useHistory } from 'react-router-dom';
 import Home from './Home';
 import Main from './Main';
 import Register from './Register';
@@ -11,12 +11,13 @@ import { ImFacebook2 } from "react-icons/im"
 import GoogleLogin from 'react-google-login';
 import io from 'socket.io-client';
 
-const endPoint = "http://localhost:5000/login";
-const socket = io.connect(endPoint);
+// const endPoint = "http://localhost:5000/login";
+// const socket = io.connect(endPoint);
 
 const Login = ({name,onNameChange,expire,changeNickName}) => {
     const [username,setUsername] = useState('');
     const [password,setPassword] = useState('');
+    const [nickName,setNickName] = useState('')
     const [error,setError] = useState('');
     const history = useHistory();
 
@@ -27,7 +28,7 @@ const Login = ({name,onNameChange,expire,changeNickName}) => {
         axios.post('google/login',{token: response.tokenObj.id_token, name: response.profileObj.name})
         .then(res=>{
             onNameChange(response.profileObj.name)
-            socket.emit("onlineUser",{username:response.profileObj.name});
+            // socket.emit("onlineUser",{username:response.profileObj.name});
             localStorage.setItem('token',response.tokenObj.id_token);
             console.log(res)
         })
@@ -49,7 +50,7 @@ const Login = ({name,onNameChange,expire,changeNickName}) => {
     const responseFacebook = (response) => {
         onNameChange(response.name)
         localStorage.setItem('token',response.accessToken);
-        socket.emit("onlineUser",{username:response.name})
+        // socket.emit("onlineUser",{username:response.name})
         console.log('[Login sucess from Facebook] ',response)
         //given: acessesToken,id,name,userID;
         //send the acessToken to backend.
@@ -75,10 +76,12 @@ const Login = ({name,onNameChange,expire,changeNickName}) => {
                 if (response.data.result === 'Pass'){
                     console.log('[Regular login passed]',response);
                     localStorage.setItem('token',response.data.token);
-                    socket.emit("onlineUser",{username:response.data.username})
                     onNameChange(response.data.username)
                     changeNickName(response.data.name)
-                    history.push(`${response.data.username}/home`)
+                    setNickName(response.data.name);
+                    // return <Redirect to={"/"+response.data.username+"/home"}/>
+                    history.push(`/${response.data.username}/home`)
+                    window.location.reload(false);
                 }
                 else{
                     console.log(response.data);
@@ -142,9 +145,7 @@ const Login = ({name,onNameChange,expire,changeNickName}) => {
             </div>
         </Col>
         </Row>
-        {/* <Switch>
-            <Route exact path={`/${name}/home`} component={<Home/>}/>
-        </Switch> */}
+            <Route exact path={`/${name}/home`} component = {()=> <Home name={name} expire={expire} nickName={nickName} changeNickName={changeNickName}  onNameChange={onNameChange} thingsToDo={2}/>}/>
     </Container>
     )
 }

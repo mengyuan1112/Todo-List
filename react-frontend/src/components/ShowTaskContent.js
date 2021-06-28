@@ -28,10 +28,13 @@ const ShowTaskContent = (props) => {
       props.task.date = date
       props.task.time = time
       props.task.range = range
+      props.setNewColor(range);
       setToggleDate(true)
       setToggleContent(true)
       setToggleTime(true)
       setToggleRange(true)
+
+
       // user didn't change the title.
       if (newTitle === title){
         setError(false)
