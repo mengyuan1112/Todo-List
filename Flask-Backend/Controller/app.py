@@ -1,9 +1,13 @@
+from logging import debug
 from flask import Flask
 from flask_cors import CORS
 from .logReg import logReg
 from .profile import profile
 from .ticket import ticket
 from flask_socketio import SocketIO
+import logging
+log = logging.getLogger('werkzeug')
+log.setLevel(logging.ERROR)
 
 
 app = Flask(__name__)
