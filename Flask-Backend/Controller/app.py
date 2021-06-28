@@ -15,9 +15,11 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 app.register_blueprint(logReg)
 app.register_blueprint(profile)
 app.register_blueprint(ticket)
+print("socket started ... ...")
 
 
 CORS(app)
 
 if __name__ == '__main__':
     socketio.run(app)
+
