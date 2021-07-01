@@ -1,10 +1,9 @@
 import os
 import hashlib
 
-from flask_cors import CORS
 from flask import request, jsonify
 from flask import Blueprint
-from .database import UserDB, TicketDB, GoogleDB, ImageDB
+from .database import UserDB, ImageDB
 
 profile = Blueprint('profile', __name__)
 """

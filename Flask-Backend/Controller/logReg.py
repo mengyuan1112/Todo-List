@@ -56,7 +56,7 @@ def register():
     user_document = {"username": data['username'], "name": data['username'], "salt_password": salt_password,
                      "email": data['email'], "salt": salt}
     ticket_document = {"username": data['username'], "self_ticket": {
-    }, "complete_ticket": {}, "public_ticket": {}}
+    }, "complete_ticket": {}, "public_ticket": {}, "complete_public_ticket": {}}
     image_document = {"username": data['username'], "icon": im}
     friend_document = {"username": data['username'], "friends": []}
     UserDB.insert_one(user_document)
