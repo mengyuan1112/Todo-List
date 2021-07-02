@@ -1,0 +1,13 @@
+.friendsPhoto{
+    height: 65px;
+    width: 65px; 
+    border-radius: 100%;
+}
+.background{
+    height: 300px;
+    width: 1110px; 
+    border-radius: 0%;
+
+}
+
+

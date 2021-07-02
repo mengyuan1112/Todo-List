@@ -1,25 +1,27 @@
 @import url("https://fonts.googleapis.com/css2?family=KoHo:wght@300;400;500&display=swap");
 
 .mainDay {
-  border: 1px solid grey;
+  border: 1px solid rgb(217, 234, 235);
+  display: block;
   margin: 50px auto;
   margin-bottom: 10px;
+  padding-bottom: 30px;
   border-radius: 10px;
-  height: 600px;
-  width: 80%;
+  overflow: auto;
+  min-height: 500px;
+  min-width: 200px;
+  width: 75%;
+  background-color: rgb(217, 234, 235);
+  overflow-x: hidden;
 }
-
-.navBarDay {
-  padding: 15px 25px;
-  background-color: rgb(52, 137, 158);
-  display: block;
-  width: 90px;
-  color: white;
-  border-radius: 70%;
-  text-align: center;
-  font-size: 20px;
-  border: 1px solid rgb(52, 137, 158);
-  font-family: "KoHo", sans-serif;
+.mainContainer {
+  height: 350px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  overflow-x: hidden;
+}
+.sortTable {
+  font-size: x-small;
 }
 
 hr {
@@ -27,8 +29,4 @@ hr {
   margin: 0;
   border-style: inset;
   border-width: 3px;
-}
-
-.navBarDay:hover {
-  background-color: rgb(28, 85, 99);
 }

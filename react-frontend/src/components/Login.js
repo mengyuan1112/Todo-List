@@ -1,5 +1,5 @@
-import { Container,Row,Form,Button,Col } from 'react-bootstrap';
-import { Link,Route,Switch,useHistory } from 'react-router-dom';
+import { Alert,Container,Row,Form,Button,Col } from 'react-bootstrap';
+import { Link,Redirect,Route,Switch,useHistory } from 'react-router-dom';
 import Home from './Home';
 import Main from './Main';
 import Register from './Register';
@@ -9,10 +9,15 @@ import './Login.css';
 import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props'
 import { ImFacebook2 } from "react-icons/im"
 import GoogleLogin from 'react-google-login';
+import io from 'socket.io-client';
 
-const Login = ({name,onNameChange}) => {
+// const endPoint = "http://localhost:5000/login";
+// const socket = io.connect(endPoint);
+
+const Login = ({name,onNameChange,expire,changeNickName}) => {
     const [username,setUsername] = useState('');
     const [password,setPassword] = useState('');
+    const [nickName,setNickName] = useState('')
     const [error,setError] = useState('');
     const history = useHistory();
 
@@ -23,20 +28,21 @@ const Login = ({name,onNameChange}) => {
         axios.post('google/login',{token: response.tokenObj.id_token, name: response.profileObj.name})
         .then(res=>{
             onNameChange(response.profileObj.name)
+            // socket.emit("onlineUser",{username:response.profileObj.name});
             localStorage.setItem('token',response.tokenObj.id_token);
             console.log(res)
         })
         .catch(err =>{
             console.log(err)
         })
-        history.push('/home')
+        history.push(`/${response.profileObj.name}/home`)
     }
 
     //This function will handle login from facebook/google on failure.
     const onFailure = (res) => {
         console.log('[login Failed] res: ',res)
         onNameChange('')
-        setError("google/facebook login fail")
+        //setError("google/facebook login fail")
     }
 
 
@@ -44,6 +50,7 @@ const Login = ({name,onNameChange}) => {
     const responseFacebook = (response) => {
         onNameChange(response.name)
         localStorage.setItem('token',response.accessToken);
+        // socket.emit("onlineUser",{username:response.name})
         console.log('[Login sucess from Facebook] ',response)
         //given: acessesToken,id,name,userID;
         //send the acessToken to backend.
@@ -55,7 +62,7 @@ const Login = ({name,onNameChange}) => {
         .catch(err =>{
             console.log(err)
         })
-        history.push('/home')
+        history.push(`/${response.name}/home`)
       }
 
     //his function will handle normal login client.Post data to backend server.
@@ -67,11 +74,14 @@ const Login = ({name,onNameChange}) => {
         .then(response=>{
                 console.log(response)
                 if (response.data.result === 'Pass'){
-                    //  I also need to store the cookie here.
                     console.log('[Regular login passed]',response);
                     localStorage.setItem('token',response.data.token);
-                    onNameChange(response.data.name)
-                    history.push('/home')
+                    onNameChange(response.data.username)
+                    changeNickName(response.data.name)
+                    setNickName(response.data.name);
+                    // return <Redirect to={"/"+response.data.username+"/home"}/>
+                    history.push(`/${response.data.username}/home`)
+                    window.location.reload(false);
                 }
                 else{
                     console.log(response.data);
@@ -91,9 +101,10 @@ const Login = ({name,onNameChange}) => {
         <Col xs={5}>
             <br></br>
             <br></br>
+            {/* {expire ? <Alert variant="danger">Your session have expired.Please Login again</Alert>:null} */}
             <h1>Login</h1>
             <hr></hr>
-            {name ? (<Link to="/home"/>) : (<p style={{color:'red'}} >{error}</p>)}
+            {name ? (<Link to= {`/${name}/home`} />) : (<p style={{color:'red'}} >{error}</p>)}
             <Form onSubmit={login}>
             <Form.Group>
             <Form.Control size="sm" style={{borderRadius:'10px'}} onChange={(e)=>{
@@ -134,11 +145,7 @@ const Login = ({name,onNameChange}) => {
             </div>
         </Col>
         </Row>
-        <Switch>
-        <Route path="/main" component = {()=> <Main name={name} />}/>
-        <Route path="/home" component = {()=> <Home name={name} />}/>
-        <Route path='/register' component={<Register/>}/>
-        </Switch>
+            <Route exact path={`/${name}/home`} component = {()=> <Home name={name} expire={expire} nickName={nickName} changeNickName={changeNickName}  onNameChange={onNameChange} thingsToDo={2}/>}/>
     </Container>
     )
 }

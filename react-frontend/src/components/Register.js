@@ -96,8 +96,8 @@ const Register = () => {
                     setPasswordReg(e.target.value)
                 }}  placeholder="Password" />
                 <Form.Text id="passwordHelpBlock" muted>
-                Your password must be 8-20 characters long, contain letters and numbers, and
-                must not contain spaces, special characters, or emoji.
+                Your password must be 8-20 characters long, contain uppercase letters, lowercase letters, numbers, and at least one spercial character.
+                Your password must not contain spaces, or emoji.
                 </Form.Text>
             </Form.Group>
                 {passwordError? 
