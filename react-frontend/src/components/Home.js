@@ -1,14 +1,13 @@
 import React from 'react'
 import Button from 'react-bootstrap/Button';
-import {useHistory} from 'react-router-dom'
+import {Redirect, useHistory} from 'react-router-dom'
 import {Alert,Container,Row,Col} from 'react-bootstrap';
 import DayDisplay from './DayDisplay';
 import './Home.css'
 
 const Home = ({name,nickName,expire,onNameChange,ticketLength,changeNickName}) => {
+    
     const history = useHistory();
-
-
 
     const handleClick =()=>{
         console.log("clicked start planning")
@@ -21,6 +20,7 @@ const Home = ({name,nickName,expire,onNameChange,ticketLength,changeNickName}) =
     }
         return (
             <Container fluid="sm">
+                {expire? <Redirect to="home"/> : null} 
                 <br></br>
                 <br></br>
                 <br></br>

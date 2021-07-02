@@ -1,7 +1,7 @@
 
 import React,{useState,useEffect} from 'react'
 import Logout from './Logout'
-import {Col,CardDeck,Row,Button,ListGroup,Card} from 'react-bootstrap';
+import {Col,CardDeck,Row,Button,Dropdown,Card} from 'react-bootstrap';
 import './Main.css'
 import { Switch, Route,useParams} from 'react-router-dom';
 import AddTask from './AddTask'
@@ -13,23 +13,35 @@ import FinishedTasks from './FinishedTasks';
 import axios from 'axios'
 import AddSharedTask from './AddSharedTask'
 import ShareTask from './ShareTask'
+import ReactCardFlip from 'react-card-flip';
+import { GrSort } from "react-icons/gr";
+import SortList from './SortList';
 
 const endPoint = "http://localhost:5000/main";
 const socket = io.connect(endPoint);
-
 
 const Main = ({name,onNameChange}) => {
     const [modalShow, setModalShow] = useState(false);
     const [modalForShared,setModalForShared] = useState(false);
     const [tasks, setTasks] = useState([]);
     const [finishedTask,setFinishedTask] = useState([]);
+    const [shareFinishedTask,setShareFinishedTask] = useState([]);
     const [sharedTasks, setSharedTasks] = useState([]);
     const [thingsFinished,setThingsFinished] = useState(0); //number of thing finished
     const [thingsToDo,setThingTodo]= useState(0); // number of thing todo
     const [sharedThings, setShareThing] = useState(0);  //number of shared task
-    const [ currentDate,setCurrentDate] = useState(new Date());  //initalize the date tobe today.
-    useEffect(() => {
+    const [currentDate,setCurrentDate] = useState(new Date());  //initalize the date tobe today.
+    const [finishedShareTask,setFinishedShareTask] = useState([])
+    const [thingsFinishedShareTask,setThingsFinishedShareTask] = useState(0)
+    const [showSortBox,setShowBox] = useState(false);
+    const [isFlipped,setIsFlipped] = useState(false)
+    const [sort,setSort] = useState('default');
+    const [shareSort,setShareSort] = useState('default')
 
+    useEffect(() => {
+        //send username to backend once user land in main page.
+        //send a get request for user data.
+        socket.emit("onlineUser",{username:name})
         axios.get(`${name}/main`).then(
             res => {
               console.log(res)
@@ -60,33 +72,22 @@ const Main = ({name,onNameChange}) => {
                   }  else {
                        console.log(res.data)
                   }
-                
-                // err => {
-                //   console.log(err);
-                //   setTasks([]);
-                //   setThingTodo([]);
-                //   setSharedTasks([]);
-                //   setThingsFinished(0)
-                //   setThingTodo(0)
-                //   setShareThing(0)
-            })
+                })
       //disconnect once done.
       // return () =>socket.disconnect();
       },[]);
-
+     const clickedFinished=()=>{
+        setIsFlipped(!isFlipped)
+      }
 
     const addTask=(task)=>{
       const sameTitle = tasks.find(t=>t.title === task.title);
       if (sameTitle) return false
       setTasks([...tasks,task])
       currentDate.setHours(0,0,0,0,0);
-      // console.log({username:name,currentDate:currentDate, ...task})
+      console.log({username:name,currentDate:currentDate, ...task})
       socket.emit("AddedTask",{username:name,currentDate:currentDate.toISOString(), ...task});
       setThingTodo(thingsToDo+1)
-      socket.on('AddedTask',data=>{
-        //update todo, finished and shared list to the setNewDay.
-        console.log("this is from server" + data)
-       })
       return true
     }
 
@@ -100,6 +101,13 @@ const Main = ({name,onNameChange}) => {
       setShareThing(sharedThings+1);
       return true
     }
+    socket.on("receviedShareTask",data=>{
+      console.log("This is from added shared task: ",data);
+      setSharedTasks([...sharedTasks,data]);
+      setShareThing(sharedThings+1);
+    })
+
+
 
     const moveToFinish = (t) =>{
       setTasks(tasks.filter((task)=> task.title !== t.title ))
@@ -117,10 +125,20 @@ const Main = ({name,onNameChange}) => {
       if (status){
         //setShareThing(sharedThings-1)
         socket.emit("finishedShareTask",{useraname:name,currentDate:currentDate,t})
+        socket.on("finishedShareTask",data=>{
+          console.log(data);
+          // TODO: I will need to check if all the share user have finished the task, if so, move the task to finish.
+          // Else, do nothing.
+        })
       }
       else{
         //setShareThing(sharedThings+1)
-        socket.emit("undoFinishedShareTask",{useraname:name,currentDate:currentDate,t})
+        socket.emit("undoFinishedShareTask",{useraname:name,currentDate:currentDate,t});
+        socket.on("undoFinishedShareTask",data=>{
+          console.log(data);
+          //TODO: If the task is on Finished, move back to shared List,
+          //Else: do nothing.
+        })
       }
     }
 
@@ -205,17 +223,37 @@ const Main = ({name,onNameChange}) => {
       return true
     }
 
-    const todo_list = tasks.map((task) =>
-        <Task key={task.title} editContent = {editTaskContent} task = {task}  onDelete={moveToFinish} deleteTask={deleteTaskFromTodo}/>
-    );  
+    const setShareListSort = (e)=>{
+      setShareSort(e);
+    }
+
+    const sortByDate = tasks.sort((a,b)=>(a.date > b.date)? 1:-1).map(
+      (task) => <Task key={task.title} editContent = {editTaskContent} task = {task}  onDelete={moveToFinish} deleteTask={deleteTaskFromTodo}/>)
+    const sortByRange = tasks.sort((a,b)=>(a.range < b.range)? 1:-1).map((task) =>
+    <Task key={task.title} editContent = {editTaskContent} task = {task}  onDelete={moveToFinish} deleteTask={deleteTaskFromTodo}/>)
+    const sortByDefault = tasks.map((task) =>
+    <Task key={task.title} editContent = {editTaskContent} task = {task}  onDelete={moveToFinish} deleteTask={deleteTaskFromTodo}/>)
+
+    
+    const shareSortByDate = sharedTasks.sort((a,b)=>(a.date > b.date)? 1:-1).map(
+      (task) => <ShareTask key={task.title} editContent = {editShareTaskContent} task = {task}  taskStatus={shareTaskStatus} deleteTask={deleteTaskFromShareList}/>)
+
+    const shareSortByRange = sharedTasks.sort((a,b)=>(a.range < b.range)? 1:-1).map((task) =>
+    <ShareTask key={task.title} editContent = {editShareTaskContent} task = {task}  taskStatus={shareTaskStatus} deleteTask={deleteTaskFromShareList}/>)
+
+    const shareSortByDefault = sharedTasks.map((task) =>
+    <ShareTask key={task.title} editContent = {editShareTaskContent} task = {task}  taskStatus={shareTaskStatus} deleteTask={deleteTaskFromShareList}/>
+    );
 
     const finish_list = finishedTask.map((task)=>
       <FinishedTasks key={task.title} editContent = {editTaskContent} task={task} backShareList={moveBackShareList} backTodo={moveBackTodo} deleteTask={deleteTaskFromFinished}/>
     );
 
-    const shared_list = sharedTasks.map((task) =>
+    const sharedTasks_finish_list = finishedShareTask.map((task) =>
     <ShareTask key={task.title} editContent = {editShareTaskContent} task = {task}  taskStatus={shareTaskStatus} deleteTask={deleteTaskFromShareList}/>
     );
+
+
 
     const setNewDay = (e) =>{
       setCurrentDate(e);
@@ -250,15 +288,11 @@ const Main = ({name,onNameChange}) => {
            console.log(data)
       }
       })
-      //  setTasks([]);
-      //  setThingTodo([]);
-      //  setSharedTasks([]);
-      //  setThingsFinished(0)
-      //  setThingTodo(0)
-      //  setShareThing(0)
      }
 
-
+    const setSortBy=(e)=>{
+      setSort(e);
+    }
 
     return (
       <>
@@ -273,35 +307,67 @@ const Main = ({name,onNameChange}) => {
 
         {/* This is the container for Things to do */}
         <Card>
-          <Card.Body className="CardBody">
-            <Card.Title>ToDo ({thingsToDo})</Card.Title>
-            <hr/>
+          <Card.Body className="mainContainer">
+            <Card.Title>
+              ToDo ({thingsToDo})
+              <Dropdown variant="none" style={{float:"right"}}>
+              <Dropdown.Toggle display="hidden" variant="none" id="dropdown-basic" size="sm">
+              <GrSort/>
+              </Dropdown.Toggle>
+              <SortList setSortBy={setSortBy} />
+              </Dropdown>
+              <hr/>
+              </Card.Title>
             <AddTask name={name} addtask={addTask} show={modalShow} onHide={() => setModalShow(false)}/>
             
-            {todo_list}
+            {sort === "date" ? sortByDate:null}
+            {sort === "range" ? sortByRange:null}
+            {sort === "default" ? sortByDefault:null}
 
             <Button onClick={() => setModalShow(true)} variant="light">+</Button>
           </Card.Body>
         </Card>
 
         {/* This is the container for Finished */}
-        <Card>
-          <Card.Body className="CardBody">
-            <Card.Title>Finished ({thingsFinished})</Card.Title>
-            <hr/>
+        <Card >
+          <Card.Body className="mainContainer">
+            <ReactCardFlip isFlipped={isFlipped} flipDirection="horizontal">
+            <div>
+              <Card.Title onClick={clickedFinished}>
+                Finish-Self ({thingsFinished})
+                <hr/>
+              </Card.Title>
+              {finish_list}
+            </div>
 
-            {finish_list}
-
+            <div>
+              <Card.Title onClick={clickedFinished}>
+                Finish-Share({thingsFinishedShareTask})
+                <hr/>
+              </Card.Title>
+              {sharedTasks_finish_list}
+            </div>
+          </ReactCardFlip>
           </Card.Body>
         </Card>
 
         {/* This is the container for shared List. */}
         <Card>
-          <Card.Body className="CardBody">
-            <Card.Title>Shared List ({sharedThings})</Card.Title>
-            <hr/>
-            <AddSharedTask addtask={addSharedTask} show={modalForShared} onHide={() => setModalForShared(false)}/>
-            {shared_list}
+          <Card.Body className="mainContainer">
+            <Card.Title>
+              Shared List ({sharedThings})
+              <Dropdown variant="none" style={{float:"right"}}>
+              <Dropdown.Toggle display="hidden" variant="none" id="dropdown-basic" size="sm">
+              <GrSort/>
+              </Dropdown.Toggle>
+              <SortList setSortBy={setShareListSort}/>
+              </Dropdown>
+              <hr/>
+            </Card.Title>
+            <AddSharedTask addtask={addSharedTask} name={name} show={modalForShared} onHide={() => setModalForShared(false)}/>
+            {shareSort === "date" ? shareSortByDate:null}
+            {shareSort === "range" ? shareSortByRange:null}
+            {shareSort === "default" ? shareSortByDefault:null}
             <Button onClick={() => setModalForShared(true)} variant="light">+</Button>
             <Card.Text>
             </Card.Text>
@@ -309,9 +375,6 @@ const Main = ({name,onNameChange}) => {
         </Card>
       </CardDeck>
       </div>
-      <Switch>
-        <Route exact path="/addTask" component={AddTask}/> 
-      </Switch>
       </>
     )
 }

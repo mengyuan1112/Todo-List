@@ -13,6 +13,7 @@ import io from 'socket.io-client'
 import axios from 'axios';
 
 const endPoint = "http://localhost:5000/friends";
+
 const socket = io.connect(endPoint);
 
 const Friend = ({name}) => {
@@ -38,6 +39,7 @@ const Friend = ({name}) => {
           }
         )},[])
 
+
            
       
 
@@ -55,7 +57,9 @@ const Friend = ({name}) => {
         //addFriends({friendName:friendName,friendPhoto:friendPhoto,friendStatus:friendStatus})
         Setfriends([...friends,friend])
         //SetfriendNumber(friendNumber+1)
-        socket.emit("Addedfriend",{username:name, friendName:friendName});
+
+        socket.emit("Addedfriend",{username:name , friendName:friendName},console.log("this is socket"));
+
         socket.on('Addedfriend',data=>{
         console.log("name")
             

@@ -47,8 +47,8 @@ const DayNavbar = (props) => {
       setToday(-5)
     }
     else if(dayName[day]==='Sunday'){
-      setI(-6)
-      setToday(-6)
+      setI(1)
+      setToday(1)
     }
 
   }, []) 
@@ -161,6 +161,7 @@ const DayNavbar = (props) => {
            setClickThur(false)
            setClickFri(false)
            setClickSat(false)
+           props.setNewDay(new Date());
            }} >today</Button>
         </div>
         
@@ -172,8 +173,8 @@ const DayNavbar = (props) => {
             <span onClick={handleClickSunday} 
             style={{
             backgroundColor: clickedSun ? "#0c7691" : "rgb(103, 184, 204)"
-            }} name="Sunday" className={i===-6? 'navBarToday': 'navBarDay'}>Sun  
-            <span name="7"  className={i===-6? 'navBarDate-today': 'navBarDate'}>
+            }} name="Sunday" className={i===1? 'navBarToday': 'navBarDay'}>Sun  
+            <span name="7"  className={i===1? 'navBarDate-today': 'navBarDate'}>
               {(new Date(new Date().setDate(new Date().getDate()+ i-1)).getDate())}</span></span> 
 
             {/* Monday  */}

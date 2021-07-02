@@ -9,8 +9,9 @@ axios.defaults.baseURL = 'http://localhost:5000/';
 axios.defaults.headers.common['Authorization'] = 'Bear ' + localStorage.getItem('token');
 
 ReactDOM.render(
-    <BrowserRouter>
+  <BrowserRouter>
     <App />
-    </BrowserRouter>,
+  </BrowserRouter>  
+    ,
   document.getElementById('root')
 );

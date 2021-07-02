@@ -55,7 +55,6 @@ const Profile = ({name,onNameChange,changeImage,changeNickName}) => {
 
     const submitAvater =(e)=>{
       e.preventDefault();
-      Getimage(image.src);
       axios.post( `http://localhost:5000/${name}/profile/icon`,{icon:image.src}).then(
           (response)=>{
               if (response.data.result === "Pass"){
@@ -64,7 +63,9 @@ const Profile = ({name,onNameChange,changeImage,changeNickName}) => {
           })
       //axios.get(`${name}/profile/icon`)
           //.catch(err=>{ console.log(err) });
-          changeImage(image.src)
+        changeImage(image.src)
+        Getimage(image.src)
+        setShow2(false);
   }
 
 
@@ -90,8 +91,6 @@ const Profile = ({name,onNameChange,changeImage,changeNickName}) => {
           Getpassword('')
           Setnewname('')
           Getimage('')
-          
-         
         }
 
     
@@ -104,7 +103,6 @@ const Profile = ({name,onNameChange,changeImage,changeNickName}) => {
     const [newnameError, SetnewnameErr]=  useState('');
     const [confirmPasswordPro,setConfirmPasswordPro] = useState('');
     const [image,uploadedImage] = useState([]);
-    const history = useHistory();
     const [error,setError] = useState(false)
     //const uploadedImage = React.useRef(null);
     const imageUploader = React.useRef(null);
@@ -120,7 +118,6 @@ const Profile = ({name,onNameChange,changeImage,changeNickName}) => {
           else{
             setError(false)
           }
-          console.log(image.file)
           reader.onload = e => {
             image.src = e.target.result;
           };
