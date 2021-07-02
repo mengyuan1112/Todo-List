@@ -12,11 +12,10 @@ import FriendList from './FriendList'
 import io from 'socket.io-client'
 import axios from 'axios';
 
-const endPoint = "http://localhost:5000/main";
-
+const endPoint = "http://localhost:5000/friends";
 const socket = io.connect(endPoint);
 
-const Friend =(name) => {
+const Friend = ({name}) => {
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
@@ -39,14 +38,7 @@ const Friend =(name) => {
           }
         )},[])
 
-        axios.post( `http://localhost:5000/${name}/profile/icon`,{friendNumber:friendNumber}).then(
-            (response)=>{
-                console.log(response)
-            })
-        
-            .catch(err=>{ console.log(err) });
            
-
       
 
     const [friends,Setfriends] = useState([]);
@@ -63,9 +55,9 @@ const Friend =(name) => {
         //addFriends({friendName:friendName,friendPhoto:friendPhoto,friendStatus:friendStatus})
         Setfriends([...friends,friend])
         //SetfriendNumber(friendNumber+1)
-        socket.emit("Addedfriend",{username:name, friendName:friendName, ...friend});
+        socket.emit("Addedfriend",{username:name, friendName:friendName});
         socket.on('Addedfriend',data=>{
-            
+        console.log("name")
             
             console.log("this is from server" + data)
             if(data.result=="pass"){
@@ -101,6 +93,7 @@ const Friend =(name) => {
         setError(false)
         if(addFriends({friendName:friendName,friendPhoto:friendPhoto,friendStatus:friendStatus})){
             SetfriendNumber(friendNumber+1)
+            console.log("name")
             setShow(false)
         }
         else{
