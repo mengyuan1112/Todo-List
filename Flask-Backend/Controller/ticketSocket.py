@@ -1,17 +1,10 @@
 # if websocket is not connect try to uninstall socket then install again
 
-from datetime import date
-from flask import Flask, request, session
-from flask_socketio import SocketIO, send, emit, join_room
+from flask import request
+from flask_socketio import send, emit, join_room
 from .app import socketio
-from pymongo import MongoClient
-from .database import UserDB, TicketDB, GoogleDB, ImageDB
+from .database import TicketDB
 
-# client = MongoClient('localhost', 27017)
-# db = client.Todo_list
-#
-# app = Flask(__name__)
-# UserDB = db
 
 clients = {}
 
@@ -224,10 +217,9 @@ def add_shared_task(data):
     #clients[data["username"]] = request.sid
     user, title, friends, content, deadline_date, deadline_time, create_date, create_time = parsing_shared_task(
         data)
-    user_shared_tickets = TicketDB.find_one(
-        {'username': user})['public_ticket']
-    ticket = {"create_time": create_time, "title": title, "content": content,
-              "date": deadline_date, "time": deadline_time}
+    user_shared_tickets = TicketDB.find_one({'username': user})['public_ticket']
+    ticket = {"creator": user, "create_time": create_time, "title": title, "content": content,
+              "date": deadline_date, "time": deadline_time, "sharedWith": friends}
     if create_date in user_shared_tickets.keys():
         ticket_list = user_shared_tickets[create_date]
         ticket_list.append(ticket)
@@ -242,21 +234,49 @@ def add_shared_task(data):
         if client in clients:
             print("Sending message to username: ", client,
                   " and the SID is ", clients[client])
+            TicketDB.update_one({"username": client},
+                                {"$set": {"public_ticket": user_shared_tickets}})
             emit("receviedShareTask", ticket, to=clients[client])
-    # for i in range(0, len(friends)):
-    #     friend = friends[i]
-    #     if friend in clients.keys():
-    #         emit("AddedSharedTask", ticket, room=clients[friend])
     return
 
 # {'username': '2', 'currentDate': '2021-06-09T04:00:00.000Z',
-# 'sharedWith': ['friend 1', 'friend 2'], 'title': '123', 'content': '', 'date': '', 'time': ''}
+# 'sharedWith': ['friend 1', 'friend 2'], 'title': '123', 'content': '', 'date': '', 'time': '', 'createdBy': '2'}
 
 
 # delete all ticket by creator / self-leave in ticket
+'''
+@:return: route = "deleteTaskFromShareList"
+@:return: {"title": title} / {"ticket": ticket}
+@:return ticket = {"creator": creator, "create_time": create_time, "title": title, "content": content,
+                  "date": deadline_date, "time": deadline_time, "sharedWith": friends}
+'''
 @socketio.on("deleteTaskFromShareList", namespace='/main')
 def delete_task_from_shared_list(data):
-    print("this is from delet: " + str(data))
+    print("this is from delete: " + str(data))
+    user, title, friends, content, deadline_date, deadline_time, create_date, create_time = parsing_shared_task(
+        data)
+    creator = data['creator']
+    if user == creator:
+        del_public_ticket(user, title, create_date)
+        for friend in friends:
+            if friend in clients:
+                emit("deleteTaskFromShareList", {"title": title}, to=clients[friend])
+            del_public_ticket(friend, title, create_date)
+    else:
+        del_public_ticket(user, title, create_date)
+        for i in range(0, len(friends)):
+            if friends[i] == user:
+                del friends[i]
+                break
+        ticket = {"creator": creator, "create_time": create_time, "title": title, "content": content,
+                  "date": deadline_date, "time": deadline_time, "sharedWith": friends}
+        update_del_ticket(creator, create_date, title, ticket)
+        if creator in clients:
+            emit("deleteTaskFromShareList", {"ticket": ticket}, to=clients[creator])
+        for friend in friends:
+            if friend in clients:
+                update_del_ticket(friend, create_date, title, ticket)
+                emit("deleteTaskFromShareList", {"ticket": ticket}, to=clients[friend])
     return
 
 
@@ -271,9 +291,30 @@ def move_from_finish_to_shared_list(data):
 
 
 # (everyone) able to edit content
+'''
+:return: route = "receviedEditTask"
+:return: {"oldTitle": data["oldTitle"], "updateTicket": ticket}
+:ticket = {'username': creator, 'currentDate': data['currentDate'], 'title': data['title'], 'content': data['content'],
+                   'create_time': data['create_time'], 'date': data['date']}
+:ticket = {'username': user, 'currentDate': data['currentDate'], 'title': data['title'], 'content': data['content'],
+              'create_time': data['create_time'], 'date': data['date']}
+'''
 @socketio.on("EditSharedTaskContent", namespace='/main')
 def edit_shared_task_content(data):
-    print("this is from move to finished: " + str(data))
+    print("this is edit stuff: " + str(data))
+    friends = data["sharedWith"]
+    creator = data["creator"]
+    edit_shared_ticket(data, creator)
+    ticket = {'username': creator, 'currentDate': data['currentDate'], 'title': data['title'], 'content': data['content'],
+              'create_time': data['create_time'], 'date': data['date']}
+    emit("receviedEditTask", {"oldTitle": data["oldTitle"], "updateTicket": ticket}, to=clients[creator])
+    for friend in friends:
+        ticket = {'username': friend, 'currentDate': data['currentDate'], 'title': data['title'], 'content': data['content'],
+                  'create_time': data['create_time'], 'date': data['date']}
+        if friend in clients:
+            print("send to client: " + str(clients[friend]))
+            emit("receviedEditTask", {"oldTitle": data["oldTitle"], "updateTicket": ticket}, to=clients[friend])
+        edit_shared_ticket(data, friend)
     return
 
 
@@ -293,7 +334,6 @@ def parsing_shared_task(data):
     user, title, friends, content, deadline_date, deadline_time =\
         data['username'], data['title'], data['sharedWith'], data['content'], data['date'], data['time']
     return user, title, friends, content, deadline_date, deadline_time, create_date, create_time
-
 
 def update_ticket_arr(create_date, ticket_arr, user):
     self_ticket = TicketDB.find_one({"username": user})['self_ticket']
@@ -323,6 +363,77 @@ def get_data_by_date(user_info, day):
     return self_ticket, complete_ticket,  public_ticket
 
 
-# if __name__ == '__main__':
-#     print("websocket is running")
-#     socketio.run(app, host="localhost", port=2000)
+def del_public_ticket(user, title, create_date):
+    cur_public_ticket_list = TicketDB.find_one({"username": user})['public_ticket'][create_date]
+    for i in range(0, len(cur_public_ticket_list)):
+        each_ticket = cur_public_ticket_list[i]
+        if each_ticket['title'] == title:
+            del cur_public_ticket_list[i]
+            public_ticket = TicketDB.find_one({"username": user})['public_ticket']
+            if len(cur_public_ticket_list) == 0:
+                public_ticket.pop(create_date)
+            else:
+                public_ticket[create_date] = cur_public_ticket_list
+            TicketDB.update_one({"username": user},
+                                {"$set": {"public_ticket": public_ticket}})
+            return
+
+
+def edit_shared_ticket(data, user):
+    xx, title, friends, content, deadline_date, deadline_time, create_date, create_time = parsing_shared_task(
+        data)
+    old_title = data["oldTitle"]
+    public_ticket = TicketDB.find_one({"username": user})['public_ticket']
+    complete_public_ticket = TicketDB.find_one({"username": user})['complete_public_ticket']
+
+    ''' public '''
+    if create_date in public_ticket.keys():
+        public_ticket_list = TicketDB.find_one({"username": user})['public_ticket'][create_date]
+        for i in range(0, len(public_ticket_list)):
+            if public_ticket_list[i]['title'] == old_title:
+                public_ticket_list[i]['title'] = title
+                if len(content) != 0:
+                    public_ticket_list[i]['content'] = content
+                if len(deadline_time) != 0:
+                    public_ticket_list[i]['time'] = deadline_time
+                if len(deadline_date) != 0:
+                    public_ticket_list[i]['date'] = deadline_date
+                public_ticket[create_date] = public_ticket_list
+                TicketDB.update_one({"username": user},
+                                    {"$set": {"public_ticket": public_ticket}})
+                return
+    ''' complete '''
+    if create_date in complete_public_ticket.keys():
+        complete_public_ticket_list = TicketDB.find_one({"username": user})['complete_public_ticket'][create_date]
+        for i in range(0, len(complete_public_ticket_list)):
+            if complete_public_ticket_list[i]['title'] == old_title:
+                complete_public_ticket_list[i]['title'] = title
+                if len(content) != 0:
+                    complete_public_ticket_list[i]['content'] = content
+                if len(deadline_time) != 0:
+                    complete_public_ticket_list[i]['time'] = deadline_time
+                if len(deadline_date) != 0:
+                    complete_public_ticket_list[i]['date'] = deadline_date
+                complete_public_ticket[create_date] = public_ticket_list
+                TicketDB.update_one({"username": user},
+                                    {"$set": {"public_ticket": complete_public_ticket}})
+                return
+
+
+def update_del_ticket(user, create_date, title, ticket):
+    public_ticket = TicketDB.find_one({"username": user})["public_ticket"]
+    public_ticket_date = TicketDB.find_one({"username": user})["public_ticket"][create_date]
+    for i in range(0, len(public_ticket_date)):
+        if public_ticket_date[i]["title"] == title:
+            del public_ticket_date[i]
+            public_ticket_date.append(ticket)
+            public_ticket[create_date] = public_ticket_date
+            TicketDB.update_one({"username": user},
+                                {"$set": {"public_ticket": public_ticket}})
+
+
+@socketio.on('Addedfriend', namespace='/friends')
+def add_friends(data, tt):
+    print(data)
+    print("this is from ticket")
+    return
