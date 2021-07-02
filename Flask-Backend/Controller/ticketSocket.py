@@ -419,6 +419,7 @@ def edit_shared_ticket(data, user):
                                     {"$set": {"public_ticket": complete_public_ticket}})
                 return
 
+
 def update_del_ticket(user, create_date, title, ticket):
     public_ticket = TicketDB.find_one({"username": user})["public_ticket"]
     public_ticket_date = TicketDB.find_one({"username": user})["public_ticket"][create_date]
@@ -431,6 +432,8 @@ def update_del_ticket(user, create_date, title, ticket):
                                 {"$set": {"public_ticket": public_ticket}})
 
 
-# if __name__ == '__main__':
-#     print("websocket is running")
-#     socketio.run(app, host="localhost", port=2000)
+@socketio.on('Addedfriend', namespace='/friends')
+def add_friends(data, tt):
+    print(data)
+    print("this is from ticket")
+    return

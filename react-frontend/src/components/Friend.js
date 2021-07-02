@@ -12,7 +12,7 @@ import FriendList from './FriendList'
 import io from 'socket.io-client'
 import axios from 'axios';
 
-const endPoint = "http://localhost:5000/main";
+const endPoint = "http://localhost:5000/friends";
 
 const socket = io.connect(endPoint);
 
@@ -39,12 +39,12 @@ const Friend =(name) => {
           }
         )},[])
 
-        axios.post( `http://localhost:5000/${name}/profile/icon`,{friendNumber:friendNumber}).then(
-            (response)=>{
-                console.log(response)
-            })
-        
-            .catch(err=>{ console.log(err) });
+        // axios.post( `http://localhost:5000/${name}/profile/icon`,{friendNumber:friendNumber}).then(
+        //     (response)=>{
+        //         console.log(response)
+        //     })
+        //
+        //     .catch(err=>{ console.log(err) });
            
 
       
@@ -63,7 +63,7 @@ const Friend =(name) => {
         //addFriends({friendName:friendName,friendPhoto:friendPhoto,friendStatus:friendStatus})
         Setfriends([...friends,friend])
         //SetfriendNumber(friendNumber+1)
-        socket.emit("Addedfriend",{username:name, friendName:friendName, ...friend});
+        socket.emit("Addedfriend",{username:name , friendName:friendName},console.log("this is socket"));
         socket.on('Addedfriend',data=>{
             
             

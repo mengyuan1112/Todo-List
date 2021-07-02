@@ -16,7 +16,6 @@ profile = Blueprint('profile', __name__)
 """
 
 
-
 @profile.route('/<user_name>/profile', methods=['GET'])
 def user_profile(user_name):
     user_info = UserDB.find_one({"username": user_name})
@@ -41,7 +40,7 @@ def change_password(user_name):
         new_salted_password = hashlib.pbkdf2_hmac(
             'sha256', new_password.encode('utf-8'), salt, 100000)
         UserDB.update_many({"username": user_name},
-                                {"$set": {"salt_password": new_salted_password, "salt": salt}})
+                           {"$set": {"salt_password": new_salted_password, "salt": salt}})
         return jsonify({"result": "Pass"})
 
 
@@ -59,7 +58,5 @@ def change_icon(user_name):
     data = request.get_json()
     new_icon = data['icon']
     ImageDB.update_one({"username": user_name},
-
                        {"$set": {"icon": new_icon}})
     return jsonify({"result": "Pass"})
-
