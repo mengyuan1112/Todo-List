@@ -58,7 +58,7 @@ const Personal = ({name,onNameChange,changeImage}) => {
         hreflink=""
     }
 
-    const [friendPage,SetfriendPage] = useState(false)
+    const [friendPage,SetfriendPage] = useState(true)
     const [summaryPage,SetsummaryPage] = useState(false)
     const [checkedPage,SetcheckedPage] = useState(false)
 

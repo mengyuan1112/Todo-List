@@ -63,7 +63,8 @@ const Friend =(name) => {
         //addFriends({friendName:friendName,friendPhoto:friendPhoto,friendStatus:friendStatus})
         Setfriends([...friends,friend])
         //SetfriendNumber(friendNumber+1)
-        socket.emit("Addedfriend",{username:name , friendName:friendName},console.log("this is socket"));
+        socket.emit("Addedfriend",{username:name['name'] , friendName:friendName},console.log("this is socket"));
+
         socket.on('Addedfriend',data=>{
 
 
@@ -113,7 +114,7 @@ const Friend =(name) => {
     const deleteFriend = (f) =>{
         Setfriends(friends.filter((friend)=> friend.friendName!== f.friendName ))
         SetfriendNumber(friendNumber-1)
-        socket.emit("Deletefriend",{username:name,  ...f})
+        socket.emit("Deletefriend",{username:name['name'],  ...f})
     }
 
 
