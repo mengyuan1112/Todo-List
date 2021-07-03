@@ -13,14 +13,14 @@ def add_friend(data, t):
     friend = data['friendName']
     user_friends = FriendsDB.find_one({"username": user})['friends']
     if friend in user_friends:
-        emit("Addedfriend", {"result": "already added", "friendPhoto": ImageDB.find_one({"username": friend})["icon"],
+        emit("Addedfriend", {"result": "already added", "friendPhoto": "",
                              "friendStatus": False})
         return
     user_friends.append(friend)
     FriendsDB.update_one({"username": user},
                          {"$set": {"friends": user_friends}})
     if FriendsDB.find_one({"username": friend}) is None:
-        emit("Addedfriend", {"result": "Not Exist", "friendPhoto": ImageDB.find_one({"username": friend})["icon"],
+        emit("Addedfriend", {"result": "Not Exist", "friendPhoto": "",
                              "friendStatus": False})
         return
     friends_query = FriendsDB.find_one({"username": friend})['friendWith']
