@@ -23,13 +23,16 @@ def add_friend(data, t):
         emit("Addedfriend", {"result": "Not Exist", "friendPhoto": "",
                              "friendStatus": False})
         return
-    friends_query = FriendsDB.find_one({"username": friend})['friendWith']
+    friends_query = FriendsDB.find_one({"username": friend})['friends']
     friends_query.append(user)
     FriendsDB.update_one({"username": friend},
-                         {"$set": {"friendWith": friends_query}})
+                         {"$set": {"friends": friends_query}})
     status = False
     if friend in clients:
         status = True
+        emit("Addedfriend", {"result": "pass", "friendPhoto": ImageDB.find_one({"username": user})["icon"],
+                             "friendStatus": True}, to=clients[friend])
+
     emit("Addedfriend", {"result": "pass", "friendPhoto": ImageDB.find_one({"username": friend})["icon"],
                          "friendStatus": status})
 
@@ -45,21 +48,10 @@ def delet_friend(data):
             del user_friends[i]
             FriendsDB.update_one({"username": user},
                                  {"$set": {"friends": user_friends}})
-    friends_query = FriendsDB.find_one({"username": friend})['friendWith']
+    friends_query = FriendsDB.find_one({"username": friend})['friends']
     for i in range(0, len(friends_query)):
         if user == friends_query[i]:
             del friends_query[i]
             FriendsDB.update_one({"username": friend},
-                                 {"$set": {"friendWith": friends_query}})
+                                 {"$set": {"friends": friends_query}})
     return
-
-
-
-# Restful API(POST, GET): 1, User ----> Server(passive)
-#                         2, Server ----> User
-
-# WebSocket()    1, User  <----> Server
-
-#   User1      User2      User3
-#       \       |
-#              Server
