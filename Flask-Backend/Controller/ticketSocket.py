@@ -220,7 +220,7 @@ def add_shared_task(data):
     user_shared_tickets = TicketDB.find_one(
         {'username': user})['public_ticket']
     ticket = {"creator": user, "create_time": create_time, "title": title, "content": content,
-              "date": deadline_date, "time": deadline_time, "sharedWith": friends}
+              "date": deadline_date, "time": deadline_time, "friends": friends}
     if create_date in user_shared_tickets.keys():
         ticket_list = user_shared_tickets[create_date]
         ticket_list.append(ticket)
@@ -273,7 +273,7 @@ def delete_task_from_shared_list(data):
                 del friends[i]
                 break
         ticket = {"creator": creator, "create_time": create_time, "title": title, "content": content,
-                  "date": deadline_date, "time": deadline_time, "sharedWith": friends}
+                  "date": deadline_date, "time": deadline_time, "friends": friends}
         update_del_ticket(creator, create_date, title, ticket)
         if creator in clients:
             emit("deleteTaskFromShareList", {
@@ -310,7 +310,7 @@ def move_from_finish_to_shared_list(data):
 @socketio.on("EditSharedTaskContent", namespace='/main')
 def edit_shared_task_content(data):
     print("this is edit stuff: " + str(data))
-    friends = data["sharedWith"]
+    friends = data["friends"]
     creator = data["creator"]
     edit_shared_ticket(data, creator)
     ticket = {'username': creator, 'currentDate': data['currentDate'], 'title': data['title'], 'content': data['content'],
@@ -342,7 +342,7 @@ def parsing_shared_task(data):
     create_date = data_time_arr[0]
     create_time = data_time_arr[1]
     user, title, friends, content, deadline_date, deadline_time =\
-        data['username'], data['title'], data['sharedWith'], data['content'], data['date'], data['time']
+        data['username'], data['title'], data['friends'], data['content'], data['date'], data['time']
     return user, title, friends, content, deadline_date, deadline_time, create_date, create_time
 
 

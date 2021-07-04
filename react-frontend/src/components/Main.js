@@ -1,9 +1,7 @@
 
 import React,{useState,useEffect} from 'react'
-import Logout from './Logout'
 import {Col,CardDeck,Row,Button,Dropdown,Card} from 'react-bootstrap';
 import './Main.css'
-import { Switch, Route,useParams} from 'react-router-dom';
 import AddTask from './AddTask'
 import { Redirect} from 'react-router';
 import DayNavbar from './DayNavbar'
@@ -166,6 +164,12 @@ const Main = ({name,onNameChange}) => {
       console.log("deleteTaskFromShareList",{username:name,currentDate:currentDate,...t})
       socket.emit("deleteTaskFromShareList",{username:name,currentDate:currentDate,...t})
     }
+
+    socket.on("deleteTaskFromShareList",data=>{
+      console.log("This is the data that need to be deleted: ",data)
+      setSharedTasks(sharedTasks.filter((task)=> task.title !== data.title ))
+      setShareThing(sharedThings-1)
+    })
 
     const moveBackTodo=(t) =>{
       setFinishedTask(finishedTask.filter((task)=> task.title !== t.title ))
