@@ -41,6 +41,7 @@ const ShowShareTaskContent = (props) => {
         setToggleTitle(true)
         props.onHide()
       }
+      // user changed the title but the title already exist.
       else{
         setToggleTitle(false)
         setError(true)

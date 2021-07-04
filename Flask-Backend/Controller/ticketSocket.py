@@ -217,7 +217,8 @@ def add_shared_task(data):
     #clients[data["username"]] = request.sid
     user, title, friends, content, deadline_date, deadline_time, create_date, create_time = parsing_shared_task(
         data, True)
-    user_shared_tickets = TicketDB.find_one({'username': user})['public_ticket']
+    user_shared_tickets = TicketDB.find_one(
+        {'username': user})['public_ticket']
     ticket = {"creator": user, "create_time": create_time, "title": title, "content": content,
               "date": deadline_date, "time": deadline_time, "friends": friends}
     if create_date in user_shared_tickets.keys():
@@ -255,7 +256,8 @@ def delete_task_from_shared_list(data):
         del_public_ticket(user, title, create_date)
         for friend in friends:
             if friend in clients:
-                emit("deleteTaskFromShareList", {"title": title}, to=clients[friend])
+                emit("deleteTaskFromShareList", {
+                     "title": title}, to=clients[friend])
             del_public_ticket(friend, title, create_date)
     return
 
@@ -280,13 +282,15 @@ def edit_shared_task_content(data):
     edit_shared_ticket(data, creator)
     ticket = {'username': creator, 'currentDate': data['currentDate'], 'title': data['title'], 'content': data['content'],
               'create_time': data['create_time'], 'date': data['date']}
-    emit("receviedEditTask", {"oldTitle": data["oldTitle"], "updateTicket": ticket}, to=clients[creator])
+    emit("receviedEditTask", {
+         "oldTitle": data["oldTitle"], "updateTicket": ticket}, to=clients[creator])
     for friend in friends:
         ticket = {'username': friend, 'currentDate': data['currentDate'], 'title': data['title'], 'content': data['content'],
                   'create_time': data['create_time'], 'date': data['date']}
         if friend in clients:
             print("send to client: " + str(clients[friend]))
-            emit("receviedEditTask", {"oldTitle": data["oldTitle"], "updateTicket": ticket}, to=clients[friend])
+            emit("receviedEditTask", {
+                 "oldTitle": data["oldTitle"], "updateTicket": ticket}, to=clients[friend])
         edit_shared_ticket(data, friend)
     return
 
@@ -306,12 +310,13 @@ def parsing_shared_task(data, shared):
     create_time = data_time_arr[1]
     if shared:
         user, title, friends, content, deadline_date, deadline_time =\
-            data['username'], data['title'], data['sharedWith'], data['content'], data['date'], data['time']
+            data['username'], data['title'], data['friends'], data['content'], data['date'], data['time']
         return user, title, friends, content, deadline_date, deadline_time, create_date, create_time
     else:
         user, title, friends, content, deadline_date, deadline_time = \
             data['username'], data['title'], data['friends'], data['content'], data['date'], data['time']
         return user, title, friends, content, deadline_date, deadline_time, create_date, create_time
+
 
 def update_ticket_arr(create_date, ticket_arr, user):
     self_ticket = TicketDB.find_one({"username": user})['self_ticket']
@@ -342,12 +347,14 @@ def get_data_by_date(user_info, day):
 
 
 def del_public_ticket(user, title, create_date):
-    cur_public_ticket_list = TicketDB.find_one({"username": user})['public_ticket'][create_date]
+    cur_public_ticket_list = TicketDB.find_one({"username": user})[
+        'public_ticket'][create_date]
     for i in range(0, len(cur_public_ticket_list)):
         each_ticket = cur_public_ticket_list[i]
         if each_ticket['title'] == title:
             del cur_public_ticket_list[i]
-            public_ticket = TicketDB.find_one({"username": user})['public_ticket']
+            public_ticket = TicketDB.find_one({"username": user})[
+                'public_ticket']
             if len(cur_public_ticket_list) == 0:
                 public_ticket.pop[create_date]
             else:
@@ -362,11 +369,13 @@ def edit_shared_ticket(data, user):
         data, False)
     old_title = data["oldTitle"]
     public_ticket = TicketDB.find_one({"username": user})['public_ticket']
-    complete_public_ticket = TicketDB.find_one({"username": user})['complete_public_ticket']
+    complete_public_ticket = TicketDB.find_one({"username": user})[
+        'complete_public_ticket']
 
     ''' public '''
     if create_date in public_ticket.keys():
-        public_ticket_list = TicketDB.find_one({"username": user})['public_ticket'][create_date]
+        public_ticket_list = TicketDB.find_one({"username": user})[
+            'public_ticket'][create_date]
         for i in range(0, len(public_ticket_list)):
             if public_ticket_list[i]['title'] == old_title:
                 public_ticket_list[i]['title'] = title
@@ -382,7 +391,8 @@ def edit_shared_ticket(data, user):
                 return
     ''' complete '''
     if create_date in complete_public_ticket.keys():
-        complete_public_ticket_list = TicketDB.find_one({"username": user})['complete_public_ticket'][create_date]
+        complete_public_ticket_list = TicketDB.find_one(
+            {"username": user})['complete_public_ticket'][create_date]
         for i in range(0, len(complete_public_ticket_list)):
             if complete_public_ticket_list[i]['title'] == old_title:
                 complete_public_ticket_list[i]['title'] = title
