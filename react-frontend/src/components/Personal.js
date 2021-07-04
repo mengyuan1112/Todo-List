@@ -50,6 +50,14 @@ const Personal = ({name,onNameChange,changeImage}) => {
 
  //////////////
 
+    let hreflink=""
+    if (name){
+        hreflink='/'+name
+    }
+    else{
+        hreflink=""
+    }
+
     const [friendPage,SetfriendPage] = useState(true)
     const [summaryPage,SetsummaryPage] = useState(false)
     const [checkedPage,SetcheckedPage] = useState(false)
@@ -60,17 +68,23 @@ const Personal = ({name,onNameChange,changeImage}) => {
             <Card className="card" >
             <Card.Img src={hhh} alt="Card image" className="background"/>
 
-            <Card.ImgOverlay>
-            <img className="friendsPhoto" src={imagePro} alt="User avatar" style={{ alignSelf: 'center' }}/>
-            <div style={{ alignSelf: 'center' }}>{usernamePro}</div>
-            </Card.ImgOverlay>
+           
+            <img className="friendsPhoto" src={imagePro} alt="User avatar" />
+            <div className="centered">{usernamePro}</div>
+           
         
             <Navbar  variant="light">
                 <Container>
                 <Nav className="me-auto">
-                <Nav.Link href="#friends" onClick={()=>{SetfriendPage(true);SetsummaryPage(false);SetcheckedPage(false)}}><FcConferenceCall/>Friends</Nav.Link>
-                <Nav.Link href="#Summary" onClick={()=>{SetfriendPage(false);SetsummaryPage(true);SetcheckedPage(false)}}><FcComboChart/>Summary</Nav.Link>
-                <Nav.Link href="#Checked" onClick={()=>{SetfriendPage(false);SetsummaryPage(false);SetcheckedPage(true)}}><FcCalendar/>Checked</Nav.Link>
+                <Nav.Item as="li">
+                <Nav.Link href={`${hreflink}/personal/friends`}  onClick={()=>{SetfriendPage(true);SetsummaryPage(false);SetcheckedPage(false)}}><FcConferenceCall/>Friends</Nav.Link>
+                </Nav.Item>
+                <Nav.Item as="li">
+                <Nav.Link href={`${hreflink}/personal/summary`} onClick={()=>{SetfriendPage(false);SetsummaryPage(true);SetcheckedPage(false)}}><FcComboChart/>Summary</Nav.Link>
+                </Nav.Item>
+                <Nav.Item as="li">
+                <Nav.Link href={`${hreflink}/personal/checked`} onClick={()=>{SetfriendPage(false);SetsummaryPage(false);SetcheckedPage(true)}}><FcCalendar/>Checked</Nav.Link>
+                </Nav.Item>
                 </Nav>
                 </Container>
             </Navbar>
@@ -79,7 +93,7 @@ const Personal = ({name,onNameChange,changeImage}) => {
             
             <Card>
                 {friendPage
-                ?(<Friend></Friend>)
+                ?(<Friend name={usernamePro}></Friend>)
                 //////////////
                 :(<></>)
                 }

@@ -16,7 +16,7 @@ const AddSharedTask = (props) => {
     const handleSubmitTask=(e)=>{
         e.preventDefault();
         setError(false)
-        if (props.addtask({sharedWith:sharedWith,title:title,content:content,date:date,time:time, createdBy:props.name})){
+        if (props.addtask({sharedWith:sharedWith,title:title,content:content,date:date,time:time, creator:props.name})){
           //add task sucess
           props.onHide();
         }

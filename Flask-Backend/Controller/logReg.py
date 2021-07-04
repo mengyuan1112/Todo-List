@@ -20,9 +20,6 @@ logReg = Blueprint('logReg', __name__)
     collection name: user
     DB document [username, name, salt_password, email, salt, self_ticket, public_ticket]
 """
-# app.config['MONGO_URI'] = "mongodb://localhost:27017/Todo_list"
-# UserDB = db
-# GoogleDB = PyMongo(app, uri="mongodb://localhost:27017/Todo_list")
 
 
 # Regex for check email validation
@@ -58,7 +55,7 @@ def register():
     ticket_document = {"username": data['username'], "self_ticket": {
     }, "complete_ticket": {}, "public_ticket": {}, "complete_public_ticket": {}}
     image_document = {"username": data['username'], "icon": im}
-    friend_document = {"username": data['username'], "friends": []}
+    friend_document = {"username": data['username'], "friends": [], "friendWith": []}
     UserDB.insert_one(user_document)
     TicketDB.insert_one(ticket_document)
     ImageDB.insert_one(image_document)
@@ -129,6 +126,18 @@ def google_login():
         last_name = id_info['given_name']
         response = {'result': "successful",
                     'first_name': first_name, 'last_name': last_name}
+
+        # user_document = {"username": first_name + " " + last_name, "name":first_name + " " + last_name , "salt_password": "",
+        #                  "email": "", "salt": ""}
+        # ticket_document = {"username": data['username'], "self_ticket": {
+        # }, "complete_ticket": {}, "public_ticket": {}, "complete_public_ticket": {}}
+        # image_document = {"username": data['username'], "icon": im}
+        # friend_document = {"username": data['username'], "friends": []}
+        # UserDB.insert_one(user_document)
+        # TicketDB.insert_one(ticket_document)
+        # ImageDB.insert_one(image_document)
+        # FriendsDB.insert_one(friend_document)
+
         return jsonify(response)
     except ValueError:
         ValueError
