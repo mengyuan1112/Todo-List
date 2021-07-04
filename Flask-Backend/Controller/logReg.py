@@ -55,7 +55,7 @@ def register():
     ticket_document = {"username": data['username'], "self_ticket": {
     }, "complete_ticket": {}, "public_ticket": {}, "complete_public_ticket": {}}
     image_document = {"username": data['username'], "icon": im}
-    friend_document = {"username": data['username'], "friends": [], "friendWith": []}
+    friend_document = {"username": data['username'], "friends": []}
     UserDB.insert_one(user_document)
     TicketDB.insert_one(ticket_document)
     ImageDB.insert_one(image_document)
@@ -127,17 +127,17 @@ def google_login():
         response = {'result': "successful",
                     'first_name': first_name, 'last_name': last_name}
 
-        # user_document = {"username": first_name + " " + last_name, "name":first_name + " " + last_name , "salt_password": "",
+
+        # user_document = {"username": first_name +" " + last_name, "name":first_name +" " + last_name , "salt_password": "",
         #                  "email": "", "salt": ""}
-        # ticket_document = {"username": data['username'], "self_ticket": {
+        # ticket_document = {"username": first_name +" " + last_name, "self_ticket": {
         # }, "complete_ticket": {}, "public_ticket": {}, "complete_public_ticket": {}}
-        # image_document = {"username": data['username'], "icon": im}
-        # friend_document = {"username": data['username'], "friends": []}
+        # image_document = {"username": first_name + " " + last_name, "icon": im}
+        # friend_document = {"username": first_name + " " + last_name, "friends": [], "friendWith": []}
         # UserDB.insert_one(user_document)
         # TicketDB.insert_one(ticket_document)
         # ImageDB.insert_one(image_document)
         # FriendsDB.insert_one(friend_document)
-
         return jsonify(response)
     except ValueError:
         ValueError
