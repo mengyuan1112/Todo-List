@@ -179,4 +179,4 @@ const Friend = (name) => {
     )
 }
 
-export default Friend
+export default Friends

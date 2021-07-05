@@ -33,7 +33,6 @@ function App() {
           localStorage.clear();
           setExpire(true)
           setNickName("")
-          history.push('/home')
         }
         else{
         setExpire(false)
@@ -82,10 +81,12 @@ function App() {
               <Route exact path={`/:name/main`} component={()=> <Main name={name} onNameChange={onChange}/>} />
               <Route exact path={`/:name/personal`} component={()=><Personal name={name} onNameChange={onChange}/>}/>
 
+
               <Route exact path={`/:name/personal/friends`}component={()=><Friend name={name} onNameChange={onChange}/>}/>
               <Route exact path={`/:name/personal/summary`}component={()=><Summary name={name} onNameChange={onChange}/>}/>
               <Route exact path={`/:name/personal/checked`}component={()=><Checked name={name} onNameChange={onChange}/>}/>
               
+
 
 
               <Route exact path={`/:name/profile`} component={()=> <Profile name={name} changeNickName={changeNickName} changeImage={changeImage} onNameChange={onChange}/>} />

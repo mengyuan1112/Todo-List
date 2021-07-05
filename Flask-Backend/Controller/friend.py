@@ -13,31 +13,36 @@ def add_friend(data, t):
     friend = data['friendName']
     user_friends = FriendsDB.find_one({"username": user})['friends']
     if friend in user_friends:
-        emit("Addedfriend", {"result": "already added", "friendPhoto": ImageDB.find_one({"username": friend})["icon"],
+        emit("Addedfriend", {"result": "already added", "friendPhoto":"",
                              "friendStatus": False})
         return
     user_friends.append(friend)
     FriendsDB.update_one({"username": user},
                          {"$set": {"friends": user_friends}})
     if FriendsDB.find_one({"username": friend}) is None:
-        emit("Addedfriend", {"result": "Not Exist", "friendPhoto": ImageDB.find_one({"username": friend})["icon"],
+        emit("Addedfriend", {"result": "Not Exist", "friendPhoto": "",
                              "friendStatus": False})
         return
-    friends_query = FriendsDB.find_one({"username": friend})['friendWith']
+    friends_query = FriendsDB.find_one({"username": friend})['friends']
     friends_query.append(user)
     FriendsDB.update_one({"username": friend},
-                         {"$set": {"friendWith": friends_query}})
+                         {"$set": {"friends": friends_query}})
     status = False
     print("this is clients: ",clients)
     if friend in clients:
         status = True
-    print("status: ",status)
+
+        emit("Addedfriend", {"result": "pass", "friendPhoto": ImageDB.find_one({"username": user})["icon"],
+                             "friendStatus": True}, to=clients[friend])
+
+
     emit("Addedfriend", {"result": "pass", "friendPhoto": ImageDB.find_one({"username": friend})["icon"],
                          "friendStatus": status})
 
 # {'username': {}, 'friendName': 'friend1', 'friendPhoto': '', 'friendStatus': ''}
 @socketio.on("Deletefriend", namespace="/friends")
 def delet_friend(data):
+    print(data)
     user = data["username"]
     friend = data["friendName"]
     user_friends = FriendsDB.find_one({"username": user})['friends']
@@ -46,7 +51,7 @@ def delet_friend(data):
             del user_friends[i]
             FriendsDB.update_one({"username": user},
                                  {"$set": {"friends": user_friends}})
-    friends_query = FriendsDB.find_one({"username": friend})['friendWith']
+    friends_query = FriendsDB.find_one({"username": friend})['friends']
     for i in range(0, len(friends_query)):
         if user == friends_query[i]:
             del friends_query[i]
