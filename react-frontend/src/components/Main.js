@@ -46,7 +46,7 @@ const Main = ({name,onNameChange}) => {
             res => {
               console.log(res)
                 console.log("after GET date is: " + currentDate)
-                  console.log((res.data.todo).length)
+                  console.log((res.data.todo))
                   if(typeof (res.data.todo).length !== 'undefined'){
                     console.log((res.data.todo).length)
                     setTasks(res.data.todo)

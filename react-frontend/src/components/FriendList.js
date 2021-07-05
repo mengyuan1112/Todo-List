@@ -17,7 +17,7 @@ const FriendList =({friend,deleteFriend}) => {
                 <Col xs="9">
                 <p class="title" >{friend.friendName}</p>
                 {friend.friendStatus
-                ?(<p class="title" style={{color:'black'}} >{friend.friendStatus}</p>)
+                ?(<p class="title" style={{color:'black'}} >online</p>)
                 :(<p class="title" style={{color:'gray'}} >offline</p>)
                 }
                 </Col>   

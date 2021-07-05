@@ -7,6 +7,9 @@ import Login from './components/Login';
 import Main from './components/Main';
 import Profile from './components/Profile'
 import Personal from './components/Personal'
+import Friend from './components/Friend'
+import Summary from './components/Personal'
+import Checked from './components/Personal'
 import axios from 'axios';
 
 
@@ -79,9 +82,9 @@ function App() {
               <Route exact path={`/:name/main`} component={()=> <Main name={name} onNameChange={onChange}/>} />
               <Route exact path={`/:name/personal`} component={()=><Personal name={name} onNameChange={onChange}/>}/>
 
-              <Route exact path={`/:name/personal/friends`}component={()=><Personal name={name} onNameChange={onChange}/>}/>
-              <Route exact path={`/:name/personal/summary`}component={()=><Personal name={name} onNameChange={onChange}/>}/>
-              <Route exact path={`/:name/personal/checked`}component={()=><Personal name={name} onNameChange={onChange}/>}/>
+              <Route exact path={`/:name/personal/friends`}component={()=><Friend name={name} onNameChange={onChange}/>}/>
+              <Route exact path={`/:name/personal/summary`}component={()=><Summary name={name} onNameChange={onChange}/>}/>
+              <Route exact path={`/:name/personal/checked`}component={()=><Checked name={name} onNameChange={onChange}/>}/>
               
 
 

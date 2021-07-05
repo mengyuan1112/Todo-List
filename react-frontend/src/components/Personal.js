@@ -10,7 +10,7 @@ import hhh from '../2.png';
 import Alert from 'react-bootstrap/Alert'
 import React ,{useState,useRef,Component,useEffect} from "react"
 import "./Personal.css";
-import Friend from './Friend'
+import AddFriend from './Friends'
 import { CgUserAdd } from "react-icons/cg";
 import { FcConferenceCall,FcComboChart,FcCalendar} from "react-icons/fc";
 import FriendList from './FriendList'
@@ -58,14 +58,14 @@ const Personal = ({name,onNameChange,changeImage}) => {
         hreflink=""
     }
 
-    const [friendPage,SetfriendPage] = useState(false)
-    const [summaryPage,SetsummaryPage] = useState(false)
-    const [checkedPage,SetcheckedPage] = useState(false)
+    // const [friendPage,SetfriendPage] = useState(true)
+    // const [summaryPage,SetsummaryPage] = useState(false)
+    // const [checkedPage,SetcheckedPage] = useState(false)
 
     return(
 
-        <Container>
-            <Card className="card" >
+        <div>
+            <Card >
             <Card.Img src={hhh} alt="Card image" className="background"/>
 
            
@@ -77,45 +77,22 @@ const Personal = ({name,onNameChange,changeImage}) => {
                 <Container>
                 <Nav className="me-auto">
                 <Nav.Item as="li">
-                <Nav.Link href={`${hreflink}/personal/friends`}  onClick={()=>{SetfriendPage(true);SetsummaryPage(false);SetcheckedPage(false)}}><FcConferenceCall/>Friends</Nav.Link>
+                <Nav.Link href={`${hreflink}/personal/friends`}  ><FcConferenceCall/>Friends</Nav.Link>
                 </Nav.Item>
                 <Nav.Item as="li">
-                <Nav.Link href={`${hreflink}/personal/summary`} onClick={()=>{SetfriendPage(false);SetsummaryPage(true);SetcheckedPage(false)}}><FcComboChart/>Summary</Nav.Link>
+                <Nav.Link href={`${hreflink}/personal/summary`} ><FcComboChart/>Summary</Nav.Link>
                 </Nav.Item>
                 <Nav.Item as="li">
-                <Nav.Link href={`${hreflink}/personal/checked`} onClick={()=>{SetfriendPage(false);SetsummaryPage(false);SetcheckedPage(true)}}><FcCalendar/>Checked</Nav.Link>
+                <Nav.Link href={`${hreflink}/personal/checked`} ><FcCalendar/>Checked</Nav.Link>
                 </Nav.Item>
                 </Nav>
                 </Container>
             </Navbar>
             </Card>
            
-            
-            <Card>
-                {friendPage
-                ?(<Friend name={usernamePro}></Friend>)
-                //////////////
-                :(<></>)
-                }
-                {summaryPage
-                ?
-                (<Card.Body >
-
-                </Card.Body >)
-                :(<></>)
-                }
-                {checkedPage
-                ?
-                (<Card.Body >
-
-                </Card.Body >)
-                :(<></>)
-                }
-            </Card>   
-
-            {/*Modal*/ }
+           
        
-        </Container>
+        </div>
         
     )
 

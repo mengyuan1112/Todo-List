@@ -75,7 +75,7 @@ const Navigation=({name,onNameChange,img,changeNickName})=>{
 
                 <ListGroup>
                     <ListGroup.Item action href={`${hreflink}/profile`}>Profile </ListGroup.Item>
-                    <ListGroup.Item action href={`${hreflink}/personal`}>Personal </ListGroup.Item>
+                    <ListGroup.Item action href={`${hreflink}/personal/friends`}>Personal </ListGroup.Item>
                     <ListGroup.Item action onClick={logout}>Logout</ListGroup.Item>    
                 </ListGroup>
 
