@@ -38,7 +38,7 @@ function App() {
         setExpire(false)
         setName(res.data.username)
         setNickName(res.data.name)
-      }
+        }
       },
       err => {
         console.log(err);

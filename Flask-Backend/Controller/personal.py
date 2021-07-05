@@ -1,6 +1,4 @@
-
 from flask import jsonify
-
 from flask import Blueprint
 from .database import FriendsDB
 from .database import ImageDB
@@ -12,7 +10,6 @@ personal = Blueprint('personal', __name__)
 
 @personal.route('/<user_name>/friend', methods=['GET'])
 def get_friend(user_name):
-
     user_friends_list = FriendsDB.find_one({"username": user_name})['friends']
     friend_list = []
     for friend in user_friends_list:
@@ -24,4 +21,3 @@ def get_friend(user_name):
             friend_status = {"friendName": friend, "friendPhoto": friend_photo, "friendStatus": False}
             friend_list.append(friend_status)
     return jsonify({"user_name": user_name, "friend_list": friend_list})
-

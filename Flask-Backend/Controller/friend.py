@@ -28,13 +28,10 @@ def add_friend(data, t):
     FriendsDB.update_one({"username": friend},
                          {"$set": {"friends": friends_query}})
     status = False
-    print("this is clients: ",clients)
     if friend in clients:
         status = True
-
         emit("Addedfriend", {"result": "pass", "friendPhoto": ImageDB.find_one({"username": user})["icon"],
                              "friendStatus": True}, to=clients[friend])
-
 
     emit("Addedfriend", {"result": "pass", "friendPhoto": ImageDB.find_one({"username": friend})["icon"],
                          "friendStatus": status})

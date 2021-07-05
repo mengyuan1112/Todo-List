@@ -10,7 +10,7 @@ import hhh from '../2.png';
 import Alert from 'react-bootstrap/Alert'
 import React ,{useState,useRef,Component,useEffect} from "react"
 import "./Personal.css";
-import AddFriend from './Friends'
+import AddFriend from './Friend'
 import { CgUserAdd } from "react-icons/cg";
 import { FcConferenceCall,FcComboChart,FcCalendar} from "react-icons/fc";
 import FriendList from './FriendList'
