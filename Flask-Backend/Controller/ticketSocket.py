@@ -375,7 +375,7 @@ def parsing_shared_task(data):
     create_date = data_time_arr[0]
     create_time = data_time_arr[1]
     user, title, friends, content, deadline_date, deadline_time =\
-        data['username'], data['title'], data['friends'], data['content'], data['date'], data['time']
+        data['username'], data['title'], data['sharedWith'], data['content'], data['date'], data['time']
     return user, title, friends, content, deadline_date, deadline_time, create_date, create_time
 
 
