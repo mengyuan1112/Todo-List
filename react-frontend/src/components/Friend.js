@@ -48,12 +48,11 @@ const Friend =({name}) => {
 
 
 
-    
-    const [searchName,SetsearchName] = useState('');
     const [friendName,SetfriendName] = useState('');
     const [friendPhoto, SetfriendPhoto] = useState('');
     const [friendStatus,SetStatus] = useState(false);
     const [error,setError] = useState(false)
+    var friend={friendName:friendName,friendPhoto:friendPhoto,friendStatus:friendStatus}
 
 
     const addFriends=(friend)=>{
@@ -65,18 +64,16 @@ const Friend =({name}) => {
         socket.emit("Addedfriend",{username:name , friendName:friendName},console.log("this is socket"));
 
         socket.on('Addedfriend',data=>{
-
-
-
+    
             console.log("this is from server" + data)
             if(data.result=="pass"){
+                friend={friendName:friendName,friendPhoto:data.friendPhoto,friendStatus:data.friendStatus}
                 SetfriendNumber(friendNumber+1)
-                SetfriendPhoto(data.friendPhoto)
-                SetStatus(data.friendStatus)
-                console.log(data.friendPhoto)
+                //SetfriendPhoto(data.friendPhoto)
+                //SetStatus(data.friendStatus)
                 Setfriends([...friends,friend])
                 setShow(false)
-                console.log(data.friendStatus)
+                console.log(friends)
                 return true
 
 
@@ -100,12 +97,12 @@ const Friend =({name}) => {
     }
 
 
-    const handleSubmit=(e)=>{
 
+    const handleSubmit=(e)=>{
         // props.addtask({title,content,date,time});
         e.preventDefault();
         setError(false)
-        if(addFriends({friendName:friendName,friendPhoto:friendPhoto,friendStatus:friendStatus})){
+        if(addFriends(friend)){
             //SetfriendNumber(friendNumber+1)
             setShow(false)
         }
@@ -119,7 +116,7 @@ const Friend =({name}) => {
     const deleteFriend = (f) =>{
         Setfriends(friends.filter((friend)=> friend.friendName!== f.friendName ))
         SetfriendNumber(friendNumber-1)
-        socket.emit("Deletefriend",{username:name, friendName:friendName})
+        socket.emit("Deletefriend",{username:name, friendName:f.friendName})
     }
 
 
