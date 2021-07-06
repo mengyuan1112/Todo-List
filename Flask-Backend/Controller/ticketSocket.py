@@ -34,7 +34,7 @@ def add_task(data):
     user, title, content, deadline_date, deadline_time, create_date, create_time = parsing_task(
         data)
     ticket = {"create_time": create_time, "title": title, "content": content,
-              "date": deadline_date, "time": deadline_time}
+              "date": deadline_date, "time": deadline_time, "range": data['range']}
     self_ticket = ticket_info['self_ticket']  # {}
 
     if create_date in self_ticket.keys():
@@ -49,6 +49,7 @@ def add_task(data):
                             {"$set": {"self_ticket": self_ticket}})
     # database - self_ticket: {date: [{},{},{}]}
     emit('AddedTask', data, broadcast=True)
+    # emit('AddedTask', data, broadcast=True)
 
 # Done
 
@@ -482,6 +483,7 @@ def update_del_ticket(user, create_date, title, ticket):
                                 {"$set": {"public_ticket": public_ticket}})
 
 
+''' Shitty code don't change !! '''
 def move_public_ticket_2_complete(user, date, title, complete_list, friend_list, creator):
     user_public_ticket = TicketDB.find_one({"username": user})['public_ticket']
     user_public_ticket_list = TicketDB.find_one({"username": user})["public_ticket"][date]
@@ -567,6 +569,7 @@ def move_public_ticket_2_complete(user, date, title, complete_list, friend_list,
     return
 
 
+''' Shitty code don't change !! '''
 def move_complete_2_public_ticket(user, date, title, complete_list, friend_list, creator):
     user_public_ticket = TicketDB.find_one({"username": user})['public_ticket']
     # user_public_ticket_list = TicketDB.find_one({"username": user})["public_ticket"][date]
