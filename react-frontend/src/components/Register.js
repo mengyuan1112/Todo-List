@@ -14,6 +14,7 @@ const Register = () => {
     const [passwordReg,setPasswordReg] = useState('');
     const [confirmPasswordReg,setConfirmPasswordReg] = useState('');
     const history = useHistory();
+    const [error,setError] = useState(false)
 
     const submitHandler= (e) =>{
         e.preventDefault();
@@ -42,14 +43,45 @@ const Register = () => {
             })
             .catch(err=>{ console.log(err) });
     }
+    const checkEmail=(e)=>{
+        setEmailReg(e.target.value);
+        if (e.target.value==""){
+            setError(true);
+        }
+        else{
+            setError(false);
+        }
+    }
+
+    const checkUsername=(e)=>{
+        setUsernameReg(e.target.value);
+        if (e.target.value==""){
+            setError(true);
+        }
+        else{
+            setError(false);
+        }
+    }
 
     const checkPassword=(e)=>{
         setConfirmPasswordReg(e.target.value);
         if (passwordReg !== e.target.value ){
             setPasswordError("Password did't match")
+            setError(true);
         }
         else{
             setPasswordError('');
+            setError(false);
+        }
+    }
+
+    const checkPasswordOnce=(e)=>{
+        setPasswordReg(e.target.value)
+        if (confirmPasswordReg!== e.target.value){
+            setError(true);
+        }
+        else{
+            setError(false);
         }
     }
 
@@ -66,34 +98,32 @@ const Register = () => {
                 {emailError? 
                 (
                 <Form.Group controlId="formGroupEmail">
-                <Form.Control onChange={(e)=>{
-                    setEmailReg(e.target.value);
+                <Form.Control onChange={(e)=>{ checkEmail(e)
                 }} size="sm" type="email" placeholder="Enter Email" style={{borderColor:"red", borderRadius:'10px'}} />
                 <Form.Text style={{ color:"red" }}>{emailError}</Form.Text> 
                 </Form.Group>
                 ) : 
                 (<Form.Group controlId="formGroupEmail">
                 <Form.Control onChange={(e)=>{
-                    setEmailReg(e.target.value);
+                    checkEmail(e)
                 }} size="sm" type="email" placeholder="Enter Email" style={{borderRadius:'10px'}}/>
                 </Form.Group>)
                 }
-
                 {usernameError? (
                 <Form.Group>
                 <Form.Control size="sm" type="text" style={{borderColor:"red", borderRadius:'10px'}} onChange={(e)=>{
-                        setUsernameReg(e.target.value);
+                        checkUsername(e)
                 }} placeholder="Enter username" />
                 <Form.Text style={{ color:"red" }}>{usernameError}</Form.Text> 
                 </Form.Group>) 
                 : 
                 (<Form.Group>
                 <Form.Control size="sm" type="text" style={{borderRadius:'10px'}} onChange={(e)=>{
-                    setUsernameReg(e.target.value);}} placeholder="Enter username" /> </Form.Group>)}
+                    checkUsername(e);}} placeholder="Enter username" /> </Form.Group>)}
 
             <Form.Group controlId="formGroupPassword">
                 <Form.Control size="sm" type="password" style={{borderRadius:'10px'}} onChange={(e)=>{
-                    setPasswordReg(e.target.value)
+                    checkPasswordOnce(e)
                 }}  placeholder="Password" />
                 <Form.Text id="passwordHelpBlock" muted>
                 Your password must be 8-20 characters long, contain uppercase letters, lowercase letters, numbers, and at least one spercial character.
@@ -108,7 +138,12 @@ const Register = () => {
                 ):(<Form.Group controlId="formGroupPasswordConfirm">
                     <Form.Control size="sm" type="password" style={{borderRadius:'10px'}} onChange={(e)=>checkPassword(e)} placeholder="Confirm Password" /> 
                     </Form.Group> )}
-            <Button variant="success" type="submit" >Register</Button>
+            {
+                error ?
+                <Button variant="success" type="submit" disabled>Register</Button>
+                 :
+                <Button variant="success" type="submit" >Register</Button>
+            }
             </Form>
         </Col>
         </Row>

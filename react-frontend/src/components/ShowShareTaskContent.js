@@ -41,6 +41,7 @@ const ShowShareTaskContent = (props) => {
         setToggleTitle(true)
         props.onHide()
       }
+      // user changed the title but the title already exist.
       else{
         setToggleTitle(false)
         setError(true)
@@ -69,7 +70,7 @@ const ShowShareTaskContent = (props) => {
           {error? <Alert variant="danger">Duplicated title. Please try again.</Alert>:null}
           <ul>
             <li>Share with :
-                <span>{props.task.sharedWith}</span>
+                <span>{props.task.friends}</span>
             </li>
 
             <li onDoubleClick={()=>setToggleTitle(false)}>Title :
@@ -153,7 +154,7 @@ const ShowShareTaskContent = (props) => {
               </li>
               
               <li>
-                Created By: <span>{createdBy}</span>
+                Created By: <span>{props.task.creator}</span>
               </li>
           </ul>
       </Modal.Body>

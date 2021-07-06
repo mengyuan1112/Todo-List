@@ -29,7 +29,7 @@ const ShareTask = ({editContent,task,taskStatus,deleteTask}) => {
             <FaCheck onClick={finishTask}
             style={{float:'right', color:'green',cursor:'pointer',fontSize:'1.5rem'}}/> 
             }
-            <Form.Text>shared with: {task.sharedWith}</Form.Text>
+            <Form.Text>shared with: {task.friends}</Form.Text>
             {isFinished ? <Form.Text>Completed: me</Form.Text>: null}
         </ListGroup.Item>
         <ShowShareTaskContent

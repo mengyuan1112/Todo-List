@@ -1,9 +1,7 @@
 
 import React,{useState,useEffect} from 'react'
-import Logout from './Logout'
 import {Col,CardDeck,Row,Button,Dropdown,Card} from 'react-bootstrap';
 import './Main.css'
-import { Switch, Route,useParams} from 'react-router-dom';
 import AddTask from './AddTask'
 import { Redirect} from 'react-router';
 import DayNavbar from './DayNavbar'
@@ -46,7 +44,7 @@ const Main = ({name,onNameChange}) => {
             res => {
               console.log(res)
                 console.log("after GET date is: " + currentDate)
-                  console.log((res.data.todo).length)
+                  console.log((res.data.todo))
                   if(typeof (res.data.todo).length !== 'undefined'){
                     console.log((res.data.todo).length)
                     setTasks(res.data.todo)
@@ -96,7 +94,7 @@ const Main = ({name,onNameChange}) => {
       if (sameTitle) return false
       setSharedTasks([...sharedTasks,task])
       currentDate.setHours(0,0,0,0,0);
-      console.log({username:name,currentDate:currentDate, ...task});
+      console.log("AddedSharedTask:", {username:name,currentDate:currentDate, ...task});
       socket.emit("AddedSharedTask",{username:name,currentDate:currentDate, ...task});
       setShareThing(sharedThings+1);
       return true
@@ -161,10 +159,17 @@ const Main = ({name,onNameChange}) => {
     const deleteTaskFromShareList = (t)=>{
       setSharedTasks(sharedTasks.filter((task)=> task.title !== t.title ))
       setShareThing(sharedThings-1)
+      console.log("deleteTaskFromShareList",{username:name,currentDate:currentDate,...t})
       socket.emit("deleteTaskFromShareList",{username:name,currentDate:currentDate,...t})
     }
     socket.on("deleteTaskFromShareList",data=>{
         console.log("This is from del shared task: ",data);
+    })
+
+    socket.on("deleteTaskFromShareList",data=>{
+      console.log("This is the data that need to be deleted: ",data)
+      setSharedTasks(sharedTasks.filter((task)=> task.title !== data.title ))
+      setShareThing(sharedThings-1)
     })
 
     const moveBackTodo=(t) =>{
@@ -181,6 +186,7 @@ const Main = ({name,onNameChange}) => {
       setSharedTasks([...sharedTasks,t])
       currentDate.setHours(0,0,0,0,0);
       console.log({currentDate:currentDate, ...t});
+      console.log("moveFromFinishToSharedList",{username:name,currentDate:currentDate, ...t})
       socket.emit("moveFromFinishToSharedList",{username:name,currentDate:currentDate, ...t});
       setThingsFinished(thingsFinished-1)
       setShareThing(sharedThings+1)
@@ -209,6 +215,7 @@ const Main = ({name,onNameChange}) => {
 
     const editShareTaskContent =(newTitle,task)=>{
       if (newTitle === task.title){
+        console.log("EditSharedTaskContent",{username:name,currentDate:currentDate,oldTitle:task.title, ...task})
         socket.emit("EditSharedTaskContent",{username:name,currentDate:currentDate,oldTitle:task.title, ...task})
         return true
       }
@@ -220,7 +227,7 @@ const Main = ({name,onNameChange}) => {
       }
       const oldTitle = task.title
       task.title = newTitle
-      console.log("Old title: ",oldTitle,"\nNewTaskContent: ",task)
+      console.log("EditSharedTaskContent",{username:name,currentDate:currentDate,oldTitle:oldTitle, ...task})
       socket.emit("EditSharedTaskContent",{username:name,currentDate:currentDate,oldTitle:oldTitle, ...task})
       console.log("The title doesn't exit. Good to go! Title is",task.title)
       return true
