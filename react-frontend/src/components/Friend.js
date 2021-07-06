@@ -68,15 +68,18 @@ const Friend =({name}) => {
 
 
 
-            console.log("this is from server" + data)
+
             if(data.result=="pass"){
+                friend={friendName:friendName,friendPhoto:data.friendPhoto,friendStatus:data.friendStatus}
                 SetfriendNumber(friendNumber+1)
                 SetfriendPhoto(data.friendPhoto)
                 SetStatus(data.friendStatus)
-                console.log(data.friendPhoto)
+                console.log("this is from server" + data.friendName)
+                console.log("this is from server: " + data.friendStatus)
+                // console.log(data.friendPhoto)
                 Setfriends([...friends,friend])
                 setShow(false)
-                console.log(data.friendStatus)
+                // console.log(data.friendStatus)
                 return true
 
 
@@ -119,7 +122,7 @@ const Friend =({name}) => {
     const deleteFriend = (f) =>{
         Setfriends(friends.filter((friend)=> friend.friendName!== f.friendName ))
         SetfriendNumber(friendNumber-1)
-        socket.emit("Deletefriend",{username:name, friendName:friendName})
+        socket.emit("Deletefriend",{username:name, friendName:f.friendName})
     }
 
 

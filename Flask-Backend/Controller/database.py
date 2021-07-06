@@ -6,3 +6,4 @@ UserDB = db.user
 GoogleDB = db.google
 ImageDB = db.image
 FriendsDB = db.friend
+clients = {}
