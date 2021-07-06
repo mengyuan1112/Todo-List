@@ -2,7 +2,7 @@ from flask import jsonify
 from flask import Blueprint
 from .database import FriendsDB
 from .database import ImageDB
-from .ticketSocket import *
+from .database import clients
 
 
 personal = Blueprint('personal', __name__)

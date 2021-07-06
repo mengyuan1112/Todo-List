@@ -64,6 +64,7 @@ const Friend =({name}) => {
         socket.emit("Addedfriend",{username:name , friendName:friendName},console.log("this is socket"));
 
         socket.on('Addedfriend',data=>{
+
     
             console.log("this is from server" + data)
             if(data.result=="pass"){
@@ -74,6 +75,7 @@ const Friend =({name}) => {
                 Setfriends([...friends,friend])
                 setShow(false)
                 console.log(friends)
+
                 return true
 
 
