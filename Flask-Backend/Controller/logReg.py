@@ -154,7 +154,7 @@ def return_user(cookie):
 
 def gen_jwt(username):
     issue_time = datetime.datetime.utcnow()
-    token = jwt.encode({"iss": username, "iat": issue_time, "exp": issue_time + datetime.timedelta(minutes=30)},
+    token = jwt.encode({"iss": username, "iat": issue_time, "exp": issue_time + datetime.timedelta(minutes=180)},
                        key,
                        algorithm="HS256")
     return token
