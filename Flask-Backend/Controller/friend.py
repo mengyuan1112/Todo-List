@@ -42,15 +42,19 @@ def delete_friend(data):
     friend = data["friendName"]
     user_friends = FriendsDB.find_one({"username": user})['friends']
     # consist delet has error with idx of user_friends
+    print("friend list is: " + str(user_friends))
     for i in range(0, len(user_friends)):
+        print("idx is: " + str(i))
         if friend == user_friends[i]:
             del user_friends[i]
             FriendsDB.update_one({"username": user},
                                  {"$set": {"friends": user_friends}})
+            break
     friends_query = FriendsDB.find_one({"username": friend})['friends']
     for i in range(0, len(friends_query)):
         if user == friends_query[i]:
             del friends_query[i]
             FriendsDB.update_one({"username": friend},
                                  {"$set": {"friends": friends_query}})
+            break
     return

@@ -521,6 +521,8 @@ def move_public_ticket_2_complete(user, date, title, complete_list, friend_list,
             del user_public_ticket_list[i]
             if len(user_public_ticket_list) == 0:
                 user_public_ticket.pop(date)
+            else:
+                user_public_ticket[date] = user_public_ticket_list
             if date in user_complete_ticket.keys():
                 user_complete_ticket_list = user_complete_ticket[date]
                 user_complete_ticket_list.append(ticket)
@@ -563,6 +565,7 @@ def move_public_ticket_2_complete(user, date, title, complete_list, friend_list,
                     break
 
     return
+
 
 def move_complete_2_public_ticket(user, date, title, complete_list, friend_list, creator):
     user_public_ticket = TicketDB.find_one({"username": user})['public_ticket']
@@ -615,8 +618,11 @@ def move_complete_2_public_ticket(user, date, title, complete_list, friend_list,
             user_complete_ticket_list[i]["completed"] = complete_list_1
             ticket = user_complete_ticket_list[i]
             del user_complete_ticket_list[i]
+            # print("this is cur list: " + str(user_complete_ticket_list))
             if len(user_complete_ticket_list) == 0:
                 user_complete_ticket.pop(date)
+            else:
+                user_complete_ticket[date] = user_complete_ticket_list
             if date in user_public_ticket.keys():
                 user_public_ticket_list = user_public_ticket[date]
                 user_public_ticket_list.append(ticket)
@@ -628,7 +634,7 @@ def move_complete_2_public_ticket(user, date, title, complete_list, friend_list,
                 TicketDB.update_one({"username": user},
                                     {"$set": {"public_ticket": user_public_ticket}})
             TicketDB.update_one({"username": user},
-                                {"$set": {"complete_public_ticket": user_public_ticket}})
+                                {"$set": {"complete_public_ticket": user_complete_ticket}})
             emit("undoFinishedShareTask", ticket, to=clients[user])
             break
 
