@@ -34,7 +34,7 @@ def add_task(data):
     user, title, content, deadline_date, deadline_time, create_date, create_time = parsing_task(
         data)
     ticket = {"create_time": create_time, "title": title, "content": content,
-              "date": deadline_date, "time": deadline_time}
+              "date": deadline_date, "time": deadline_time, "range": data['range']}
     self_ticket = ticket_info['self_ticket']  # {}
 
     if create_date in self_ticket.keys():
@@ -49,6 +49,7 @@ def add_task(data):
                             {"$set": {"self_ticket": self_ticket}})
     # database - self_ticket: {date: [{},{},{}]}
     emit('AddedTask', data, broadcast=True)
+    # emit('AddedTask', data, broadcast=True)
 
 # Done
 
@@ -375,7 +376,7 @@ def parsing_shared_task(data):
     create_date = data_time_arr[0]
     create_time = data_time_arr[1]
     user, title, friends, content, deadline_date, deadline_time =\
-        data['username'], data['title'], data['friends'], data['content'], data['date'], data['time']
+        data['username'], data['title'], data['sharedWith'], data['content'], data['date'], data['time']
     return user, title, friends, content, deadline_date, deadline_time, create_date, create_time
 
 
@@ -482,6 +483,7 @@ def update_del_ticket(user, create_date, title, ticket):
                                 {"$set": {"public_ticket": public_ticket}})
 
 
+''' Shitty code don't change !! '''
 def move_public_ticket_2_complete(user, date, title, complete_list, friend_list, creator):
     user_public_ticket = TicketDB.find_one({"username": user})['public_ticket']
     user_public_ticket_list = TicketDB.find_one({"username": user})["public_ticket"][date]
@@ -521,6 +523,8 @@ def move_public_ticket_2_complete(user, date, title, complete_list, friend_list,
             del user_public_ticket_list[i]
             if len(user_public_ticket_list) == 0:
                 user_public_ticket.pop(date)
+            else:
+                user_public_ticket[date] = user_public_ticket_list
             if date in user_complete_ticket.keys():
                 user_complete_ticket_list = user_complete_ticket[date]
                 user_complete_ticket_list.append(ticket)
@@ -564,6 +568,8 @@ def move_public_ticket_2_complete(user, date, title, complete_list, friend_list,
 
     return
 
+
+''' Shitty code don't change !! '''
 def move_complete_2_public_ticket(user, date, title, complete_list, friend_list, creator):
     user_public_ticket = TicketDB.find_one({"username": user})['public_ticket']
     # user_public_ticket_list = TicketDB.find_one({"username": user})["public_ticket"][date]
@@ -615,8 +621,11 @@ def move_complete_2_public_ticket(user, date, title, complete_list, friend_list,
             user_complete_ticket_list[i]["completed"] = complete_list_1
             ticket = user_complete_ticket_list[i]
             del user_complete_ticket_list[i]
+            # print("this is cur list: " + str(user_complete_ticket_list))
             if len(user_complete_ticket_list) == 0:
                 user_complete_ticket.pop(date)
+            else:
+                user_complete_ticket[date] = user_complete_ticket_list
             if date in user_public_ticket.keys():
                 user_public_ticket_list = user_public_ticket[date]
                 user_public_ticket_list.append(ticket)
@@ -628,7 +637,7 @@ def move_complete_2_public_ticket(user, date, title, complete_list, friend_list,
                 TicketDB.update_one({"username": user},
                                     {"$set": {"public_ticket": user_public_ticket}})
             TicketDB.update_one({"username": user},
-                                {"$set": {"complete_public_ticket": user_public_ticket}})
+                                {"$set": {"complete_public_ticket": user_complete_ticket}})
             emit("undoFinishedShareTask", ticket, to=clients[user])
             break
 

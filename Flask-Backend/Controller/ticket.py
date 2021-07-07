@@ -28,4 +28,5 @@ def hello(username):
     document = {"todo": today_self_ticket,
                 "finishedList": today_complete_ticket, "sharedList": today_shared_ticket}
     # print(document)
+    print(str(document))
     return jsonify(document)

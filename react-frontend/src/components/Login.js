@@ -29,8 +29,8 @@ const Login = ({name,onNameChange,expire,changeNickName}) => {
         .then(res=>{
             onNameChange(response.profileObj.name)
             // socket.emit("onlineUser",{username:response.profileObj.name});
-            localStorage.setItem('token',response.tokenObj.id_token);
-            console.log(res)
+            localStorage.setItem('token',res.data.token);
+            console.log("this is res: " + JSON.stringify(res))
         })
         .catch(err =>{
             console.log(err)
