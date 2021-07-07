@@ -25,18 +25,20 @@ const Friend =({name}) => {
     const handleShow = () => setShow(true);
     const [notExistAlert, SetnotExistAlert] = useState(false);
     const [alreadyAddedAlert, SetalreadyAddedAlert] = useState(false);
+    const [selfAlert,SetselfAler] = useState(false);
 
 
     const [friendNumber,SetfriendNumber]= useState(0);
     const [friends,Setfriends] = useState([]);
 
     useEffect(() => {
+        socket.emit("IntoPersonal",{username:name})
         axios.get(`/${name}/friend`).then(
             res => {
                 SetfriendNumber(res.data.friend_list.length)
-                console.log(res.data.friend_list)
+                //console.log(res.data.friend_list)
                 Setfriends(res.data.friend_list)
-                console.log(res.friend_list)
+                //console.log(res.friend_list)
 
                 //SetAvater(res.data.avater)
             },
@@ -56,6 +58,7 @@ const Friend =({name}) => {
 
 
     const addFriends=(friend)=>{
+    
         // console.log()
         //friendName.preventDefault();
         //addFriends({friendName:friendName,friendPhoto:friendPhoto,friendStatus:friendStatus})
@@ -63,54 +66,81 @@ const Friend =({name}) => {
         //SetfriendNumber(friendNumber+1)
         socket.emit("Addedfriend",{username:name , friendName:friendName},console.log("this is socket"));
 
-        socket.on('Addedfriend',data=>{
-
-    
-            console.log("this is from server" + data)
-            if(data.result=="pass"){
-                friend={friendName:friendName,friendPhoto:data.friendPhoto,friendStatus:data.friendStatus}
-                SetfriendNumber(friendNumber+1)
-                //SetfriendPhoto(data.friendPhoto)
-                //SetStatus(data.friendStatus)
-                Setfriends([...friends,friend])
-                setShow(false)
-                console.log(friends)
-
-                return true
 
 
-            }
-            else if(data.result=="already added"){
-                console.log(data.result)
-                SetalreadyAddedAlert(true)
-                setShow(true)
-                return false
-
-            }
-            else{
-                SetnotExistAlert(true)
-                console.log(data.result)
-                setShow(true)
-                return false
-            }
-
-        })
 
     }
+
+    socket.on('Addedfriend',data=>{
+
+    
+        console.log("this is from server" + data)
+        if(data.result=="pass" && data.friendName!=name){
+            friend={friendName:data.friendName,friendPhoto:data.friendPhoto,friendStatus:data.friendStatus}
+            console.log(friend)
+            SetnotExistAlert(false)
+            SetalreadyAddedAlert(false)
+            SetselfAler(false)
+            SetfriendNumber(friendNumber+1)
+            //SetfriendPhoto(data.friendPhoto)
+            //SetStatus(data.friendStatus)
+            Setfriends([...friends,friend])
+            setShow(false)
+            console.log(data.result)
+
+            return true
+
+
+        }
+        else if( data.friendName==name){
+            SetselfAler(true)
+            return false
+
+        }
+
+        else if(data.result=="already added"){
+            console.log(data.result)
+            SetalreadyAddedAlert(true)
+            setShow(true)
+            return false
+
+        }
+        else{
+            SetnotExistAlert(true)
+            console.log(data.result)
+            setShow(true)
+            return false
+        }
+
+    })
+
+    socket.on("Addedfriend1",data=>{
+        console.log("this is add friend1")
+    })
 
 
 
     const handleSubmit=(e)=>{
-        // props.addtask({title,content,date,time});
         e.preventDefault();
         setError(false)
-        if(addFriends(friend)){
-            //SetfriendNumber(friendNumber+1)
-            setShow(false)
-        }
-        else{
+        if(friendName==name){
+            SetselfAler(true)
             setError(true)
         }
+        else{
+            if(addFriends(friend)){
+                //SetfriendNumber(friendNumber+1)
+                setShow(false)
+            }
+            else{
+                setError(true)
+            }
+
+        }
+        // props.addtask({title,content,date,time});
+        
+       
+
 
 
     }
@@ -125,6 +155,12 @@ const Friend =({name}) => {
     const friend_list = friends.map((friend) =>
         <FriendList key={friend.friendName} friend={friend} deleteFriend={deleteFriend}/>
     );
+
+    setTimeout(() => {
+        SetnotExistAlert(false);SetalreadyAddedAlert(false);SetselfAler(false)
+      }, 5000)
+
+      
 
     return(
         <Container >
@@ -142,7 +178,7 @@ const Friend =({name}) => {
         </ListGroup>
         {friend_list}
         </Card.Body>   
-        <Modal show={show} onHide={handleClose}>
+        <Modal show={show} onHide={()=>{setShow(false);SetnotExistAlert(false);SetalreadyAddedAlert(false);SetselfAler(false)}}>
         <Modal.Header closeButton>
         </Modal.Header>
         <Modal.Body>
@@ -154,6 +190,11 @@ const Friend =({name}) => {
             <Alert show={alreadyAddedAlert} variant="danger" onClose={() => SetalreadyAddedAlert(false)} dismissible>
                 <p>
                 You have already added this friend
+                </p>
+            </Alert>
+            <Alert show={selfAlert} variant="danger" onClose={() => SetselfAler(false)} dismissible>
+                <p>
+                You can not add yourself
                 </p>
             </Alert>
             <Form onSubmit={handleSubmit}>

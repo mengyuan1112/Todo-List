@@ -13,7 +13,7 @@ def get_friend(user_name):
     user_friends_list = FriendsDB.find_one({"username": user_name})['friends']
     friend_list = []
     for friend in user_friends_list:
-        friend_photo = ImageDB.find_one({"username": user_name})['icon']
+        friend_photo = ImageDB.find_one({"username": friend})['icon']
         if friend in clients:
             friend_status = {"friendName": friend, "friendPhoto": friend_photo, "friendStatus": True}
             friend_list.append(friend_status)

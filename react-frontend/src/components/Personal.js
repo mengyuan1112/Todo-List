@@ -60,6 +60,8 @@ const Personal = ({name,onNameChange,changeImage}) => {
 
 
 
+
+
     return(
 
         <div>
