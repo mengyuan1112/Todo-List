@@ -7,6 +7,9 @@ import Login from './components/Login';
 import Main from './components/Main';
 import Profile from './components/Profile'
 import Personal from './components/Personal'
+import Friend from './components/Friend'
+import Summary from './components/Personal'
+import Checked from './components/Personal'
 import axios from 'axios';
 
 
@@ -35,7 +38,7 @@ function App() {
         setExpire(false)
         setName(res.data.username)
         setNickName(res.data.name)
-      }
+        }
       },
       err => {
         console.log(err);
@@ -77,9 +80,15 @@ function App() {
               <Route exact path={`/:name/home`} component = {()=> <Home name={name} expire={expire} ticketLength={length} nickName={nickName} changeNickName={changeNickName}  onNameChange={onChange} thingsToDo={2}/>}/>
               <Route exact path={`/:name/main`} component={()=> <Main name={name} onNameChange={onChange}/>} />
               <Route exact path={`/:name/personal`} component={()=><Personal name={name} onNameChange={onChange}/>}/>
-              <Route exact path={`/:name/personal/friends`}component={()=><Personal name={name} onNameChange={onChange}/>}/>
-              <Route exact path={`/:name/personal/summary`}component={()=><Personal name={name} onNameChange={onChange}/>}/>
-              <Route exact path={`/:name/personal/checked`}component={()=><Personal name={name} onNameChange={onChange}/>}/>
+
+
+              <Route exact path={`/:name/personal/friends`}component={()=><Friend name={name} onNameChange={onChange}/>}/>
+              <Route exact path={`/:name/personal/summary`}component={()=><Summary name={name} onNameChange={onChange}/>}/>
+              <Route exact path={`/:name/personal/checked`}component={()=><Checked name={name} onNameChange={onChange}/>}/>
+              
+
+
+
               <Route exact path={`/:name/profile`} component={()=> <Profile name={name} changeNickName={changeNickName} changeImage={changeImage} onNameChange={onChange}/>} />
               <Route exact path={`/:name/`} component = {()=> <Home name={name} expire={expire} ticketLength={length} nickName={nickName} onNameChange={onChange} />}/>
               </Switch>) 
