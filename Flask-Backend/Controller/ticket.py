@@ -24,9 +24,12 @@ def hello(username):
     today_shared_ticket = []
     if today in ticket_info['public_ticket'].keys():
         today_shared_ticket = ticket_info['public_ticket'][today]
+    today_complete_shared_ticket = []
+    if today in ticket_info['public_ticket'].keys():
+        today_complete_shared_ticket = ticket_info['complete_public_ticket'][today]
 
-    document = {"todo": today_self_ticket,
-                "finishedList": today_complete_ticket, "sharedList": today_shared_ticket}
+    document = {"todo": today_self_ticket, "finishedList": today_complete_ticket,
+                "sharedList": today_shared_ticket, "finishedSharedList": today_complete_shared_ticket}
     # print(document)
     print(str(document))
     return jsonify(document)

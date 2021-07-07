@@ -7,3 +7,4 @@ GoogleDB = db.google
 ImageDB = db.image
 FriendsDB = db.friend
 clients = {}
+friends_clients = {}

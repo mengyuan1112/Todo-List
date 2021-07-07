@@ -221,7 +221,7 @@ def add_shared_task(data):
     user_shared_tickets = TicketDB.find_one(
         {'username': user})['public_ticket']
     ticket = {"creator": user, "create_time": create_time, "title": title, "content": content,
-              "date": deadline_date, "time": deadline_time, "sharedWith": friends, "completed": []}
+              "date": deadline_date, "time": deadline_time, "sharedWith": friends, "completed": [], "status": False}
     if create_date in user_shared_tickets.keys():
         ticket_list = user_shared_tickets[create_date]
         ticket_list.append(ticket)
@@ -290,7 +290,18 @@ def delete_task_from_shared_list(data):
 # self-undo the ticket from shared ticket and
 @socketio.on("moveFromFinishToSharedList", namespace='/main')
 def move_from_finish_to_shared_list(data):
-    print("this is from move to finished: " + str(data))
+    user, title, friends, content, deadline_date, deadline_time, create_date, create_time = parsing_shared_task(
+        data)
+    date_list = TicketDB.find_one({"username": user})["complete_public_ticket"][create_date]
+    complete_list = []
+    for entry in date_list:
+        if entry["title"] == title:
+            complete_list = entry["completed"]
+            break
+    move_complete_2_public_ticket(user, create_date, title, complete_list, friends, data["creator"], "moveFromFinishToSharedList")
+    for friend in friends:
+        update_to_finished(friend, title, create_date, False)
+    update_to_finished(data['creator'], title, create_date, False)
     return
 
 # {'username': '2', 'currentDate': '2021-06-09T04:00:00.000Z', 'oldTitle': 'asd',
@@ -358,7 +369,7 @@ def undo_finished_share_task(data):
         if entry["title"] == title:
             complete_list = entry["completed"]
             break
-    move_complete_2_public_ticket(user, create_date, title, complete_list, friends, data["creator"])
+    move_complete_2_public_ticket(user, create_date, title, complete_list, friends, data["creator"], "undoFinishedShareTask")
     return
 
 
@@ -565,12 +576,24 @@ def move_public_ticket_2_complete(user, date, title, complete_list, friend_list,
                                         {"$set": {"public_ticket": friend_public_ticket}})
                     emit("finishedShareTask", friend_public_ticket_list[i], to=clients[friend])
                     break
-
-    return
+    check_complete = TicketDB.find_one({"username": user})['complete_public_ticket'][date]
+    for t in check_complete:
+        if t['title'] == title:
+            friends = t['sharedWith']
+            complete = t['completed']
+            if len(complete) == len(friends)+1:
+                update_to_finished(creator, title, date, True)
+                if creator in clients:
+                    emit("completeTaskByAll", {"username": creator, "title": title}, to=clients[creator])
+                for f in friends:
+                    if f in clients:
+                        emit("completeTaskByAll", {"username": f, "title": title}, to=clients[f])
+                    update_to_finished(f, title, date, True)
+            break
 
 
 ''' Shitty code don't change !! '''
-def move_complete_2_public_ticket(user, date, title, complete_list, friend_list, creator):
+def move_complete_2_public_ticket(user, date, title, complete_list, friend_list, creator, event):
     user_public_ticket = TicketDB.find_one({"username": user})['public_ticket']
     # user_public_ticket_list = TicketDB.find_one({"username": user})["public_ticket"][date]
     user_complete_ticket = TicketDB.find_one({"username": user})['complete_public_ticket']
@@ -590,7 +613,7 @@ def move_complete_2_public_ticket(user, date, title, complete_list, friend_list,
                     friend_complete_ticket[date] = friend_complete_ticket_list
                     TicketDB.update_one({"username": creator},
                                         {"$set": {"complete_public_ticket": friend_complete_ticket}})
-                    emit("undoFinishedShareTask", friend_complete_ticket_list[i], to=clients[creator])
+                    emit(event, {"ticket": friend_complete_ticket_list[i], "complete": True}, to=clients[creator])
                     break
         else:
             friend_public_ticket = TicketDB.find_one({"username": creator})["public_ticket"]
@@ -606,7 +629,7 @@ def move_complete_2_public_ticket(user, date, title, complete_list, friend_list,
                     friend_public_ticket[date] = friend_public_ticket_list
                     TicketDB.update_one({"username": creator},
                                         {"$set": {"public_ticket": friend_public_ticket}})
-                    emit("undoFinishedShareTask", friend_public_ticket_list[i], to=clients[creator])
+                    emit(event, {"ticket": friend_public_ticket_list[i], "complete": False}, to=clients[creator])
                     break
 
 
@@ -638,7 +661,7 @@ def move_complete_2_public_ticket(user, date, title, complete_list, friend_list,
                                     {"$set": {"public_ticket": user_public_ticket}})
             TicketDB.update_one({"username": user},
                                 {"$set": {"complete_public_ticket": user_complete_ticket}})
-            emit("undoFinishedShareTask", ticket, to=clients[user])
+            emit(event, {"ticket": ticket, "complete": False}, to=clients[user])
             break
 
     # update friends ticket list
@@ -657,7 +680,7 @@ def move_complete_2_public_ticket(user, date, title, complete_list, friend_list,
                     friend_complete_ticket[date] = friend_complete_ticket_list
                     TicketDB.update_one({"username": friend},
                                         {"$set": {"complete_public_ticket": friend_complete_ticket}})
-                    emit("undoFinishedShareTask", friend_complete_ticket_list[i], to=clients[friend])
+                    emit(event, {"ticket": friend_complete_ticket_list[i], "complete": True}, to=clients[friend])
                     break
 
         elif friend in friend_list and user != friend:
@@ -674,36 +697,19 @@ def move_complete_2_public_ticket(user, date, title, complete_list, friend_list,
                     friend_public_ticket[date] = friend_public_ticket_list
                     TicketDB.update_one({"username": friend},
                                         {"$set": {"public_ticket": friend_public_ticket}})
-                    emit("undoFinishedShareTask", friend_public_ticket_list[i], to=clients[friend])
+                    emit(event, {"ticket": friend_public_ticket_list[i], "complete": False}, to=clients[friend])
                     break
 
     return
 
-@socketio.on('Addedfriend', namespace='/main')
-def add_friend(data, t):
-    print(data)
-    user = data['username']
-    friend = data['friendName']
-    user_friends = FriendsDB.find_one({"username": user})['friends']
-    if friend in user_friends:
-        emit("Addedfriend", {"result": "already added", "friendPhoto":"", "friendStatus": False})
-        return
-    if FriendsDB.find_one({"username": friend}) is None:
-        emit("Addedfriend", {"result": "Not Exist", "friendPhoto": "", "friendStatus": False})
-        return
-    user_friends.append(friend)
-    FriendsDB.update_one({"username": user},
-                         {"$set": {"friends": user_friends}})
-    friends_query = FriendsDB.find_one({"username": friend})['friends']
-    friends_query.append(user)
-    FriendsDB.update_one({"username": friend},
-                         {"$set": {"friends": friends_query}})
-    status = False
-    if friend in clients:
-        status = True
-        emit("Addedfriend1", {"result": "pass", "friendPhoto": ImageDB.find_one({"username": user})["icon"],
-                             "friendStatus": True, "friendName": user}, broadcast=False, to=clients[friend])
-        print("sent to: "+str(friend) + " client number: "+str(clients[friend])) 
 
-    emit("Addedfriend", {"result": "pass", "friendPhoto": ImageDB.find_one({"username": friend})["icon"],
-                         "friendStatus": status, "friendName": friend})
+def update_to_finished(user, title, date, status):
+    complete_ticket = TicketDB.find_one({"username": user})['complete_public_ticket']
+    complete_ticket_list = TicketDB.find_one({"username": user})["complete_public_ticket"][date]
+    for i in range(0, len(complete_ticket_list)):
+        if complete_ticket_list[i]['title'] == title:
+
+            complete_ticket_list[i]["status"] = status
+            complete_ticket[date] = complete_ticket_list
+            TicketDB.update_one({"username": user},
+                                {"$set": {"complete_public_ticket": complete_ticket}})

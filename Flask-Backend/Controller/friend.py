@@ -1,8 +1,13 @@
 from flask import request
 from flask_socketio import send, emit, join_room
 from .app import socketio
-from .database import FriendsDB, ImageDB
-from .ticketSocket import clients
+from .database import FriendsDB, ImageDB, friends_clients
+
+
+@socketio.on("IntoPersonal", namespace='/friends')
+def online_friend(data):
+    friends_clients[data["username"]] = request.sid
+    return
 
 
 # {'username': {}, 'friendName': 'friend1'}
@@ -26,11 +31,11 @@ def add_friend(data, t):
     FriendsDB.update_one({"username": friend},
                          {"$set": {"friends": friends_query}})
     status = False
-    if friend in clients:
+    if friend in friends_clients:
         status = True
         emit("Addedfriend1", {"result": "pass", "friendPhoto": ImageDB.find_one({"username": user})["icon"],
-                             "friendStatus": True, "friendName": user}, broadcast=False, to=clients[friend])
-        print("sent to: "+str(friend) + " client number: "+str(clients[friend])) 
+                             "friendStatus": True, "friendName": user}, broadcast=False, to=friends_clients[friend])
+        print("sent to: "+str(friend) + " client number: "+str(friends_clients[friend]))
 
     emit("Addedfriend", {"result": "pass", "friendPhoto": ImageDB.find_one({"username": friend})["icon"],
                          "friendStatus": status, "friendName": friend})
