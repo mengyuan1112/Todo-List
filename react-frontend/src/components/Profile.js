@@ -13,6 +13,7 @@ import { AiOutlineEdit } from "react-icons/ai";
 import { BiCheckCircle } from "react-icons/bi";
 
 import Alert from 'react-bootstrap/Alert'
+import { CgOpenCollective } from 'react-icons/cg';
 
 
 
@@ -58,7 +59,9 @@ const Profile = ({name,onNameChange,changeImage,changeNickName}) => {
       axios.post( `http://localhost:5000/${name}/profile/icon`,{icon:image.src}).then(
           (response)=>{
               if (response.data.result === "Pass"){
-                  setShow2(false);Seticonalert(true)
+                  setShow2(false);
+                  Seticonalert(true)
+
               }
           })
       //axios.get(`${name}/profile/icon`)
@@ -107,7 +110,7 @@ const Profile = ({name,onNameChange,changeImage,changeNickName}) => {
     //const uploadedImage = React.useRef(null);
     const imageUploader = React.useRef(null);
 
-    const handleImageUpload = e => {
+    const handleImageUpload = (e)=> {
         const [file] = e.target.files;
         if (file) {
           const reader = new FileReader();
@@ -120,6 +123,7 @@ const Profile = ({name,onNameChange,changeImage,changeNickName}) => {
           }
           reader.onload = e => {
             image.src = e.target.result;
+            
           };
           reader.readAsDataURL(file);
         }
@@ -137,6 +141,7 @@ const Profile = ({name,onNameChange,changeImage,changeNickName}) => {
     (response)=>{
         if (response.data.result === "Pass"){
             setShow(false);Setnicknamealert(true)
+            console.log(nicknamealert)
         }
  
     })
@@ -183,7 +188,7 @@ const Profile = ({name,onNameChange,changeImage,changeNickName}) => {
 
     const checkNicname=(e)=>{
         Setnewname(e.target.value)
-        if (e.target.value== ""){
+        if (e.target.value== " "){
             SetnewnameErr("Nickname cannot be empty")
         }
         else{
@@ -284,23 +289,26 @@ const Profile = ({name,onNameChange,changeImage,changeNickName}) => {
 
             <Form onSubmit={submitNickname}>
             <Modal.Body>
-                {newnameError
-                ?(<Form.Group className="mb-3" controlId="formBasicEmail">
+                
+               <Form.Group className="mb-3" controlId="formBasicEmail">
                     <Form.Control type="nickname" onChange={(e)=>checkNicname(e)} placeholder="Enter nickname"  />
 
                     <Form.Text className="text-muted">
                     Please enter your new nickname.
                     </Form.Text>
-                    <Form.Text style={{ color:"red" }}>{newnameError}</Form.Text> 
-                </Form.Group>)  
+                    {newnameError
+                    ?(<Form.Text style={{ color:"red" }}>{newnameError}</Form.Text> )
+                    :(<></>)}
 
-                :(<Form.Group className="mb-3" controlId="formBasicEmail">
+                </Form.Group>
+
+               {/*:(<Form.Group className="mb-3" controlId="formBasicEmail">
                 <Form.Control type="nickname" onChange={(e)=>checkNicname(e)} placeholder="Enter nickname"  />
                 <Form.Text className="text-muted">
                 Please enter your new nickname.
                 </Form.Text>
                 </Form.Group>)
-                }     
+                }    */ }
 
         </Modal.Body>
         <Modal.Footer>
@@ -309,8 +317,8 @@ const Profile = ({name,onNameChange,changeImage,changeNickName}) => {
             </Button>
 
             {newnameError
-            ?(<Button variant="primary" type="submit" >Save Changes</Button>)
-            :(<Button variant="primary" type="submit" /*onClick={()=>{setShow(false);Setnicknamealert(true)}}*/>Save Changes</Button>)
+            ?(<Button variant="primary" >Save Changes</Button>)
+            :(<Button variant="primary" type="submit" onClick={()=>{Setnicknamealert(true)}}>Save Changes</Button>)
             }
 
         </Modal.Footer>
@@ -358,8 +366,8 @@ const Profile = ({name,onNameChange,changeImage,changeNickName}) => {
             Close
           </Button>
           {newpasswordErr
-          ?(<Button variant="primary" type="submit" >Submit</Button>)
-          :(<Button variant="primary" type="submit" /*onClick={()=>{setShow1(false);Setpasswordalert(true)}}*/>Submit</Button>)}
+          ?(<Button variant="primary" type="submit">Submit</Button>)
+          :(<Button variant="primary" type="submit" /*onClick={()=>{Setpasswordalert(true)}}*/>Submit</Button>)}
 
         </Modal.Footer>
         </Form>
@@ -383,7 +391,7 @@ const Profile = ({name,onNameChange,changeImage,changeNickName}) => {
       <input
         type="file"
         accept="image/*"
-        onChange={handleImageUpload}
+        onChange={(e)=>handleImageUpload(e)}
         ref={imageUploader}
         style={{
           display: "none"

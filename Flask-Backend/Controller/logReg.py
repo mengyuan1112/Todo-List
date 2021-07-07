@@ -21,7 +21,6 @@ logReg = Blueprint('logReg', __name__)
     DB document [username, name, salt_password, email, salt, self_ticket, public_ticket]
 """
 
-
 # Regex for check email validation
 regex = '^(\w|\.|\_|\-)+[@](\w|\_|\-|\.)+[.]\w{2,3}$'
 key = "HelloWord"
@@ -99,6 +98,7 @@ def login():
         return jsonify(status)
     else:
         data = request.get_json()
+        print("login cookies: " + str(request.cookies.get('login')))
         if request.cookies.get('login') is not None:
             user = return_user(request.cookies.get('login'))
             if user is not None:
@@ -118,26 +118,30 @@ def login():
 
 @logReg.route("/google/login", methods=['POST'])
 def google_login():
-    token = request.get_json()['token']
+    google_token = request.get_json()['token']
     try:
-        id_info = id_token.verify_oauth2_token(token, requests.Request(), None)
-        GoogleDB.insert_one(id_info)
+        id_info = id_token.verify_oauth2_token(google_token, requests.Request(), None)
+
         first_name = id_info['family_name']
         last_name = id_info['given_name']
-        response = {'result': "successful",
-                    'first_name': first_name, 'last_name': last_name}
+        token = gen_jwt(last_name + " " + first_name)
+        response = {'result': "successful", "token": token,
+                    'first_name': first_name, 'last_name': last_name, }
 
-
-        # user_document = {"username": first_name +" " + last_name, "name":first_name +" " + last_name , "salt_password": "",
-        #                  "email": "", "salt": ""}
-        # ticket_document = {"username": first_name +" " + last_name, "self_ticket": {
-        # }, "complete_ticket": {}, "public_ticket": {}, "complete_public_ticket": {}}
-        # image_document = {"username": first_name + " " + last_name, "icon": im}
-        # friend_document = {"username": first_name + " " + last_name, "friends": [], "friendWith": []}
-        # UserDB.insert_one(user_document)
-        # TicketDB.insert_one(ticket_document)
-        # ImageDB.insert_one(image_document)
-        # FriendsDB.insert_one(friend_document)
+        user_document = {"username": last_name + " " + first_name, "name": first_name + " " + last_name,
+                         "salt_password": "",
+                         "email": "", "salt": ""}
+        if GoogleDB.find_one({"name": last_name + " " + first_name}) is not None:
+            return response
+        GoogleDB.insert_one(id_info)
+        ticket_document = {"username": last_name + " " + first_name, "self_ticket": {
+        }, "complete_ticket": {}, "public_ticket": {}, "complete_public_ticket": {}}
+        image_document = {"username": last_name + " " + first_name, "icon": im}
+        friend_document = {"username": last_name + " " + first_name, "friends": [], "friendWith": []}
+        UserDB.insert_one(user_document)
+        TicketDB.insert_one(ticket_document)
+        ImageDB.insert_one(image_document)
+        FriendsDB.insert_one(friend_document)
         return jsonify(response)
     except ValueError:
         ValueError
@@ -154,15 +158,17 @@ def return_user(cookie):
 
 def gen_jwt(username):
     issue_time = datetime.datetime.utcnow()
-    token = jwt.encode({"iss": username, "iat": issue_time, "exp": issue_time + datetime.timedelta(minutes=30)},
+    token = jwt.encode({"iss": username, "iat": issue_time, "exp": issue_time + datetime.timedelta(minutes=5)},
                        key,
                        algorithm="HS256")
+    print("this is gen_jwt: " + token)
     return token
 
 
 def check_token(token):
     try:
-        form = jwt.decode(token, key, algorithms="HS256")
+        print("token from try is: " + token)
+        form = jwt.decode(token, key, algorithms=["HS256"])
         username = form['iss']
         user = UserDB.find_one({"username": username})
         ticket = TicketDB.find_one({"username": username})
@@ -171,4 +177,5 @@ def check_token(token):
                     "public_ticket": ticket['public_ticket'], "complete_ticket": ticket['complete_ticket']}
         return response
     except jwt.exceptions.ExpiredSignatureError:
+        print("token from except is: " + token)
         return {"result": "Expired"}
