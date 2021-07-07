@@ -14,6 +14,7 @@ import ShareTask from './ShareTask'
 import ReactCardFlip from 'react-card-flip';
 import { GrSort } from "react-icons/gr";
 import SortList from './SortList';
+import FinishedShareTask from './FinishedShareTask';
 
 const endPoint = "http://localhost:5000/main";
 const socket = io.connect(endPoint);
@@ -114,20 +115,6 @@ const Main = ({name,onNameChange}) => {
       socket.emit("moveFromToDoToFinish",{username:name,currentDate:currentDate,...t})
     }
 
-    // This function will handle the onClick event for shareList . Either finished / undo Finish
-    const shareTaskStatus = (t,status) =>{
-      // if status is true, the task is finished.
-      if (status){
-        //setShareThing(sharedThings-1)
-        socket.emit("finishedShareTask",{username:name,currentDate:currentDate,...t})
-      }
-      else{
-        //setShareThing(sharedThings+1)
-        socket.emit("undoFinishedShareTask",{username:name,currentDate:currentDate,...t});
-      }
-    }
-
-    //TODO: UNDO 
 
     const deleteTaskFromTodo = (t) =>{
       setTasks(tasks.filter((task)=> task.title !== t.title ))
@@ -239,6 +226,24 @@ const Main = ({name,onNameChange}) => {
       setShareSort(e);
     }
 
+    // This function will handle the onClick event for shareList . Either finished / undo Finish
+    const shareTaskStatus = (t,status) =>{
+    // if status is true, the task is finished.
+      if (status){
+        //setShareThing(sharedThings-1)
+        socket.emit("finishedShareTask",{username:name,currentDate:currentDate,...t})
+      }
+      else{
+        setFinishedShareTask(finishedShareTask.filter((task)=>task.title!==t.title));
+        setThingsFinishedShareTask(thingsFinishedShareTask-1);
+        setSharedTasks([...sharedTasks,t]);
+        setShareThing(sharedThings+1);
+        socket.emit("undoFinishedShareTask",{username:name,currentDate:currentDate,...t});
+      }
+    }
+    
+        //TODO: UNDO 
+
     const sortByDate = tasks.sort((a,b)=>(a.date > b.date)? 1:-1).map(
       (task) => <Task key={task.title} editContent = {editTaskContent} task = {task}  onDelete={moveToFinish} deleteTask={deleteTaskFromTodo}/>)
     const sortByRange = tasks.sort((a,b)=>(a.range < b.range)? 1:-1).map((task) =>
@@ -262,7 +267,7 @@ const Main = ({name,onNameChange}) => {
     );
 
     const sharedTasks_finish_list = finishedShareTask.map((task) =>
-    <ShareTask key={task.title} editContent = {editShareTaskContent} task = {task}  taskStatus={shareTaskStatus} deleteTask={deleteTaskFromShareList}/>
+    <FinishedShareTask key={task.title} editContent = {editShareTaskContent} task = {task}  taskStatus={shareTaskStatus} deleteTask={deleteTaskFromShareList}/>
     );
 
 
