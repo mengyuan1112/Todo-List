@@ -322,7 +322,7 @@ def move_from_finish_to_shared_list(data):
 @socketio.on("EditSharedTaskContent", namespace='/main')
 def edit_shared_task_content(data):
     print("this is edit stuff: " + str(data))
-    friends = data["friends"]
+    friends = data["sharedWith"]
     creator = data["creator"]
     edit_shared_ticket(data, creator)
     ticket = {'username': creator, 'currentDate': data['currentDate'], 'title': data['title'], 'content': data['content'],
