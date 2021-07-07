@@ -23,7 +23,6 @@ const Main = ({name,onNameChange}) => {
     const [modalForShared,setModalForShared] = useState(false);
     const [tasks, setTasks] = useState([]);
     const [finishedTask,setFinishedTask] = useState([]);
-    const [shareFinishedTask,setShareFinishedTask] = useState([]);
     const [sharedTasks, setSharedTasks] = useState([]);
     const [thingsFinished,setThingsFinished] = useState(0); //number of thing finished
     const [thingsToDo,setThingTodo]= useState(0); // number of thing todo
@@ -71,8 +70,6 @@ const Main = ({name,onNameChange}) => {
                        console.log(res.data)
                   }
                 })
-      //disconnect once done.
-      // return () =>socket.disconnect();
       },[]);
      const clickedFinished=()=>{
         setIsFlipped(!isFlipped)
@@ -99,12 +96,12 @@ const Main = ({name,onNameChange}) => {
       setShareThing(sharedThings+1);
       return true
     }
+
     socket.on("receviedShareTask",data=>{
       console.log("This is from added shared task: ",data);
       setSharedTasks([...sharedTasks,data]);
       setShareThing(sharedThings+1);
     })
-
 
 
     const moveToFinish = (t) =>{
@@ -123,22 +120,14 @@ const Main = ({name,onNameChange}) => {
       if (status){
         //setShareThing(sharedThings-1)
         socket.emit("finishedShareTask",{username:name,currentDate:currentDate,...t})
-        socket.on("finishedShareTask",data=>{
-          console.log(data);
-          // TODO: I will need to check if all the share user have finished the task, if so, move the task to finish.
-          // Else, do nothing.
-        })
       }
       else{
         //setShareThing(sharedThings+1)
         socket.emit("undoFinishedShareTask",{username:name,currentDate:currentDate,...t});
-        socket.on("undoFinishedShareTask",data=>{
-          console.log(data);
-          //TODO: If the task is on Finished, move back to shared List,
-          //Else: do nothing.
-        })
       }
     }
+
+    //TODO: UNDO 
 
     const deleteTaskFromTodo = (t) =>{
       setTasks(tasks.filter((task)=> task.title !== t.title ))
@@ -162,14 +151,19 @@ const Main = ({name,onNameChange}) => {
       console.log("deleteTaskFromShareList",{username:name,currentDate:currentDate,...t})
       socket.emit("deleteTaskFromShareList",{username:name,currentDate:currentDate,...t})
     }
-    socket.on("deleteTaskFromShareList",data=>{
-        console.log("This is from del shared task: ",data);
-    })
 
     socket.on("deleteTaskFromShareList",data=>{
       console.log("This is the data that need to be deleted: ",data)
       setSharedTasks(sharedTasks.filter((task)=> task.title !== data.title ))
       setShareThing(sharedThings-1)
+    })
+
+    socket.on("finishedShareTask",data=>{
+      console.log("This is socket on event on all the user finished the task...");
+      setSharedTasks(sharedTasks.filter((task)=> task.title !== data.title))
+      setShareThing(sharedThings-1);
+      setFinishedShareTask([...finishedShareTask,data]);
+      setThingsFinishedShareTask(thingsFinishedShareTask+1);
     })
 
     const moveBackTodo=(t) =>{
@@ -181,6 +175,8 @@ const Main = ({name,onNameChange}) => {
       setThingsFinished(thingsFinished-1)
       setThingTodo(thingsToDo+1)
     }
+
+
     const moveBackShareList=(t)=>{
       setFinishedTask(finishedTask.filter((task)=> task.title !== t.title ))
       setSharedTasks([...sharedTasks,t])
@@ -232,6 +228,12 @@ const Main = ({name,onNameChange}) => {
       console.log("The title doesn't exit. Good to go! Title is",task.title)
       return true
     }
+
+    socket.on("EditSharedTaskContent",data=>{
+      console.log("This is data from receviedEditTask: ",data);
+      setSharedTasks(sharedTasks.filter((task)=> task.title !== data.oldTitle ))
+      setSharedTasks([...sharedTasks,data.updateTicket])
+    })
 
     const setShareListSort = (e)=>{
       setShareSort(e);
