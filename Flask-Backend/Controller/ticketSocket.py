@@ -3,7 +3,7 @@
 from flask import request
 from flask_socketio import send, emit, join_room
 from .app import socketio
-from .database import TicketDB
+from .database import TicketDB,FriendsDB,ImageDB
 from .database import clients
 # clients = {}
 
@@ -678,3 +678,32 @@ def move_complete_2_public_ticket(user, date, title, complete_list, friend_list,
                     break
 
     return
+
+@socketio.on('Addedfriend', namespace='/main')
+def add_friend(data, t):
+    print(data)
+    user = data['username']
+    friend = data['friendName']
+    user_friends = FriendsDB.find_one({"username": user})['friends']
+    if friend in user_friends:
+        emit("Addedfriend", {"result": "already added", "friendPhoto":"", "friendStatus": False})
+        return
+    if FriendsDB.find_one({"username": friend}) is None:
+        emit("Addedfriend", {"result": "Not Exist", "friendPhoto": "", "friendStatus": False})
+        return
+    user_friends.append(friend)
+    FriendsDB.update_one({"username": user},
+                         {"$set": {"friends": user_friends}})
+    friends_query = FriendsDB.find_one({"username": friend})['friends']
+    friends_query.append(user)
+    FriendsDB.update_one({"username": friend},
+                         {"$set": {"friends": friends_query}})
+    status = False
+    if friend in clients:
+        status = True
+        emit("Addedfriend1", {"result": "pass", "friendPhoto": ImageDB.find_one({"username": user})["icon"],
+                             "friendStatus": True, "friendName": user}, broadcast=False, to=clients[friend])
+        print("sent to: "+str(friend) + " client number: "+str(clients[friend])) 
+
+    emit("Addedfriend", {"result": "pass", "friendPhoto": ImageDB.find_one({"username": friend})["icon"],
+                         "friendStatus": status, "friendName": friend})

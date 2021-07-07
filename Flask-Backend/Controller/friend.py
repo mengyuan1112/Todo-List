@@ -8,7 +8,7 @@ from .ticketSocket import clients
 # {'username': {}, 'friendName': 'friend1'}
 @socketio.on('Addedfriend', namespace='/friends')
 def add_friend(data, t):
-    print(data)
+    print("friend SID: "+str(request.sid))
     user = data['username']
     friend = data['friendName']
     user_friends = FriendsDB.find_one({"username": user})['friends']
@@ -28,14 +28,15 @@ def add_friend(data, t):
     status = False
     if friend in clients:
         status = True
-        emit("receiveFriend", {"result": "pass", "friendPhoto": ImageDB.find_one({"username": user})["icon"],
-                             "friendStatus": True, "friendName": user}, to=clients[friend])
+        emit("Addedfriend1", {"result": "pass", "friendPhoto": ImageDB.find_one({"username": user})["icon"],
+                             "friendStatus": True, "friendName": user}, broadcast=False, to=clients[friend])
+        print("sent to: "+str(friend) + " client number: "+str(clients[friend])) 
 
     emit("Addedfriend", {"result": "pass", "friendPhoto": ImageDB.find_one({"username": friend})["icon"],
                          "friendStatus": status, "friendName": friend})
 
 # {'username': {}, 'friendName': 'friend1', 'friendPhoto': '', 'friendStatus': ''}
-@socketio.on("Deletefriend", namespace="/friends")
+@socketio.on("Deletefriend", namespace="/main")
 def delete_friend(data):
     print(data)
     user = data["username"]
