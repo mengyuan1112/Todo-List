@@ -30,7 +30,7 @@ const AddTask = (props) => {
         setContent("")
         setDate("")
         setTime("")
-        setRange("")
+        setRange("1")
     }
     return (
         <Modal
@@ -97,15 +97,8 @@ const AddTask = (props) => {
               <Form.Label column sm="3">Prority </Form.Label>
               <Col sm="9">
                 <input type="range" className="custom-range" 
-                min="1"
-                max="5"
-                step="1"
-                value={range}
-                list="tickMark"
-                onChange={(e)=>{
-                setRange(e.target.value)
-                console.log(e.target.value)
-                }}/>
+                min="1" max="5" step="1" value={range}
+                onChange={(e)=>{ setRange(e.target.value) }}/>
               </Col>
             </Form.Group>
         </Modal.Body>

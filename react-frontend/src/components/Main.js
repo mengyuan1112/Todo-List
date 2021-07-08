@@ -67,9 +67,19 @@ const Main = ({name,onNameChange}) => {
                   if (typeof (res.data.finishedList).length === 'undefined') {
                     setFinishedTask([res.data.finishedList])
                     setThingsFinished(1)
-                  }  else {
+                  }
+                  if (typeof (res.data.finishedSharedList).length !== 'undefined')
+                    setFinishedShareTask(res.data.finishedSharedList)
+                    setThingsFinishedShareTask(res.data.finishedSharedList.length)
+                  if (typeof (res.data.finishedSharedList).length === 'undefined') {
+                    setFinishedShareTask([res.data.finishedSharedList])
+                    setThingsFinishedShareTask(1)
+                  }    
+                  
+                  else {
                        console.log(res.data)
                   }
+
                 })
       },[]);
      const clickedFinished=()=>{
@@ -218,8 +228,8 @@ const Main = ({name,onNameChange}) => {
 
     socket.on("EditSharedTaskContent",data=>{
       console.log("This is data from receviedEditTask: ",data);
-      setSharedTasks(sharedTasks.filter((task)=> task.title !== data.oldTitle ))
-      setSharedTasks([...sharedTasks,data.updateTicket])
+      setSharedTasks(sharedTasks.filter((task)=> task.title !== data.oldTitle))
+      setSharedTasks([...sharedTasks.filter((task)=> task.title !== data.oldTitle),data.updateTicket])
     })
 
     const setShareListSort = (e)=>{

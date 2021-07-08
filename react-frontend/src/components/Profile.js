@@ -6,8 +6,7 @@ import hhh from '../1.png';
 import "./Profile.css";
 import axios from 'axios';
 import Button from 'react-bootstrap/Button';
-import Modal from 'react-bootstrap/Modal'
-import Changepassword from './Changepassword'
+import Modal from 'react-bootstrap/Modal';
 import { Switch, Route, Link, useHistory } from 'react-router-dom';
 import { AiOutlineEdit } from "react-icons/ai";
 import { BiCheckCircle } from "react-icons/bi";
@@ -275,10 +274,6 @@ const Profile = ({name,onNameChange,changeImage,changeNickName}) => {
             </Col>
             </Row>
         </Container>
-
-        <Switch>
-            <Route path="/changepassword" component={<Changepassword/>} />
-        </Switch>
 
 
 

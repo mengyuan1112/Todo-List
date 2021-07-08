@@ -324,16 +324,16 @@ def move_from_finish_to_shared_list(data):
 @socketio.on("EditSharedTaskContent", namespace='/main')
 def edit_shared_task_content(data):
     print("this is edit stuff: " + str(data))
-    friends = data["friends"]
+    friends = data["sharedWith"]
     creator = data["creator"]
     edit_shared_ticket(data, creator)
-    ticket = {'username': creator, 'currentDate': data['currentDate'], 'title': data['title'], 'content': data['content'],
-              'create_time': data['create_time'], 'date': data['date']}
-    emit("EditSharedTaskContent", {
-         "oldTitle": data["oldTitle"], "updateTicket": ticket}, to=clients[creator])
+    # ticket = {'creator': creator,
+    #           'title': data['title'], 'content': data['content'], 'date': data['date']}
+    # emit("EditSharedTaskContent", {
+    #      "oldTitle": data["oldTitle"], "updateTicket": ticket}, to=clients[creator])
     for friend in friends:
-        ticket = {'username': friend, 'currentDate': data['currentDate'], 'title': data['title'], 'content': data['content'],
-                  'create_time': data['create_time'], 'date': data['date']}
+        ticket = {'sharedWith': data["sharedWith"], 'time': data['time'], 'creator': creator,
+                  'title': data['title'], 'content': data['content'], 'date': data['date']}
         if friend in clients:
             print("send to client: " + str(clients[friend]))
             emit("EditSharedTaskContent", {
