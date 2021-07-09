@@ -147,7 +147,8 @@ const Friend =({name}) => {
     }
 
     socket.on("Deletefriend", data=>{
-        console.log("delete friend")
+        Setfriends(friends.filter((friend)=> friend.friendName!== data.username ))
+        console.log(data)
     })
 
 
