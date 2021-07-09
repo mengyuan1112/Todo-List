@@ -4,7 +4,7 @@ from flask import request
 from flask_socketio import send, emit, join_room
 from .app import socketio
 from .database import TicketDB,FriendsDB,ImageDB
-from .database import clients
+from .database import clients, friends_clients
 # clients = {}
 
 # Done
@@ -16,6 +16,12 @@ def online_user(data):
     join_room(request.sid)
     print("The username", data["username"],
           " has join.Their SID is : ", request.sid)
+    friend_list = FriendsDB.find_one({"username": data["username"]})["friends"]
+    for friend in friend_list:
+        if friend in friends_clients:
+            emit("userStatus", {"username": data["username"], "status": True}, to=friends_clients[friend])
+        if friend in clients:
+            emit("userStatus", {"username": data["username"], "status": True}, to=clients[friend])
     return
 
 
@@ -322,16 +328,16 @@ def move_from_finish_to_shared_list(data):
 @socketio.on("EditSharedTaskContent", namespace='/main')
 def edit_shared_task_content(data):
     print("this is edit stuff: " + str(data))
-    friends = data["friends"]
+    friends = data["sharedWith"]
     creator = data["creator"]
     edit_shared_ticket(data, creator)
-    ticket = {'username': creator, 'currentDate': data['currentDate'], 'title': data['title'], 'content': data['content'],
-              'create_time': data['create_time'], 'date': data['date']}
+    ticket = {'username': creator, 'title': data['title'], 'content': data['content'],
+               'date': data['date']}
     emit("receviedEditTask", {
          "oldTitle": data["oldTitle"], "updateTicket": ticket}, to=clients[creator])
     for friend in friends:
-        ticket = {'username': friend, 'currentDate': data['currentDate'], 'title': data['title'], 'content': data['content'],
-                  'create_time': data['create_time'], 'date': data['date']}
+        ticket = {'username': friend,  'title': data['title'], 'content': data['content'],
+                  'date': data['date']}
         if friend in clients:
             print("send to client: " + str(clients[friend]))
             emit("receviedEditTask", {
