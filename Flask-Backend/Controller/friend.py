@@ -39,9 +39,9 @@ def add_friend(data, t):
     status = False
     if friend in friends_clients:
         status = True
-        emit("Addedfriend1", {"result": "pass", "friendPhoto": ImageDB.find_one({"username": user})["icon"],
+        emit("Addedfriend", {"result": "pass", "friendPhoto": ImageDB.find_one({"username": user})["icon"],
                              "friendStatus": True, "friendName": user}, broadcast=False, to=friends_clients[friend])
-        print("sent to: "+str(friend) + " client number: "+str(friends_clients[friend]))
+        #print("sent to: "+str(friend) + " client number: "+str(friends_clients[friend]))
 
     emit("Addedfriend", {"result": "pass", "friendPhoto": ImageDB.find_one({"username": friend})["icon"],
                          "friendStatus": status, "friendName": friend})

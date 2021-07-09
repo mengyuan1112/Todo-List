@@ -73,7 +73,6 @@ const Friend =({name}) => {
 
     socket.on('Addedfriend',data=>{
 
-    
         console.log("this is from server" + data)
         if(data.result=="pass" && data.friendName!=name){
             friend={friendName:data.friendName,friendPhoto:data.friendPhoto,friendStatus:data.friendStatus}
@@ -138,10 +137,6 @@ const Friend =({name}) => {
 
         }
         // props.addtask({title,content,date,time});
-        
-       
-
-
 
     }
 
@@ -150,6 +145,11 @@ const Friend =({name}) => {
         SetfriendNumber(friendNumber-1)
         socket.emit("Deletefriend",{username:name, friendName:f.friendName})
     }
+
+    socket.on("Deletefriend", data=>{
+        Setfriends(friends.filter((friend)=> friend.friendName!== data.username ))
+        console.log(data)
+    })
 
 
     const friend_list = friends.map((friend) =>
