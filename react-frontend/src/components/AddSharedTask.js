@@ -29,7 +29,6 @@ const AddSharedTask = (props) => {
         setContent("")
         setDate("")
         setTime("")
-          
     }
 
     const addFriend=()=>{
