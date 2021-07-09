@@ -62,5 +62,7 @@ def delete_friend(data):
             del friends_query[i]
             FriendsDB.update_one({"username": friend},
                                  {"$set": {"friends": friends_query}})
+            if friend in friends_clients:
+                emit("Deletefriend", {"username": user}, to=friends_clients[friend])
             break
     return
