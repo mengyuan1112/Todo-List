@@ -33,15 +33,15 @@ def add_friend(data, t):
     status = False
     if friend in friends_clients:
         status = True
-        emit("Addedfriend1", {"result": "pass", "friendPhoto": ImageDB.find_one({"username": user})["icon"],
+        emit("Addedfriend", {"result": "pass", "friendPhoto": ImageDB.find_one({"username": user})["icon"],
                              "friendStatus": True, "friendName": user}, broadcast=False, to=friends_clients[friend])
-        print("sent to: "+str(friend) + " client number: "+str(friends_clients[friend]))
+        #print("sent to: "+str(friend) + " client number: "+str(friends_clients[friend]))
 
     emit("Addedfriend", {"result": "pass", "friendPhoto": ImageDB.find_one({"username": friend})["icon"],
                          "friendStatus": status, "friendName": friend})
 
 # {'username': {}, 'friendName': 'friend1', 'friendPhoto': '', 'friendStatus': ''}
-@socketio.on("Deletefriend", namespace="/main")
+@socketio.on("Deletefriend", namespace="/friends")
 def delete_friend(data):
     print(data)
     user = data["username"]
