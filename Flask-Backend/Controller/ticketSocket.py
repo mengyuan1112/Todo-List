@@ -4,7 +4,7 @@ from flask import request
 from flask_socketio import send, emit, join_room
 from .app import socketio
 from .database import TicketDB,FriendsDB,ImageDB
-from .database import clients
+from .database import clients, friends_clients
 # clients = {}
 
 # Done
@@ -16,6 +16,12 @@ def online_user(data):
     join_room(request.sid)
     print("The username", data["username"],
           " has join.Their SID is : ", request.sid)
+    friend_list = FriendsDB.find_one({"username": data["username"]})["friends"]
+    for friend in friend_list:
+        if friend in friends_clients:
+            emit("userStatus", {"username": data["username"], "status": True}, to=friends_clients[friend])
+        if friend in clients:
+            emit("userStatus", {"username": data["username"], "status": True}, to=clients[friend])
     return
 
 
