@@ -70,7 +70,7 @@ const ShowShareTaskContent = (props) => {
           {error? <Alert variant="danger">Duplicated title. Please try again.</Alert>:null}
           <ul>
             <li>Share with :
-                <span>{props.task.friends}</span>
+                <span>{props.task.sharedWith}</span>
             </li>
 
             <li onDoubleClick={()=>setToggleTitle(false)}>Title :

@@ -5,18 +5,19 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ShowShareTaskContent from './ShowShareTaskContent'
 import { FaUndo } from 'react-icons/fa'
 
-const ShareTask = ({editContent,task,taskStatus,deleteTask}) => {
+const ShareTask = ({name,editContent,task,taskStatus,deleteTask}) => {
     const [modalShow, setModalShow] = useState(false);
-    const [isFinished,setIsFinished] = useState(false);
-
+    const [isFinished,setIsFinished] = useState(task.status);
+    const [completedBy,setCompletedBy] = useState([task.completed]);
     const finishTask=()=>{
         setIsFinished(true)
         taskStatus(task,true)
-        //onDelete(task)
+        setCompletedBy([...completedBy,name])
     }
     const undoFinishTask=()=>{
-        setIsFinished(false)
-        taskStatus(task,false)
+        setIsFinished(false);
+        taskStatus(task,false);
+        setCompletedBy(completedBy.filter((completed)=>completed!==name));
     }
     
     return (
@@ -29,8 +30,8 @@ const ShareTask = ({editContent,task,taskStatus,deleteTask}) => {
             <FaCheck onClick={finishTask}
             style={{float:'right', color:'green',cursor:'pointer',fontSize:'1.5rem'}}/> 
             }
-            <Form.Text>shared with: {task.friends}</Form.Text>
-            {isFinished ? <Form.Text>Completed: me</Form.Text>: null}
+            <Form.Text>shared with: {task.sharedWith}</Form.Text>
+            {(completedBy && completedBy.length !== 0) ? <Form.Text>Completed: {completedBy}</Form.Text>: null}
         </ListGroup.Item>
         <ShowShareTaskContent
         editContent = {editContent}
