@@ -1,12 +1,18 @@
 from flask import request
-from flask_socketio import send, emit, join_room
+from flask_socketio import emit
 from .app import socketio
-from .database import FriendsDB, ImageDB, friends_clients
+from .database import FriendsDB, ImageDB, friends_clients, clients
 
 
 @socketio.on("IntoPersonal", namespace='/friends')
 def online_friend(data):
     friends_clients[data["username"]] = request.sid
+    friend_list = FriendsDB.find_one({"username": data["username"]})["friends"]
+    for friend in friend_list:
+        if friend in friends_clients:
+            emit("userStatus", {"username": data["username"], "status": True}, to=friends_clients[friend])
+        if friend in clients:
+            emit("userStatus", {"username": data["username"], "status": True}, to=clients[friend])
     return
 
 
@@ -62,5 +68,7 @@ def delete_friend(data):
             del friends_query[i]
             FriendsDB.update_one({"username": friend},
                                  {"$set": {"friends": friends_query}})
+            if friend in friends_clients:
+                emit("Deletefriend", {"username": user}, to=friends_clients[friend])
             break
     return
