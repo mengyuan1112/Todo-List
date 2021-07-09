@@ -35,58 +35,81 @@ const Main = ({name,onNameChange}) => {
     const [isFlipped,setIsFlipped] = useState(false)
     const [sort,setSort] = useState('default');
     const [shareSort,setShareSort] = useState('default')
-    const [CompletedUpdate,setCompletedUpdate] = useState([]);
     const [friendList,setFriendList] = useState([]);
 
     useEffect(() => {
         //send username to backend once user land in main page.
         //send a get request for user data.
         socket.emit("onlineUser",{username:name})
-        axios.get(`${name}/main`).then(
+
+        // Get request to get all the TODO, FINISHED ,SHAREDLIST and FINISHEDSHARELIST.
+        axios.get(`${name}/main`)
+        .then(
             res => {
-              console.log(res)
                 console.log("after GET date is: " + currentDate)
-                  console.log((res.data.todo))
-                  if(typeof (res.data.todo).length !== 'undefined'){
-                    console.log((res.data.todo).length)
-                    setTasks(res.data.todo)
-                    setThingTodo(res.data.todo.length)
-                  }
-                  if (typeof (res.data.todo).length === 'undefined') {
-                    setTasks([res.data.todo])
-                    setThingTodo(1)
-                  }
-                  if (typeof (res.data.sharedList).length !== 'undefined')
-                    setSharedTasks(res.data.sharedList)
-                    setShareThing(res.data.sharedList.length)
-                  if (typeof (res.data.sharedList).length === 'undefined') {
-                    setSharedTasks([res.data.sharedList])
-                    setShareThing(1)
-                  }
-                  if (typeof (res.data.finishedList).length !== 'undefined')
-                    setFinishedTask(res.data.finishedList)
-                    setThingsFinished(res.data.finishedList.length)
-                  if (typeof (res.data.finishedList).length === 'undefined') {
-                    setFinishedTask([res.data.finishedList])
-                    setThingsFinished(1)
-                  }
-                  if (typeof (res.data.friendList).length !== 'undefined')
-                    setFriendList(res.data.friendList)
-                  if (typeof (res.data.finishedList).length === 'undefined') {
-                    setFriendList([res.data.friendList])
-                  }
-                  if (typeof (res.data.finishedSharedList).length !== 'undefined')
-                    setFinishedShareTask(res.data.finishedSharedList)
-                    setThingsFinishedShareTask(res.data.finishedSharedList.length)
-                  if (typeof (res.data.finishedSharedList).length === 'undefined') {
-                    setFinishedShareTask([res.data.finishedSharedList])
-                    setThingsFinishedShareTask(1)
-                  }
+                setGetRequestData(res);
                 })
+        .catch(
+          err => console.error(err)
+        );
       },[]);
-     const clickedFinished=()=>{
+
+      useEffect(() => {
+         // Recieved share task from creator.
+         socket.on("receviedShareTask",data=>{
+          console.log("[ReceviedShareTask]: ",data);
+          setSharedTasks([...sharedTasks,data]);
+          setShareThing(sharedThings+1);
+        })
+
+        // Mark finishedShare Task as uncompleted.
+        socket.on("undoFinishedShareTask",data=>{
+          console.log("[undoFinishedShareTask] data: ",data);
+          setFinishedShareTask(finishedShareTask.filter((task)=> task.title !== data.ticket.title))
+          if (thingsFinishedShareTask>0){
+            setThingsFinishedShareTask(thingsFinishedShareTask-1);
+          }
+          setSharedTasks([...sharedTasks,data.ticket]);
+          setShareThing(sharedThings+1);
+        })
+
+        // Mark finished Share Task.
+        socket.on("finishedShareTask",data=>{
+          console.log("[socket on finishedShareTask] data: ",data);
+          setSharedTasks(sharedTasks.filter((task)=> task.title !== data.title))
+          setSharedTasks([...sharedTasks,data])
+          // setShareThing(sharedThings-1);
+          // setFinishedShareTask([...finishedShareTask,data]);
+          // setThingsFinishedShareTask(thingsFinishedShareTask+1);
+        })
+
+
+        socket.on("deleteTaskFromShareList",data=>{
+          console.log("This is the data that need to be deleted: ",data)
+          setSharedTasks(sharedTasks.filter((task)=> task.title !== data.title))
+          if(sharedThings>0){
+            setShareThing(sharedThings-1)
+          }
+        })
+
+        socket.on("completeTaskByAll",data=>{
+          //"{username": f, "title": title}
+          console.log("[CompleteTaskByAll] task :",data);
+          setFinishedShareTask([...finishedShareTask,data.task]);
+          setThingsFinishedShareTask(thingsFinishedShareTask+1);
+          console.log("This is the number of sharedThing: ",sharedThings)
+          // if(sharedThings>0){
+          if (sharedThings>0){
+            setShareThing(sharedThings-1)
+          }
+          setSharedTasks(sharedTasks.filter((task)=> task.title !== data.task.title))
+          setShareThing(sharedTasks.length)
+        })
+      }, [socket.on])
+
+    const clickedFinished=()=>{
         setIsFlipped(!isFlipped)
-      }
+    }
 
     const addTask=(task)=>{
       const sameTitle = tasks.find(t=>t.title === task.title);
@@ -110,13 +133,6 @@ const Main = ({name,onNameChange}) => {
       return true
     }
 
-    // socket on recieved share task from creator.
-    socket.on("receviedShareTask",data=>{
-      console.log("[ReceviedShareTask]: ",data);
-      setSharedTasks([...sharedTasks,data]);
-      setShareThing(sharedThings+1);
-    })
-
     const moveToFinish = (t) =>{
       setTasks(tasks.filter((task)=> task.title !== t.title ))
       setFinishedTask([...finishedTask,t])
@@ -139,31 +155,6 @@ const Main = ({name,onNameChange}) => {
         socket.emit("undoFinishedShareTask",{username:name,currentDate:currentDate,...t});
       }
     }
-    socket.on("undoFinishedShareTask",data=>{
-      console.log(data);
-      setFinishedShareTask(finishedShareTask.filter((task)=> task.title !== data.ticket.title))
-      setThingsFinishedShareTask(thingsFinishedShareTask-1);
-      setSharedTasks([...sharedTasks,data.ticket]);
-      setShareThing(sharedThings+1);
-      //TODO: If the task is on Finished, move back to shared List,
-      //Else: do nothing.
-    })
-    socket.on("finishedShareTask",data=>{
-      console.log("[socket on finishedShareTask] data: ",data);
-      setCompletedUpdate(data.completed)
-      setSharedTasks([...sharedTasks.filter((task)=> task.title !== data.title),data])
-      // setShareThing(sharedThings-1);
-      // setFinishedShareTask([...finishedShareTask,data]);
-      // setThingsFinishedShareTask(thingsFinishedShareTask+1);
-    })
-    socket.on("completeTaskByAll",data=>{
-      //"{username": f, "title": title}
-      console.log("[CompleteTaskByAll] task :",data);
-      setFinishedShareTask([...finishedShareTask,data.task]);
-      setSharedTasks(sharedTasks.filter((task)=> task.title !== data.task.title))
-      setShareThing(sharedThings-1);
-      setThingsFinishedShareTask(thingsFinishedShareTask+1);
-    })
 
     const deleteTaskFromTodo = (t) =>{
       setTasks(tasks.filter((task)=> task.title !== t.title ))
@@ -182,8 +173,10 @@ const Main = ({name,onNameChange}) => {
     }
 
     const deleteTaskFromShareList = (t)=>{
-      setSharedTasks(sharedTasks.filter((task)=> task.title !== t.title ))
-      setShareThing(sharedThings-1)
+      setSharedTasks(sharedTasks.filter((task)=> task.title !== t.title))
+      if (sharedThings>0){
+        setShareThing(sharedThings-1)
+      }
       console.log("deleteTaskFromShareList",{username:name,currentDate:currentDate,...t})
       socket.emit("deleteTaskFromShareList",{username:name,currentDate:currentDate,...t})
     }
@@ -192,17 +185,11 @@ const Main = ({name,onNameChange}) => {
     // delete the tasks from finished Share List . Emit event && update DB. 
     const deleteTaskFromFinishShareList = (t)=>{
       setFinishedShareTask(finishedShareTask.filter((task)=> task.title !== t.title ));
-      setThingsFinishedShareTask(thingsFinishedShareTask-1);
+      if (thingsFinishedShareTask > 0){
+        setThingsFinishedShareTask(thingsFinishedShareTask-1);
+      }
       socket.emit("deleteTaskFromFinishShareList",{username:name,currentDate:currentDate,...t})
     }
-
-
-
-    socket.on("deleteTaskFromShareList",data=>{
-      console.log("This is the data that need to be deleted: ",data)
-      setSharedTasks(sharedTasks.filter((task)=> task.title !== data.title ))
-      setShareThing(sharedThings-1)
-    })
 
     const moveBackTodo=(t) =>{
       setFinishedTask(finishedTask.filter((task)=> task.title !== t.title ))
@@ -213,6 +200,7 @@ const Main = ({name,onNameChange}) => {
       setThingsFinished(thingsFinished-1)
       setThingTodo(thingsToDo+1)
     }
+
     const moveBackShareList=(t)=>{
       setFinishedTask(finishedTask.filter((task)=> task.title !== t.title ))
       setSharedTasks([...sharedTasks,t])
@@ -269,8 +257,8 @@ const Main = ({name,onNameChange}) => {
       setShareSort(e);
     }
 
-    const sortByDate = tasks.sort((a,b)=>(a.date > b.date)? 1:-1).map(
-      (task) => <Task key={task.title} editContent = {editTaskContent} task = {task}  onDelete={moveToFinish} deleteTask={deleteTaskFromTodo}/>)
+    const sortByDate = tasks.sort((a,b)=>(a.date > b.date)? 1:-1).map((task) => 
+    <Task key={task.title} editContent = {editTaskContent} task = {task}  onDelete={moveToFinish} deleteTask={deleteTaskFromTodo}/>)
     const sortByRange = tasks.sort((a,b)=>(a.range < b.range)? 1:-1).map((task) =>
     <Task key={task.title} editContent = {editTaskContent} task = {task}  onDelete={moveToFinish} deleteTask={deleteTaskFromTodo}/>)
     const sortByDefault = tasks.map((task) =>
@@ -278,20 +266,20 @@ const Main = ({name,onNameChange}) => {
 
     
     const shareSortByDate = sharedTasks.sort((a,b)=>(a.date > b.date)? 1:-1).map(
-      (task) => 
-    <ShareTask key={task.title} name={name} CompletedUpdate={CompletedUpdate} editContent = {editShareTaskContent} task = {task} taskStatus={shareTaskStatus} deleteTask={deleteTaskFromShareList}/>
+    (task) => 
+    <ShareTask key={task.title} name={name} editContent = {editShareTaskContent} task = {task} taskStatus={shareTaskStatus} deleteTask={deleteTaskFromShareList}/>
     );
 
     const shareSortByRange = sharedTasks.sort((a,b)=>(a.range < b.range)? 1:-1).map((task) =>
-    <ShareTask key={task.title} name={name} CompletedUpdate={CompletedUpdate} editContent = {editShareTaskContent} task = {task} taskStatus={shareTaskStatus} deleteTask={deleteTaskFromShareList}/>
+    <ShareTask key={task.title} name={name}  editContent = {editShareTaskContent} task = {task} taskStatus={shareTaskStatus} deleteTask={deleteTaskFromShareList}/>
     );
 
     const shareSortByDefault = sharedTasks.map((task) =>
-    <ShareTask key={task.title} name={name} CompletedUpdate={CompletedUpdate} editContent = {editShareTaskContent} task = {task} taskStatus={shareTaskStatus} deleteTask={deleteTaskFromShareList}/>
+    <ShareTask key={task.title} name={name}  editContent = {editShareTaskContent} task = {task} taskStatus={shareTaskStatus} deleteTask={deleteTaskFromShareList}/>
     );
 
     const finish_list = finishedTask.map((task)=>
-      <FinishedTasks key={task.title} editContent = {editTaskContent} task={task} backShareList={moveBackShareList} backTodo={moveBackTodo} deleteTask={deleteTaskFromFinished}/>
+    <FinishedTasks key={task.title} editContent = {editTaskContent} task={task} backShareList={moveBackShareList} backTodo={moveBackTodo} deleteTask={deleteTaskFromFinished}/>
     );
 
     const sharedTasks_finish_list = finishedShareTask.map((task) =>
@@ -337,6 +325,45 @@ const Main = ({name,onNameChange}) => {
 
     const setSortBy=(e)=>{
       setSort(e);
+    }
+
+    const setGetRequestData =(res)=>{
+        console.log("[Get request] data: ",res);
+        if(typeof (res.data.todo).length !== 'undefined'){
+          console.log((res.data.todo).length)
+          setTasks(res.data.todo)
+          setThingTodo(res.data.todo.length)
+        }
+        if (typeof (res.data.todo).length === 'undefined') {
+          setTasks([res.data.todo])
+          setThingTodo(1)
+        }
+        if (typeof (res.data.sharedList).length !== 'undefined')
+          setSharedTasks(res.data.sharedList)
+          setShareThing(res.data.sharedList.length)
+        if (typeof (res.data.sharedList).length === 'undefined') {
+          setSharedTasks([res.data.sharedList])
+          setShareThing(1)
+        }
+        if (typeof (res.data.finishedList).length !== 'undefined')
+          setFinishedTask(res.data.finishedList)
+          setThingsFinished(res.data.finishedList.length)
+        if (typeof (res.data.finishedList).length === 'undefined') {
+          setFinishedTask([res.data.finishedList])
+          setThingsFinished(1)
+        }
+        if (typeof (res.data.friendList).length !== 'undefined')
+          setFriendList(res.data.friendList)
+        if (typeof (res.data.finishedList).length === 'undefined') {
+          setFriendList([res.data.friendList])
+        }
+        if (typeof (res.data.finishedSharedList).length !== 'undefined')
+          setFinishedShareTask(res.data.finishedSharedList)
+          setThingsFinishedShareTask(res.data.finishedSharedList.length)
+        if (typeof (res.data.finishedSharedList).length === 'undefined') {
+          setFinishedShareTask([res.data.finishedSharedList])
+          setThingsFinishedShareTask(1)
+        }
     }
 
     return (
@@ -400,7 +427,7 @@ const Main = ({name,onNameChange}) => {
         <Card>
           <Card.Body className="mainContainer">
             <Card.Title>
-              Shared List ({sharedThings})
+              Shared List({sharedThings}) 
               <Dropdown variant="none" style={{float:"right"}}>
               <Dropdown.Toggle display="hidden" variant="none" id="dropdown-basic" size="sm">
               <GrSort/>

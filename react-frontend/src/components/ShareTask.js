@@ -5,14 +5,16 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ShowShareTaskContent from './ShowShareTaskContent'
 import { FaUndo } from 'react-icons/fa'
 
-const ShareTask = ({name,editContent,task,taskStatus,deleteTask,CompletedUpdate}) => {
+const ShareTask = ({name,editContent,task,taskStatus,deleteTask}) => {
     const [modalShow, setModalShow] = useState(false);
-    const [isFinished,setIsFinished] = useState(task.status);
+    const [isFinished,setIsFinished] = useState(false);
     const [completedBy,setCompletedBy] = useState([task.completed]);
     const finishTask=()=>{
         setIsFinished(true)
         taskStatus(task,true)
-        setCompletedBy([...completedBy,name])
+        if (!(completedBy.filter((completed)=>completed===name))){
+            setCompletedBy([...completedBy,name])
+        }
     }
     const undoFinishTask=()=>{
         setIsFinished(false);
@@ -25,10 +27,10 @@ const ShareTask = ({name,editContent,task,taskStatus,deleteTask,CompletedUpdate}
         <ListGroup.Item action onDoubleClick={()=>setModalShow(true)}>
             {task.title} 
             {
-            isFinished ? <FaUndo onClick={undoFinishTask}
-            style={{float:'right', color:'black',cursor:'pointer' ,fontSize:'1rem'}}/> :
-            <FaCheck onClick={finishTask}
-            style={{float:'right', color:'green',cursor:'pointer',fontSize:'1.5rem'}}/> 
+            isFinished ?
+            <FaUndo onClick={undoFinishTask} style={{float:'right', color:'black',cursor:'pointer' ,fontSize:'1rem'}}/> 
+            :
+            <FaCheck onClick={finishTask} style={{float:'right', color:'green',cursor:'pointer',fontSize:'1.5rem'}}/> 
             }
             <Form.Text>shared with: {task.sharedWith}</Form.Text>
             {(completedBy && completedBy.length !== 0) ? <Form.Text>Completed: {completedBy}</Form.Text>: null}
