@@ -3,8 +3,8 @@
 from flask import request
 from flask_socketio import send, emit, join_room
 from .app import socketio
-from .database import TicketDB, FriendsDB, ImageDB
-from .database import clients
+from .database import TicketDB,FriendsDB,ImageDB
+from .database import clients, friends_client
 # clients = {}
 
 # Done
@@ -16,6 +16,12 @@ def online_user(data):
     join_room(request.sid)
     print("The username", data["username"],
           " has join.Their SID is : ", request.sid)
+    friend_list = FriendsDB.find_one({"username": data["username"]})["friends"]
+    for friend in friend_list:
+        if friend in friends_clients:
+            emit("userStatus", {"username": data["username"], "status": True}, to=friends_clients[friend])
+        if friend in clients:
+            emit("userStatus", {"username": data["username"], "status": True}, to=clients[friend])
     return
 
 
@@ -327,13 +333,14 @@ def edit_shared_task_content(data):
     friends = data["sharedWith"]
     creator = data["creator"]
     edit_shared_ticket(data, creator)
-    # ticket = {'creator': creator,
-    #           'title': data['title'], 'content': data['content'], 'date': data['date']}
-    # emit("EditSharedTaskContent", {
-    #      "oldTitle": data["oldTitle"], "updateTicket": ticket}, to=clients[creator])
+    ticket = {'username': creator, 'title': data['title'], 'content': data['content'],
+               'date': data['date']}
+    emit("receviedEditTask", {
+         "oldTitle": data["oldTitle"], "updateTicket": ticket}, to=clients[creator])
     for friend in friends:
-        ticket = {'sharedWith': data["sharedWith"], 'time': data['time'], 'creator': creator,
-                  'title': data['title'], 'content': data['content'], 'date': data['date']}
+        ticket = {'username': friend,  'title': data['title'], 'content': data['content'],
+                  'date': data['date']}
+
         if friend in clients:
             print("send to client: " + str(clients[friend]))
             emit("EditSharedTaskContent", {
