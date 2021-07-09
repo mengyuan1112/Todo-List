@@ -35,7 +35,7 @@ const Main = ({name,onNameChange}) => {
     const [isFlipped,setIsFlipped] = useState(false)
     const [sort,setSort] = useState('default');
     const [shareSort,setShareSort] = useState('default')
-    const [completedBy,setCompletedBy] = useState([]);
+    const [CompletedUpdate,setCompletedUpdate] = useState([]);
     const [friendList,setFriendList] = useState([]);
 
     useEffect(() => {
@@ -150,8 +150,8 @@ const Main = ({name,onNameChange}) => {
     })
     socket.on("finishedShareTask",data=>{
       console.log("[socket on finishedShareTask] data: ",data);
-      setCompletedBy(data.completed);
-      // setSharedTasks(sharedTasks.filter((task)=> task.title !== data.title))
+      setCompletedUpdate(data.completed)
+      setSharedTasks([...sharedTasks.filter((task)=> task.title !== data.title),data])
       // setShareThing(sharedThings-1);
       // setFinishedShareTask([...finishedShareTask,data]);
       // setThingsFinishedShareTask(thingsFinishedShareTask+1);
@@ -279,15 +279,15 @@ const Main = ({name,onNameChange}) => {
     
     const shareSortByDate = sharedTasks.sort((a,b)=>(a.date > b.date)? 1:-1).map(
       (task) => 
-    <ShareTask key={task.title} name={name} editContent = {editShareTaskContent} task = {task} taskStatus={shareTaskStatus} deleteTask={deleteTaskFromShareList}/>
+    <ShareTask key={task.title} name={name} CompletedUpdate={CompletedUpdate} editContent = {editShareTaskContent} task = {task} taskStatus={shareTaskStatus} deleteTask={deleteTaskFromShareList}/>
     );
 
     const shareSortByRange = sharedTasks.sort((a,b)=>(a.range < b.range)? 1:-1).map((task) =>
-    <ShareTask key={task.title} name={name} editContent = {editShareTaskContent} task = {task} taskStatus={shareTaskStatus} deleteTask={deleteTaskFromShareList}/>
+    <ShareTask key={task.title} name={name} CompletedUpdate={CompletedUpdate} editContent = {editShareTaskContent} task = {task} taskStatus={shareTaskStatus} deleteTask={deleteTaskFromShareList}/>
     );
 
     const shareSortByDefault = sharedTasks.map((task) =>
-    <ShareTask key={task.title} name={name} editContent = {editShareTaskContent} task = {task} taskStatus={shareTaskStatus} deleteTask={deleteTaskFromShareList}/>
+    <ShareTask key={task.title} name={name} CompletedUpdate={CompletedUpdate} editContent = {editShareTaskContent} task = {task} taskStatus={shareTaskStatus} deleteTask={deleteTaskFromShareList}/>
     );
 
     const finish_list = finishedTask.map((task)=>

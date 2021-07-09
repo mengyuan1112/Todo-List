@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ShowShareTaskContent from './ShowShareTaskContent'
 import { FaUndo } from 'react-icons/fa'
 
-const ShareTask = ({name,editContent,task,taskStatus,deleteTask}) => {
+const ShareTask = ({name,editContent,task,taskStatus,deleteTask,CompletedUpdate}) => {
     const [modalShow, setModalShow] = useState(false);
     const [isFinished,setIsFinished] = useState(task.status);
     const [completedBy,setCompletedBy] = useState([task.completed]);

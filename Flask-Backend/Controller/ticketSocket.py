@@ -397,7 +397,7 @@ def parsing_task(data):
 
 def parsing_shared_task(data):
     data_time_arr = data['currentDate'].split("T")
-    create_date = "2021-07-08"
+    create_date = "2021-07-09"
     create_time = data_time_arr[1]
     user, title, friends, content, deadline_date, deadline_time =\
         data['username'], data['title'], data['sharedWith'], data['content'], data['date'], data['time']
@@ -546,7 +546,7 @@ def move_public_ticket_2_complete(user, date, title, complete_list, friend_list,
                          friend_public_ticket_list[i], to=clients[creator])
                     break
 
-    # for user to update himself ticket
+   # for user to update himself ticket
     for i in range(0, len(user_public_ticket_list)):
         if user_public_ticket_list[i]['title'] == title:
             complete_list = user_public_ticket_list[i]["completed"]
