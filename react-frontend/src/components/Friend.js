@@ -72,6 +72,7 @@ const Friend =({name}) => {
     }
 
     socket.on('Addedfriend',data=>{
+        
 
         console.log("this is from server" + data)
         if(data.result=="pass" && data.friendName!=name){
@@ -113,7 +114,10 @@ const Friend =({name}) => {
 
     })
 
-    socket.on("Addedfriend1",data=>{
+    socket.on("usersStatus",data=>{
+        const index = friends.map((f) => f.friendName).indexOf(data.username);
+        friends[index][friendStatus]=data.status
+        console.log("index of 'larry': " + index);
         console.log("this is add friend1")
     })
 
