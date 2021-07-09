@@ -10,7 +10,8 @@ from google.auth.transport import requests
 from flask import request, jsonify
 from flask import Blueprint
 from .database import UserDB, TicketDB, GoogleDB, ImageDB, FriendsDB, friends_clients, clients
-from flask_socketio import send, emit, join_room
+# from .friend import update_user
+
 
 
 logReg = Blueprint('logReg', __name__)
@@ -128,23 +129,25 @@ def google_login():
     return jsonify({"result": "unsuccessful"})
 
 
-@logReg.route("/logout", methods=["POST"])
-def logout():
-    data = request.get_json()
-    username = data['username']
-    print("before logout: " + str(username) + " friends_clients: " + str(friends_clients) + " clients: " + str(clients))
-    if username in clients:
-        clients.pop(username)
-    if username in friends_clients:
-        friends_clients.pop(username)
-    print("after logout: " + str(username) + " " + str(friends_clients) + " clients: " + str(clients))
-    friend_list = FriendsDB.find_one({"username": username})["friends"]
-    for friend in friend_list:
-        if friend in friends_clients:
-            emit("userStatus", {"username": username, "status": False}, to=friends_clients[friend])
-        if friend in clients:
-            emit("userStatus", {"username": username, "status": False}, to=clients[friend])
-    return jsonify({"status": "pass"})
+# @logReg.route("/logout", methods=["POST"])
+# def logout():
+#     data = request.get_json()
+#     username = data['username']
+#     print("before logout: " + str(username) + " friends_clients: " + str(friends_clients) + " clients: " + str(clients))
+#     if username in clients:
+#         clients.pop(username)
+#     if username in friends_clients:
+#         friends_clients.pop(username)
+#     print("after logout: " + str(username) + " " + str(friends_clients) + " clients: " + str(clients))
+#     friend_list = FriendsDB.find_one({"username": username})["friends"]
+#     for friend in friend_list:
+#         if friend in friends_clients:
+#             # socketio.emit("userStatus", {"username": username, "status": False}, to=friends_clients[friend])
+#             update_user(username, friend, friends_clients)
+#         if friend in clients:
+#             # socketio.emit("userStatus", {"username": username, "status": False}, to=clients[friend])
+#             update_user(username, friend, clients)
+#     return jsonify({"status": "pass"})
 
 def return_user(cookie):
     query = UserDB.find_one({'cookies': cookie})
