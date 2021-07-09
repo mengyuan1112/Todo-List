@@ -132,17 +132,19 @@ def google_login():
 def logout():
     data = request.get_json()
     username = data['username']
+    print("before logout: " + str(username) + " friends_clients: " + str(friends_clients) + " clients: " + str(clients))
     if username in clients:
         clients.pop(username)
     if username in friends_clients:
         friends_clients.pop(username)
+    print("after logout: " + str(username) + " " + str(friends_clients) + " clients: " + str(clients))
     friend_list = FriendsDB.find_one({"username": username})["friends"]
     for friend in friend_list:
         if friend in friends_clients:
             emit("userStatus", {"username": username, "status": False}, to=friends_clients[friend])
         if friend in clients:
             emit("userStatus", {"username": username, "status": False}, to=clients[friend])
-    return
+    return jsonify({"status": "pass"})
 
 def return_user(cookie):
     query = UserDB.find_one({'cookies': cookie})
