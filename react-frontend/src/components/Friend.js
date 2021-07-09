@@ -71,6 +71,10 @@ const Friend =({name}) => {
 
     }
 
+    socket.on("userStatus", data=>{
+        console.log("friend is: " + data.username + " login status is: " + data.status )
+    })
+
     socket.on('Addedfriend',data=>{
 
         console.log("this is from server" + data)

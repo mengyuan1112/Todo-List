@@ -72,3 +72,22 @@ def delete_friend(data):
                 emit("Deletefriend", {"username": user}, to=friends_clients[friend])
             break
     return
+
+
+@socketio.on("logout", namespace='/friends')
+def logout(data):
+    username = data['username']
+    print("before logout: " + str(username) + " friends_clients: " + str(friends_clients) + " clients: " + str(clients))
+    friend_list = FriendsDB.find_one({"username": username})["friends"]
+    if username in friends_clients:
+        friends_clients.pop(username)
+    if username in clients:
+        clients.pop(username)
+    for friend in friend_list:
+        print("send to friend: " + friend)
+        if friend in friends_clients:
+            emit("userStatus", {"username": username, "status": False}, to=friends_clients[friend])
+        if friend in clients:
+            emit("userStatus", {"username": username, "status": False}, to=clients[friend])
+    print("after logout: " + str(username) + " friends_clients: " + str(friends_clients) + " clients: " + str(clients))
+    return
