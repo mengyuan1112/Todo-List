@@ -120,7 +120,8 @@ def login():
 def google_login():
     google_token = request.get_json()['token']
     try:
-        id_info = id_token.verify_oauth2_token(google_token, requests.Request(), None)
+        id_info = id_token.verify_oauth2_token(
+            google_token, requests.Request(), None)
 
         first_name = id_info['family_name']
         last_name = id_info['given_name']
@@ -137,7 +138,8 @@ def google_login():
         ticket_document = {"username": last_name + " " + first_name, "self_ticket": {
         }, "complete_ticket": {}, "public_ticket": {}, "complete_public_ticket": {}}
         image_document = {"username": last_name + " " + first_name, "icon": im}
-        friend_document = {"username": last_name + " " + first_name, "friends": [], "friendWith": []}
+        friend_document = {"username": last_name + " " +
+                           first_name, "friends": [], "friendWith": []}
         UserDB.insert_one(user_document)
         TicketDB.insert_one(ticket_document)
         ImageDB.insert_one(image_document)
@@ -158,7 +160,7 @@ def return_user(cookie):
 
 def gen_jwt(username):
     issue_time = datetime.datetime.utcnow()
-    token = jwt.encode({"iss": username, "iat": issue_time, "exp": issue_time + datetime.timedelta(minutes=5)},
+    token = jwt.encode({"iss": username, "iat": issue_time, "exp": issue_time + datetime.timedelta(minutes=50000)},
                        key,
                        algorithm="HS256")
     print("this is gen_jwt: " + token)

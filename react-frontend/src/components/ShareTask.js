@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ShowShareTaskContent from './ShowShareTaskContent'
 import { FaUndo } from 'react-icons/fa'
 
-const ShareTask = ({editContent,task,taskStatus,deleteTask}) => {
+const ShareTask = ({editContent,task,taskStatus,deleteTask,completedBy}) => {
     const [modalShow, setModalShow] = useState(false);
     const [isFinished,setIsFinished] = useState(false);
 
@@ -30,7 +30,7 @@ const ShareTask = ({editContent,task,taskStatus,deleteTask}) => {
             style={{float:'right', color:'green',cursor:'pointer',fontSize:'1.5rem'}}/> 
             }
             <Form.Text>shared with: {task.sharedWith}</Form.Text>
-            {isFinished ? <Form.Text>Completed: me</Form.Text>: null}
+            {completedBy.length !== 0 ? <Form.Text>Completed: {completedBy}</Form.Text>: null}
         </ListGroup.Item>
         <ShowShareTaskContent
         editContent = {editContent}

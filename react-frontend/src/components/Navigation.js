@@ -5,6 +5,7 @@ import './Navigation.css'
 import hhh from '../1.png';
 import ListGroup from 'react-bootstrap/ListGroup'
 import { useDetectOutsideClick } from "./useDetectOutsideClick";
+import axios from 'axios';
 
 
 // This will create the navbar.
@@ -16,12 +17,25 @@ const Navigation=({name,onNameChange,img,changeNickName})=>{
     const [expanded, setExpanded] = useState(false);    //This is used to set to close the navbar when user onclick.
     
     const logout =()=>{
-        setExpanded(false)
-        localStorage.clear()
-        onNameChange('')
-        changeNickName("")
-        history.push('/home')
-    };
+        setExpanded(false);
+        console.log("Logout")
+        onNameChange("")
+        console.log("This is the logout user: ",name);
+        console.log("This is the user token: ",localStorage.getItem("token"));
+        axios.post("logout",{username:name,token:localStorage.getItem('token')})
+            .then(
+                res=>{
+                    console.log(res);
+                }
+            )
+            .catch(
+                err=>{
+                    console.error(err);
+                }
+            )
+            localStorage.clear()
+            history.push('/home');
+        }
     
     
     const onClick = () => setIsActive(!isActive);

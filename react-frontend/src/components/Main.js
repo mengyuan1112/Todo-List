@@ -35,6 +35,7 @@ const Main = ({name,onNameChange}) => {
     const [isFlipped,setIsFlipped] = useState(false)
     const [sort,setSort] = useState('default');
     const [shareSort,setShareSort] = useState('default')
+    const [completedBy,setCompletedBy] = useState("");
 
     useEffect(() => {
         //send username to backend once user land in main page.
@@ -42,7 +43,6 @@ const Main = ({name,onNameChange}) => {
         socket.emit("onlineUser",{username:name})
         axios.get(`${name}/main`).then(
             res => {
-              console.log(res)
                 console.log("after GET date is: " + currentDate)
                   console.log((res.data.todo))
                   if(typeof (res.data.todo).length !== 'undefined'){
@@ -77,15 +77,18 @@ const Main = ({name,onNameChange}) => {
                   }    
                   
                   else {
-                       console.log(res.data)
+                       console.log("[ This is from /main get request (Else case)]: ",res.data)
                   }
 
                 })
       },[]);
+
+    // This is for regular toDo (finished or undoFinished)
      const clickedFinished=()=>{
         setIsFlipped(!isFlipped)
       }
-
+    
+    // This is trigger by add task.
     const addTask=(task)=>{
       const sameTitle = tasks.find(t=>t.title === task.title);
       if (sameTitle) return false
@@ -96,6 +99,7 @@ const Main = ({name,onNameChange}) => {
       setThingTodo(thingsToDo+1)
       return true
     }
+
 
     const addSharedTask=(task)=>{
       const sameTitle = sharedTasks.find(t=>t.title === task.title);
@@ -156,10 +160,21 @@ const Main = ({name,onNameChange}) => {
     })
 
     socket.on("finishedShareTask",data=>{
-      console.log("This is socket on event on all the user finished the task...");
+      console.log("[socket on finishedShareTask] data: ",data);
+      setCompletedBy(data.completed);
+      // setSharedTasks(sharedTasks.filter((task)=> task.title !== data.title))
+      // setShareThing(sharedThings-1);
+      // setFinishedShareTask([...finishedShareTask,data]);
+      // setThingsFinishedShareTask(thingsFinishedShareTask+1);
+    })
+
+    socket.on("completeTaskByAll",data=>{
+      //"{username": f, "title": title}
+      var task = sharedTasks.filter((task)=> task.title === data.title)
+      console.log("[CompleteTaskByAll] task :",task);
       setSharedTasks(sharedTasks.filter((task)=> task.title !== data.title))
       setShareThing(sharedThings-1);
-      setFinishedShareTask([...finishedShareTask,data]);
+      setFinishedShareTask([...finishedShareTask,task]);
       setThingsFinishedShareTask(thingsFinishedShareTask+1);
     })
 
@@ -263,13 +278,13 @@ const Main = ({name,onNameChange}) => {
 
     
     const shareSortByDate = sharedTasks.sort((a,b)=>(a.date > b.date)? 1:-1).map(
-      (task) => <ShareTask key={task.title} editContent = {editShareTaskContent} task = {task}  taskStatus={shareTaskStatus} deleteTask={deleteTaskFromShareList}/>)
+      (task) => <ShareTask key={task.title} editContent = {editShareTaskContent} task = {task} completedBy={completedBy} taskStatus={shareTaskStatus} deleteTask={deleteTaskFromShareList}/>)
 
     const shareSortByRange = sharedTasks.sort((a,b)=>(a.range < b.range)? 1:-1).map((task) =>
-    <ShareTask key={task.title} editContent = {editShareTaskContent} task = {task}  taskStatus={shareTaskStatus} deleteTask={deleteTaskFromShareList}/>)
+    <ShareTask key={task.title} editContent = {editShareTaskContent} task = {task} completedBy={completedBy}  taskStatus={shareTaskStatus} deleteTask={deleteTaskFromShareList}/>)
 
     const shareSortByDefault = sharedTasks.map((task) =>
-    <ShareTask key={task.title} editContent = {editShareTaskContent} task = {task}  taskStatus={shareTaskStatus} deleteTask={deleteTaskFromShareList}/>
+    <ShareTask key={task.title} editContent = {editShareTaskContent} task = {task} completedBy={completedBy}  taskStatus={shareTaskStatus} deleteTask={deleteTaskFromShareList}/>
     );
 
     const finish_list = finishedTask.map((task)=>
