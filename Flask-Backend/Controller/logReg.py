@@ -9,7 +9,9 @@ from google.oauth2 import id_token
 from google.auth.transport import requests
 from flask import request, jsonify
 from flask import Blueprint
-from .database import UserDB, TicketDB, GoogleDB, ImageDB, FriendsDB
+from .database import UserDB, TicketDB, GoogleDB, ImageDB, FriendsDB, friends_clients, clients
+from flask_socketio import send, emit, join_room
+
 
 logReg = Blueprint('logReg', __name__)
 """
@@ -61,28 +63,6 @@ def register():
     FriendsDB.insert_one(friend_document)
     return jsonify({"result": "Pass"})
 
-
-def valid_pwd(pwd):
-    """
-        Check the password is valid in categories.
-        @:param pwd: String
-        @special Character: [',', '.', '!', '@', '#', '$', '%', '^', '&', '*']
-    """
-    n = len(pwd)
-    spec_list = [',', '.', '!', '@', '#', '$', '%', '^', '&', '*']
-    up_case, low_case, num, special_char = False, False, False, False
-    if n < 8:
-        return False
-    for i in pwd:
-        if i.isupper:
-            up_case = True
-        if i.islower:
-            low_case = True
-        if i.isdigit():
-            num = True
-        if i in spec_list:
-            special_char = True
-    return up_case and low_case and num and special_char
 
 
 @logReg.route('/login', methods=['POST', 'GET'])
@@ -150,6 +130,22 @@ def google_login():
     return jsonify({"result": "unsuccessful"})
 
 
+@logReg.route("/logout", methods=["POST"])
+def logout():
+    data = request.get_json()
+    username = data['username']
+    if username in clients:
+        clients.pop(username)
+    if username in friends_clients:
+        friends_clients.pop(username)
+    friend_list = FriendsDB.find_one({"username": username})["friends"]
+    for friend in friend_list:
+        if friend in friends_clients:
+            emit("userStatus", {"username": username, "status": False}, to=friends_clients[friend])
+        if friend in clients:
+            emit("userStatus", {"username": username, "status": False}, to=clients[friend])
+    return
+
 def return_user(cookie):
     query = UserDB.find_one({'cookies': cookie})
     if query is None:
@@ -160,16 +156,20 @@ def return_user(cookie):
 
 def gen_jwt(username):
     issue_time = datetime.datetime.utcnow()
+<<<<<<< HEAD
     token = jwt.encode({"iss": username, "iat": issue_time, "exp": issue_time + datetime.timedelta(minutes=50000)},
+=======
+    token = jwt.encode({"iss": username, "iat": issue_time, "exp": issue_time + datetime.timedelta(minutes=60)},
+>>>>>>> e8db2d6b6badf616f16159ccd5728e08141d5bc3
                        key,
                        algorithm="HS256")
-    print("this is gen_jwt: " + token)
+
     return token
 
 
 def check_token(token):
     try:
-        print("token from try is: " + token)
+
         form = jwt.decode(token, key, algorithms=["HS256"])
         username = form['iss']
         user = UserDB.find_one({"username": username})
@@ -181,3 +181,26 @@ def check_token(token):
     except jwt.exceptions.ExpiredSignatureError:
         print("token from except is: " + token)
         return {"result": "Expired"}
+
+
+def valid_pwd(pwd):
+    """
+        Check the password is valid in categories.
+        @:param pwd: String
+        @special Character: [',', '.', '!', '@', '#', '$', '%', '^', '&', '*']
+    """
+    n = len(pwd)
+    spec_list = [',', '.', '!', '@', '#', '$', '%', '^', '&', '*']
+    up_case, low_case, num, special_char = False, False, False, False
+    if n < 8:
+        return False
+    for i in pwd:
+        if i.isupper:
+            up_case = True
+        if i.islower:
+            low_case = True
+        if i.isdigit():
+            num = True
+        if i in spec_list:
+            special_char = True
+    return up_case and low_case and num and special_char
