@@ -10,9 +10,11 @@ def online_friend(data):
     friend_list = FriendsDB.find_one({"username": data["username"]})["friends"]
     for friend in friend_list:
         if friend in friends_clients:
-            emit("userStatus", {"username": data["username"], "status": True}, to=friends_clients[friend])
+            emit("userStatus", {
+                "friendName": data["username"], "friendPhoto": ImageDB.find_one({"username": data['username']})['icon'], "friendStatus": True}, to=friends_clients[friend])
         if friend in clients:
-            emit("userStatus", {"username": data["username"], "status": True}, to=clients[friend])
+            emit("userStatus", {
+                "friendName": data["username"], "friendPhoto": ImageDB.find_one({"username": data['username']})['icon'], "friendStatus": True}, to=clients[friend])
     return
 
 
@@ -86,8 +88,10 @@ def logout(data):
     for friend in friend_list:
         print("send to friend: " + friend)
         if friend in friends_clients:
-            emit("userStatus", {"username": username, "status": False}, to=friends_clients[friend])
+            emit("userStatus", {
+                "friendName": data["username"], "friendPhoto": ImageDB.find_one({"username": data['username']})['icon'], "friendStatus": False}, to=friends_clients[friend])
         if friend in clients:
-            emit("userStatus", {"username": username, "status": False}, to=clients[friend])
+            emit("userStatus", {
+                "friendName": data["username"], "friendPhoto": ImageDB.find_one({"username": data['username']})['icon'], "friendStatus": False}, to=clients[friend])
     print("after logout: " + str(username) + " friends_clients: " + str(friends_clients) + " clients: " + str(clients))
     return
