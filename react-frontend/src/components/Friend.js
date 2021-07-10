@@ -38,7 +38,7 @@ const Friend =({name}) => {
                 SetfriendNumber(res.data.friend_list.length)
                 //console.log(res.data.friend_list)
                 Setfriends(res.data.friend_list)
-                console.log(res.data.friend_list)
+                //console.log(res.data.friend_list)
 
                 //SetAvater(res.data.avater)
             },
@@ -71,9 +71,28 @@ const Friend =({name}) => {
 
     }
 
-    useEffect(()=>{
+   // useEffect(()=>{
         socket.on("userStatus", data=>{
-            const index = friends.map((f)=>f.friendName).indexOf(data.username)
+            //Setfriends(friends.filter((friend)=> friend.friendName!== data.friendName))
+
+            //Setfriends([...friends,data])
+            //const index = friends.map((f)=>f.friendName).indexOf(data.friendName)
+            //const index = friends.findIndex(x=> x.friendName === data.friendName);
+            //console.log(index)
+            console.log(data)
+            // if (index === -1){
+            //     // handle error
+            //     console.log('no match');
+            //     }
+            //     else
+            //     Setfriends([
+            //         ...friends.slice(0,index),
+            //         data,
+            //         ...friends.slice(index+1)
+            //     ]
+            //             );
+            //console.log(friends);
+            //console.log(index)
            //updateItem(data.username,"friendStatus",data.status)
            //console.log(friends[index].friendPhoto)
            
@@ -92,7 +111,7 @@ const Friend =({name}) => {
             //console.log(friends[index]["friendStatus"])
             //console.log(data.username);
             //console.log("userStatus is:" + data.status)
-            console.log("friend is: " + data.username + " login status is: " + data.status )
+            //console.log("friend is: " + data.username + " login status is: " + data.status )
         })
     
         socket.on('Addedfriend',data=>{
@@ -144,7 +163,7 @@ const Friend =({name}) => {
         })
     
 
-    })
+   // })
     
 //    function updateItem(friendName,friendStatus,newStatus) {
 //        console.log(newStatus);
