@@ -38,7 +38,7 @@ const Friend =({name}) => {
                 SetfriendNumber(res.data.friend_list.length)
                 //console.log(res.data.friend_list)
                 Setfriends(res.data.friend_list)
-                //console.log(res.friend_list)
+                console.log(res.data.friend_list)
 
                 //SetAvater(res.data.avater)
             },
@@ -52,7 +52,7 @@ const Friend =({name}) => {
 
     const [friendName,SetfriendName] = useState('');
     const [friendPhoto, SetfriendPhoto] = useState('');
-    const [friendStatus,SetStatus] = useState(false);
+    const [friendStatus,SetStatus] = useState('false');
     const [error,setError] = useState(false)
     var friend={friendName:friendName,friendPhoto:friendPhoto,friendStatus:friendStatus}
 
@@ -71,59 +71,107 @@ const Friend =({name}) => {
 
     }
 
-    socket.on("userStatus", data=>{
-        console.log("friend is: " + data.username + " login status is: " + data.status )
-    })
+    useEffect(()=>{
+        socket.on("userStatus", data=>{
+            const index = friends.map((f)=>f.friendName).indexOf(data.username)
+           //updateItem(data.username,"friendStatus",data.status)
+           //console.log(friends[index].friendPhoto)
+           
+            
+           
+            //const statusChange=friends.filter((friend)=> friend.friendName=== data.username)
+            //statusChange.friendStatus=data.username
+            //friends[index]=statusChange
+            //const hhh = friends.map((f) => f.friendName = data.username);
+            
+            //console.log(friends[index])
+            //friends[index].friendStatus=llll
+            //friends[index]["friendStatus"]=data.status
+            //Setfriends(friend)
+            //sameTitle.friendStatus = data.status
+            //console.log(friends[index]["friendStatus"])
+            //console.log(data.username);
+            //console.log("userStatus is:" + data.status)
+            console.log("friend is: " + data.username + " login status is: " + data.status )
+        })
+    
+        socket.on('Addedfriend',data=>{
+            
+    
+            console.log("this is from server" + data)
+            if(data.result=="pass" && data.friendName!=name){
+                friend={friendName:data.friendName,friendPhoto:data.friendPhoto,friendStatus:data.friendStatus}
+                console.log(friend)
+                SetnotExistAlert(false)
+                SetalreadyAddedAlert(false)
+                SetselfAler(false)
+                SetfriendNumber(friendNumber+1)
+                SetfriendPhoto(data.friendPhoto)
+                SetStatus(data.friendStatus)
+                Setfriends([...friends,friend])
+                setShow(false)
+                console.log(data.result)
+    
+                return true
+    
+    
+            }
+            else if( data.friendName==name){
+                SetselfAler(true)
+                return false
+    
+            }
+    
+            else if(data.result=="already added"){
+                console.log(data.result)
+                SetalreadyAddedAlert(true)
+                setShow(true)
+                return false
+    
+            }
+            else{
+                SetnotExistAlert(true)
+                console.log(data.result)
+                setShow(true)
+                return false
+            }
+    
+        })
+    
+        socket.on("Deletefriend", data=>{
+            Setfriends(friends.filter((friend)=> friend.friendName!== data.username ))
+            console.log(data)
+        })
+    
 
-    socket.on('Addedfriend',data=>{
+    })
+    
+//    function updateItem(friendName,friendStatus,newStatus) {
+//        console.log(newStatus);
+//         var index = friends.findIndex(x=> x.friendName === friendName);
+      
+//         let statusChangeFriend= friends[index];
+//         console.log(statusChangeFriend);
+//         statusChangeFriend[friendStatus] = newStatus;
+//         if (index === -1){
+//             // handle error
+//             console.log('no match');
+//           }
+//           else
+//             Setfriends([
+//               ...friends.slice(0,index),
+//               statusChangeFriend,
+//               ...friends.slice(index+1)
+//             ]
+//                     );
+//         //console.log(friends);
         
-
-        console.log("this is from server" + data)
-        if(data.result=="pass" && data.friendName!=name){
-            friend={friendName:data.friendName,friendPhoto:data.friendPhoto,friendStatus:data.friendStatus}
-            console.log(friend)
-            SetnotExistAlert(false)
-            SetalreadyAddedAlert(false)
-            SetselfAler(false)
-            SetfriendNumber(friendNumber+1)
-            //SetfriendPhoto(data.friendPhoto)
-            //SetStatus(data.friendStatus)
-            Setfriends([...friends,friend])
-            setShow(false)
-            console.log(data.result)
-
-            return true
+//       } 
 
 
-        }
-        else if( data.friendName==name){
-            SetselfAler(true)
-            return false
 
-        }
 
-        else if(data.result=="already added"){
-            console.log(data.result)
-            SetalreadyAddedAlert(true)
-            setShow(true)
-            return false
-
-        }
-        else{
-            SetnotExistAlert(true)
-            console.log(data.result)
-            setShow(true)
-            return false
-        }
-
-    })
-
-    socket.on("usersStatus",data=>{
-        const index = friends.map((f) => f.friendName).indexOf(data.username);
-        friends[index][friendStatus]=data.status
-        console.log("index of 'larry': " + index);
-        console.log("this is add friend1")
-    })
+    
 
 
 
@@ -154,10 +202,6 @@ const Friend =({name}) => {
         socket.emit("Deletefriend",{username:name, friendName:f.friendName})
     }
 
-    socket.on("Deletefriend", data=>{
-        Setfriends(friends.filter((friend)=> friend.friendName!== data.username ))
-        console.log(data)
-    })
 
 
     const friend_list = friends.map((friend) =>
