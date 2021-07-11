@@ -1,0 +1,6 @@
+.friendsList{
+    max-height: 750px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    overflow-x: hidden;
+}

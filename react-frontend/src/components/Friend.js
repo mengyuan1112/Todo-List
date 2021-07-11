@@ -6,7 +6,7 @@ import Modal from 'react-bootstrap/Modal'
 import { Container,Col,Row,Form} from 'react-bootstrap';
 import Alert from 'react-bootstrap/Alert'
 import React ,{useState,useRef,Component,useEffect} from "react"
-import "./Personal.css";
+import "./Friend.css";
 import { CgUserAdd } from "react-icons/cg";
 import FriendList from './FriendList'
 
@@ -59,24 +59,13 @@ const Friend =({name}) => {
 
     const addFriends=(friend)=>{
     
-        // console.log()
-        //friendName.preventDefault();
-        //addFriends({friendName:friendName,friendPhoto:friendPhoto,friendStatus:friendStatus})
-        //Setfriends([...friends,friend])
-        //SetfriendNumber(friendNumber+1)
         socket.emit("Addedfriend",{username:name , friendName:friendName},console.log("this is socket"));
-
-
-
 
     }
 
   useEffect(()=>{
         socket.on("userStatus", data=>{
-            // Setfriends(friends.filter((friend)=> friend.friendName!== data.friendName))
-
-            // Setfriends([...friends,data])
-            //const index = friends.map((f)=>f.friendName).indexOf(data.friendName)
+    
             const index = friends.findIndex(x=> x.friendName === data.friendName);
             console.log(index)
             console.log(friends)
@@ -84,14 +73,17 @@ const Friend =({name}) => {
             if (index === -1){
                 // handle error
                 console.log('no match');
-                }
-                else
+            }
+            else{
+
                 Setfriends([
                     ...friends.slice(0,index),
                     data,
-                    ...friends.slice(index+1)
-                ]
-                        );
+                    ...friends.slice(index+1),
+                ]);
+
+                }
+
             console.log(friends);
             console.log(index)
      
@@ -147,34 +139,6 @@ const Friend =({name}) => {
     
 
      })
-    
-//    function updateItem(friendName,friendStatus,newStatus) {
-//        console.log(newStatus);
-//         var index = friends.findIndex(x=> x.friendName === friendName);
-      
-//         let statusChangeFriend= friends[index];
-//         console.log(statusChangeFriend);
-//         statusChangeFriend[friendStatus] = newStatus;
-//         if (index === -1){
-//             // handle error
-//             console.log('no match');
-//           }
-//           else
-//             Setfriends([
-//               ...friends.slice(0,index),
-//               statusChangeFriend,
-//               ...friends.slice(index+1)
-//             ]
-//                     );
-//         //console.log(friends);
-        
-//       } 
-
-
-
-
-    
-
 
 
     const handleSubmit=(e)=>{
@@ -217,21 +181,26 @@ const Friend =({name}) => {
       
 
     return(
-        <Container >
+        <Container>
         <Personal name={name}></Personal>     
         <Card >
             
         <Card.Body>    
         <Card.Title> My Friends ({friendNumber})</Card.Title>
-        <ListGroup variant="flush">
-            <ListGroup.Item>
+        
             <Button  variant="light"  onClick={handleShow}><CgUserAdd/></Button>
                 Add new friends
-            </ListGroup.Item>
-            
-        </ListGroup>
-        {friend_list}
-        </Card.Body>   
+        
+        </Card.Body>  
+        </Card>
+        <Card>
+        <Card.Body className="friendsList">
+        {friend_list} 
+        </Card.Body>
+        </Card>
+        <br />
+        <br />
+        
         <Modal show={show} onHide={()=>{setShow(false);SetnotExistAlert(false);SetalreadyAddedAlert(false);SetselfAler(false)}}>
         <Modal.Header closeButton>
         </Modal.Header>
@@ -264,8 +233,8 @@ const Friend =({name}) => {
         </Modal.Body>
 
         </Modal> 
-        </Card>
         </Container>
+
     )
 }
 

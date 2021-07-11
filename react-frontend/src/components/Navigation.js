@@ -17,8 +17,9 @@ const socket = io.connect(endPoint);
 const Navigation=({name,onNameChange,img,changeNickName})=>{
     const history = useHistory();
     const dropdownRef = useRef(null);
-    const [isActive,setIsActive]  = useState (false);
-    //const [isActive, setIsActive] = useDetectOutsideClick(dropdownRef, false);
+    //const [isActive,setIsActive]  = useState (false);
+    const [isActive, setIsActive] = useDetectOutsideClick(dropdownRef, false);
+    //const onClick = () => setIsActive(!isActive);
     const [expanded, setExpanded] = useState(false);    //This is used to set to close the navbar when user onclick.
 
     const logout =()=>{
@@ -99,7 +100,7 @@ const Navigation=({name,onNameChange,img,changeNickName})=>{
                                 <ListGroup.Item action onClick={logout}>Logout</ListGroup.Item>
                             </ListGroup>
 
-                        </nav>
+                        </nav> 
                     </div>)
                     :(<></>)}
 

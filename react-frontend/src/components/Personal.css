@@ -9,7 +9,16 @@
     top: 40%;
     left: 50%;
     transform: translate(-50%, -50%);
+  
 }
+.friendsList{
+    max-height: 750px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    overflow-x: hidden;
+    
+}
+
 .background{
     height: 150px;
     width: 1110px; 
@@ -22,11 +31,13 @@
     left: 50%;
     transform: translate(-50%, -50%);
 }
+
+
+
 .card {
     overflow-y: auto;
     white-space: pre-wrap;
     overflow-x: hidden;
-
 }
 
 
