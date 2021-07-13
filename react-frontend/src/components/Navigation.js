@@ -6,7 +6,9 @@ import hhh from '../1.png';
 import ListGroup from 'react-bootstrap/ListGroup'
 import { useDetectOutsideClick } from "./useDetectOutsideClick";
 import axios from 'axios';
-import io from 'socket.io-client';
+
+import io from "socket.io-client";
+
 
 const endPoint = "http://localhost:5000/friends";
 
