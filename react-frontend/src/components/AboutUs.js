@@ -1,5 +1,6 @@
 import {Container,Row, Col,Image,Jumbotron} from 'react-bootstrap';
 import img from './../chiklam.JPG'
+import yuanImg from './../Yuan Meng.png'
 import './AboutUs.css'
 const AboutUs = () => {
     return (
@@ -26,12 +27,12 @@ const AboutUs = () => {
                 <Col>
                     <br/>
                     <br/>
-                        <p style={{fontSize:"2rem"}}>Name here </p>
-                        <p>Role here</p>
-                        <p><a href="XXX">Github Link</a></p>
+                        <p style={{fontSize:"2rem"}}>Yuan Meng</p>
+                        <p>Backend Developer</p>
+                        <p><a href="https://github.com/mengyuan1112">Github Link</a></p>
                 </Col>
                 <Col>
-                    <Image src="xxx" rounded style={{width:'34%'}} />
+                    <Image src={yuanImg} rounded style={{width:'34%'}} />
                 </Col>
                 </Row>
 
