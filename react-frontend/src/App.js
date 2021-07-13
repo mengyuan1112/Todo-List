@@ -11,7 +11,7 @@ import Friend from './components/Friend'
 import Summary from './components/Personal'
 import Checked from './components/Personal'
 import axios from 'axios';
-
+import aboutUs from './components/AboutUs'
 
 
 
@@ -85,7 +85,7 @@ function App() {
               <Route exact path={`/:name/personal/friends`}component={()=><Friend name={name} onNameChange={onChange}/>}/>
               <Route exact path={`/:name/personal/summary`}component={()=><Summary name={name} onNameChange={onChange}/>}/>
               <Route exact path={`/:name/personal/checked`}component={()=><Checked name={name} onNameChange={onChange}/>}/>
-              
+              <Route exact path={`/:name/aboutUs`} component={<AboutUs/>}/>
 
 
 
@@ -96,6 +96,7 @@ function App() {
               <Route exact path="/home" component = {()=> <Home name={name} changeNickName={changeNickName} expire={expire} nickName={nickName} ticketLength={length}  onNameChange={onChange} />}/>
               <Route exact path="/register" component={Register} />
               <Route exact path="/login" component={()=> <Login expire={expire} name={name} onNameChange={onChange} changeNickName={changeNickName}/>} />
+              <Route exact path="/aboutUs" component={<AboutUs/>}/>
               <Route exact path="/" component = {()=> <Home name={name} expire={expire} ticketLength={length} nickName={nickName} onNameChange={onChange} />}/>
 
             </Switch>
