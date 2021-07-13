@@ -1,18 +1,19 @@
 import React from 'react'
-import { Container,Col,Row,Form} from 'react-bootstrap';
+import { Container,Col,Row,Form, Card} from 'react-bootstrap';
 import hhh from '../1.png';
 import Button from 'react-bootstrap/Button'
+import "./FriendList.css";
 
 import {ListGroup} from 'react-bootstrap'
 
 const FriendList =({friend,deleteFriend}) => {
 
     return (
-        <ListGroup>
+        <ListGroup >
             <ListGroup.Item>
                 <Row>
                 <Col  xs="1">
-                <img className="friendsPhoto" src={friend.friendPhoto} alt="User avatar" />
+                <img className="friendsListPhoto" src={friend.friendPhoto} alt="User avatar" />
                 </Col>
                 <Col xs="9">
                 <p class="title" >{friend.friendName}</p>
@@ -25,6 +26,7 @@ const FriendList =({friend,deleteFriend}) => {
                 </Row>
             </ListGroup.Item>
         </ListGroup>
+        
 
     )
 

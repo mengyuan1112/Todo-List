@@ -7,20 +7,27 @@ import ListGroup from 'react-bootstrap/ListGroup'
 import { useDetectOutsideClick } from "./useDetectOutsideClick";
 import axios from 'axios';
 
+
+const endPoint = "http://localhost:5000/friends";
+
+const socket = io.connect(endPoint);
+
 // This will create the navbar.
 const Navigation=({name,onNameChange,img,changeNickName})=>{
     const history = useHistory();
     const dropdownRef = useRef(null);
-    const [isActive,setIsActive]  = useState (false); 
-    //const [isActive, setIsActive] = useDetectOutsideClick(dropdownRef, false);
+    //const [isActive,setIsActive]  = useState (false);
+    const [isActive, setIsActive] = useDetectOutsideClick(dropdownRef, false);
+    //const onClick = () => setIsActive(!isActive);
     const [expanded, setExpanded] = useState(false);    //This is used to set to close the navbar when user onclick.
-    
+
     const logout =()=>{
         setExpanded(false);
         console.log("Logout")
         onNameChange("")
         console.log("This is the logout user: ",name);
         console.log("This is the user token: ",localStorage.getItem("token"));
+
         axios.post("logout",{username:name,token:localStorage.getItem('token')})
             .then(
                 res=>{
@@ -39,6 +46,7 @@ const Navigation=({name,onNameChange,img,changeNickName})=>{
     
     const clickedOnImage = () => setIsActive(!isActive);
     
+
     let hreflink=""
     if (name){
         hreflink='/'+name
@@ -47,7 +55,7 @@ const Navigation=({name,onNameChange,img,changeNickName})=>{
         hreflink=""
     }
 
-    
+
 
     return (
         <>
@@ -87,6 +95,7 @@ const Navigation=({name,onNameChange,img,changeNickName})=>{
     
         </Navbar>
         </>)
+
 }
 
 export default Navigation

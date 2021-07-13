@@ -26,20 +26,21 @@ body {
   border: none;
   vertical-align: middle;
   transition: box-shadow 0.4s ease;
-  margin-left: auto; /* Strictly for positioning */
+  margin-left: auto;  
   float: right;
+ 
 }
 
 .menu-trigger:hover {
   box-shadow: 0 1px 8px rgba(0, 0, 0, 0.3);
 }
 
-/* .menu-trigger span {
+ /* .menu-trigger span {
   font-weight: 700;
   vertical-align: middle;
   font-size: 14px;
   margin: 0 10px;
-} */
+}  */
 
 .menu-trigger img {
   border-radius: 90px;
@@ -48,17 +49,18 @@ body {
 .menu {
   background: #ffffff;
   border-radius: 8px;
-  position: fixed;
+  position: absolute;
   z-index: 99;
   top: 60px;
   right: 0;
-  margin-right: 2em;
+  margin-right: auto;
   width: 150px;
   box-shadow: 0 1px 8px rgba(0, 0, 0, 0.3);
   opacity: 0;
   visibility: hidden;
   transform: translateY(-20px);
   transition: opacity 0.4s ease, transform 0.4s ease, visibility 0.4s;
+  overflow-y: auto;
 }
 
 .menu.active {
