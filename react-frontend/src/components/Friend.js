@@ -6,7 +6,7 @@ import Modal from 'react-bootstrap/Modal'
 import { Container,Col,Row,Form} from 'react-bootstrap';
 import Alert from 'react-bootstrap/Alert'
 import React ,{useState,useRef,Component,useEffect} from "react"
-import "./Personal.css";
+import "./Friend.css";
 import { CgUserAdd } from "react-icons/cg";
 import FriendList from './FriendList'
 
@@ -38,7 +38,7 @@ const Friend =({name}) => {
                 SetfriendNumber(res.data.friend_list.length)
                 //console.log(res.data.friend_list)
                 Setfriends(res.data.friend_list)
-                //console.log(res.friend_list)
+                //console.log(res.data.friend_list)
 
                 //SetAvater(res.data.avater)
             },
@@ -52,75 +52,93 @@ const Friend =({name}) => {
 
     const [friendName,SetfriendName] = useState('');
     const [friendPhoto, SetfriendPhoto] = useState('');
-    const [friendStatus,SetStatus] = useState(false);
+    const [friendStatus,SetStatus] = useState('false');
     const [error,setError] = useState(false)
     var friend={friendName:friendName,friendPhoto:friendPhoto,friendStatus:friendStatus}
 
 
     const addFriends=(friend)=>{
     
-        // console.log()
-        //friendName.preventDefault();
-        //addFriends({friendName:friendName,friendPhoto:friendPhoto,friendStatus:friendStatus})
-        //Setfriends([...friends,friend])
-        //SetfriendNumber(friendNumber+1)
         socket.emit("Addedfriend",{username:name , friendName:friendName},console.log("this is socket"));
-
-
-
 
     }
 
-    socket.on("userStatus", data=>{
-        console.log("friend is: " + data.username + " login status is: " + data.status )
-    })
+  useEffect(()=>{
+        socket.on("userStatus", data=>{
+    
+            const index = friends.findIndex(x=> x.friendName === data.friendName);
+            console.log(index)
+            console.log(friends)
+            console.log(data)
+            if (index === -1){
+                // handle error
+                console.log('no match');
+            }
+            else{
 
-    socket.on('Addedfriend',data=>{
+                Setfriends([
+                    ...friends.slice(0,index),
+                    data,
+                    ...friends.slice(index+1),
+                ]);
 
-        console.log("this is from server" + data)
-        if(data.result=="pass" && data.friendName!=name){
-            friend={friendName:data.friendName,friendPhoto:data.friendPhoto,friendStatus:data.friendStatus}
-            console.log(friend)
-            SetnotExistAlert(false)
-            SetalreadyAddedAlert(false)
-            SetselfAler(false)
-            SetfriendNumber(friendNumber+1)
-            //SetfriendPhoto(data.friendPhoto)
-            //SetStatus(data.friendStatus)
-            Setfriends([...friends,friend])
-            setShow(false)
-            console.log(data.result)
+                }
 
-            return true
+            console.log(friends);
+            console.log(index)
+     
+        })
+    
+        socket.on('Addedfriend',data=>{
+            
+    
+            console.log("this is from server" + data)
+            if(data.result=="pass" && data.friendName!=name){
+                friend={friendName:data.friendName,friendPhoto:data.friendPhoto,friendStatus:data.friendStatus}
+                console.log(friend)
+                SetnotExistAlert(false)
+                SetalreadyAddedAlert(false)
+                SetselfAler(false)
+                SetfriendNumber(friendNumber+1)
+                SetfriendPhoto(data.friendPhoto)
+                SetStatus(data.friendStatus)
+                Setfriends([...friends,friend])
+                setShow(false)
+                console.log(data.result)
+    
+                return true
+    
+    
+            }
+            else if( data.friendName==name){
+                SetselfAler(true)
+                return false
+    
+            }
+    
+            else if(data.result=="already added"){
+                console.log(data.result)
+                SetalreadyAddedAlert(true)
+                setShow(true)
+                return false
+    
+            }
+            else{
+                SetnotExistAlert(true)
+                console.log(data.result)
+                setShow(true)
+                return false
+            }
+    
+        })
+    
+        socket.on("Deletefriend", data=>{
+            //console.log(friends)
+            Setfriends(friends.filter((friend)=> friend.friendName!== data.username ))
+        })
+    
 
-
-        }
-        else if( data.friendName==name){
-            SetselfAler(true)
-            return false
-
-        }
-
-        else if(data.result=="already added"){
-            console.log(data.result)
-            SetalreadyAddedAlert(true)
-            setShow(true)
-            return false
-
-        }
-        else{
-            SetnotExistAlert(true)
-            console.log(data.result)
-            setShow(true)
-            return false
-        }
-
-    })
-
-    socket.on("Addedfriend1",data=>{
-        console.log("this is add friend1")
-    })
-
+     })
 
 
     const handleSubmit=(e)=>{
@@ -150,10 +168,6 @@ const Friend =({name}) => {
         socket.emit("Deletefriend",{username:name, friendName:f.friendName})
     }
 
-    socket.on("Deletefriend", data=>{
-        Setfriends(friends.filter((friend)=> friend.friendName!== data.username ))
-        console.log(data)
-    })
 
 
     const friend_list = friends.map((friend) =>
@@ -167,21 +181,26 @@ const Friend =({name}) => {
       
 
     return(
-        <Container >
+        <Container>
         <Personal name={name}></Personal>     
         <Card >
             
         <Card.Body>    
         <Card.Title> My Friends ({friendNumber})</Card.Title>
-        <ListGroup variant="flush">
-            <ListGroup.Item>
+        
             <Button  variant="light"  onClick={handleShow}><CgUserAdd/></Button>
                 Add new friends
-            </ListGroup.Item>
-            
-        </ListGroup>
-        {friend_list}
-        </Card.Body>   
+        
+        </Card.Body>  
+        </Card>
+        <Card>
+        <Card.Body className="friendsList">
+        {friend_list} 
+        </Card.Body>
+        </Card>
+        <br />
+        <br />
+        
         <Modal show={show} onHide={()=>{setShow(false);SetnotExistAlert(false);SetalreadyAddedAlert(false);SetselfAler(false)}}>
         <Modal.Header closeButton>
         </Modal.Header>
@@ -214,8 +233,8 @@ const Friend =({name}) => {
         </Modal.Body>
 
         </Modal> 
-        </Card>
         </Container>
+
     )
 }
 

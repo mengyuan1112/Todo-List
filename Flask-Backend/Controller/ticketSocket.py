@@ -19,11 +19,13 @@ def online_user(data):
     friend_list = FriendsDB.find_one({"username": data["username"]})["friends"]
     for friend in friend_list:
         if friend in friends_clients:
+
             emit("userStatus", {
-                "friendName": data["username"], "friendPhoto": ImageDB.find_one({"username": data['username']})['icon'], "friendStatus": True}, to=friends_clients[friend])
+                "friendName": data["username"], "friendPhoto": ImageDB.find_one({"username": data['username']})['icon'], "friendStatus": True}, namespace='/friends',to=friends_clients[friend])
+
         if friend in clients:
             emit("userStatus", {
-                "friendName": data["username"], "friendPhoto": ImageDB.find_one({"username": data['username']})['icon'], "friendStatus": True}, to=clients[friend])
+                "friendName": data["username"], "friendPhoto": ImageDB.find_one({"username": data['username']})['icon'], "friendStatus": True}, namespace='/friends',to=clients[friend])
     return
 
 
