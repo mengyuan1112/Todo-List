@@ -10,9 +10,11 @@ def online_friend(data):
     friend_list = FriendsDB.find_one({"username": data["username"]})["friends"]
     for friend in friend_list:
         if friend in friends_clients:
-            emit("userStatus", {"username": data["username"], "status": True}, to=friends_clients[friend])
+            emit("userStatus", {
+                "friendName": data["username"], "friendPhoto": ImageDB.find_one({"username": data['username']})['icon'], "friendStatus": True}, to=friends_clients[friend])
         if friend in clients:
-            emit("userStatus", {"username": data["username"], "status": True}, to=clients[friend])
+            emit("userStatus", {
+                "friendName": data["username"], "friendPhoto": ImageDB.find_one({"username": data['username']})['icon'], "friendStatus": True}, to=clients[friend])
     return
 
 
@@ -39,9 +41,9 @@ def add_friend(data, t):
     status = False
     if friend in friends_clients:
         status = True
-        emit("Addedfriend1", {"result": "pass", "friendPhoto": ImageDB.find_one({"username": user})["icon"],
+        emit("Addedfriend", {"result": "pass", "friendPhoto": ImageDB.find_one({"username": user})["icon"],
                              "friendStatus": True, "friendName": user}, broadcast=False, to=friends_clients[friend])
-        print("sent to: "+str(friend) + " client number: "+str(friends_clients[friend]))
+        #print("sent to: "+str(friend) + " client number: "+str(friends_clients[friend]))
 
     emit("Addedfriend", {"result": "pass", "friendPhoto": ImageDB.find_one({"username": friend})["icon"],
                          "friendStatus": status, "friendName": friend})
@@ -71,4 +73,25 @@ def delete_friend(data):
             if friend in friends_clients:
                 emit("Deletefriend", {"username": user}, to=friends_clients[friend])
             break
+    return
+
+
+@socketio.on("logout", namespace='/friends')
+def logout(data):
+    username = data['username']
+    print("before logout: " + str(username) + " friends_clients: " + str(friends_clients) + " clients: " + str(clients))
+    friend_list = FriendsDB.find_one({"username": username})["friends"]
+    if username in friends_clients:
+        friends_clients.pop(username)
+    if username in clients:
+        clients.pop(username)
+    for friend in friend_list:
+        print("send to friend: " + friend)
+        if friend in friends_clients:
+            emit("userStatus", {
+                "friendName": data["username"], "friendPhoto": ImageDB.find_one({"username": data['username']})['icon'], "friendStatus": False}, to=friends_clients[friend])
+        if friend in clients:
+            emit("userStatus", {
+                "friendName": data["username"], "friendPhoto": ImageDB.find_one({"username": data['username']})['icon'], "friendStatus": False}, to=clients[friend])
+    print("after logout: " + str(username) + " friends_clients: " + str(friends_clients) + " clients: " + str(clients))
     return
