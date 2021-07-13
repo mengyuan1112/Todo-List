@@ -399,7 +399,7 @@ def parsing_task(data):
 
 def parsing_shared_task(data):
     data_time_arr = data['currentDate'].split("T")
-    create_date = "2021-07-09"
+    create_date = data_time_arr[0]
     create_time = data_time_arr[1]
     user, title, friends, content, deadline_date, deadline_time =\
         data['username'], data['title'], data['sharedWith'], data['content'], data['date'], data['time']

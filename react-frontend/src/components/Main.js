@@ -66,8 +66,9 @@ const Main = ({name,onNameChange}) => {
         socket.on("undoFinishedShareTask",data=>{
           console.log("[undoFinishedShareTask] data: ",data);
           setFinishedShareTask(finishedShareTask.filter((task)=> task.title !== data.ticket.title))
+          //setThingsFinishedShareTask(finishedShareTask.length);
           if (thingsFinishedShareTask>0){
-            setThingsFinishedShareTask(thingsFinishedShareTask-1);
+            setThingsFinishedShareTask(thingsFinishedShareTask-1)
           }
           setSharedTasks([...sharedTasks,data.ticket]);
           setShareThing(sharedThings+1);
@@ -99,11 +100,17 @@ const Main = ({name,onNameChange}) => {
           setThingsFinishedShareTask(thingsFinishedShareTask+1);
           console.log("This is the number of sharedThing: ",sharedThings)
           // if(sharedThings>0){
+          setSharedTasks(sharedTasks.filter((task)=> task.title !== data.task.title))
+          setShareThing(sharedTasks.length)
           if (sharedThings>0){
             setShareThing(sharedThings-1)
           }
-          setSharedTasks(sharedTasks.filter((task)=> task.title !== data.task.title))
-          setShareThing(sharedTasks.length)
+        })
+
+        socket.on("EditSharedTaskContent",data=>{
+          console.log("This is data from receviedEditTask: ",data);
+          setSharedTasks(sharedTasks.filter((task)=> task.title !== data.oldTitle))
+          setSharedTasks([...sharedTasks,data.updateTicket])
         })
       }, [socket.on])
 
