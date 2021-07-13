@@ -11,13 +11,13 @@ const AboutUs = () => {
         <Container className="justify-content-center">
                 <Row className="justify-content-center">
                 <Col>
-                    <Image src={img} rounded style={{width:'50%'}} />
+                    <Image src={img} rounded style={{width:'60%', height: '100%'}} />
                 </Col>
                 <Col>
-                    <Image src={yuanImg} rounded style={{width:'60%'}} />
+                    <Image src={yuanImg} className="yuan_img" rounded style={{width:'60%', height: '100%'}} />
                 </Col>
                 <Col>
-                    <Image src="xxx" rounded style={{width:'34%'}} />
+                    <Image src="xxx" rounded style={{width:'60%', height: '100%'}} />
                 </Col>
 
                 </Row>
@@ -28,7 +28,7 @@ const AboutUs = () => {
                         <p style={{fontSize:"2rem"}}>Chik Lam</p>
                         <p>Frontend Software developer</p>
                         <p><a href="https://github.com/lamchik1997">Github Link</a></p>
-                        <p>Contact Email: chiklam@buffalo.edu</p>
+                        <p>Email: chiklam@buffalo.edu</p>
                 </Col>
                 <hr/>
                  <br/>
@@ -38,7 +38,7 @@ const AboutUs = () => {
                         <p style={{fontSize:"2rem"}}>Yuan Meng</p>
                         <p>Backend Developer</p>
                         <p><a href="https://github.com/mengyuan1112">Github Link</a></p>
-                        <p>Contact Email: yuanmeng@buffalo.edu</p>
+                        <p>Email: yuanmeng@buffalo.edu</p>
                 </Col>
 
                 <hr/>
@@ -49,7 +49,7 @@ const AboutUs = () => {
                         <p style={{fontSize:"2rem"}}>Name here </p>
                         <p>Role here</p>
                         <p><a href="XXX">Github Link</a></p>
-                        <p>Contact Email: ...</p>
+                        <p>Email: ...</p>
                 </Col>
             </Row>
         </Container>
