@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import {Alert,Modal,Button,Form,Row,Col} from 'react-bootstrap'
-
+import ShowFriend from './ShowFriend'
+import { useHistory } from 'react-router'
 
 const AddSharedTask = (props) => {
     const [validated, setValidated] = useState(false);
@@ -10,13 +11,17 @@ const AddSharedTask = (props) => {
     const [time,setTime] = useState('')
     const [sharedWith, setSharedWith] = useState([])
     const [error,setError] = useState(false);
+    const history = useHistory();
+    const [completedBy,setCompletedBy] = useState([]);
+    const [status,setStatus] = useState(false);
     var myCurrentDate = new Date();
     myCurrentDate.setHours(0,0,0,0,0);
     // This function will handle the form submission for adding a shared task.
     const handleSubmitTask=(e)=>{
         e.preventDefault();
         setError(false)
-        if (props.addtask({sharedWith:sharedWith,title:title,content:content,date:date,time:time, creator:props.name})){
+        if (props.addtask({sharedWith:sharedWith,title:title,content:content,date:date,time:time, creator:props.name,
+          completedBy:completedBy,status:status})){
           //add task sucess
           props.onHide();
         }
@@ -33,10 +38,9 @@ const AddSharedTask = (props) => {
     }
 
     const addFriend=()=>{
-        console.log("add friend button clicked.")
+      history.push(`/${props.name}/personal/friends`)
     } 
-
-
+    const showFriendList = props.friendList.map((friend)=><ShowFriend key={friend} friend={friend}/>)
 
     return (
         <Modal
@@ -58,10 +62,7 @@ const AddSharedTask = (props) => {
                 <Col sm="8"> 
                 <Form.Control as="select" multiple htmlSize={3} required onChange={(e) => 
               setSharedWith([].slice.call(e.target.selectedOptions).map(item => item.value)) }>
-                  {/* TODO: needed to get the friend list from server and display it here. */}
-                    <option>friend1</option>  
-                    <option>friend2</option>
-                    <option>friend3</option>
+                  {showFriendList}
                 </Form.Control>
                 </Col>
 

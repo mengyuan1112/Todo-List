@@ -5,18 +5,21 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ShowShareTaskContent from './ShowShareTaskContent'
 import { FaUndo } from 'react-icons/fa'
 
-const ShareTask = ({editContent,task,taskStatus,deleteTask}) => {
+const ShareTask = ({name,editContent,task,taskStatus,deleteTask}) => {
     const [modalShow, setModalShow] = useState(false);
     const [isFinished,setIsFinished] = useState(false);
-
+    const [completedBy,setCompletedBy] = useState([task.completed]);
     const finishTask=()=>{
         setIsFinished(true)
         taskStatus(task,true)
-        //onDelete(task)
+        if (!(completedBy.filter((completed)=>completed===name))){
+            setCompletedBy([...completedBy,name])
+        }
     }
     const undoFinishTask=()=>{
-        setIsFinished(false)
-        taskStatus(task,false)
+        setIsFinished(false);
+        taskStatus(task,false);
+        setCompletedBy(completedBy.filter((completed)=>completed!==name));
     }
     
     return (
@@ -24,13 +27,13 @@ const ShareTask = ({editContent,task,taskStatus,deleteTask}) => {
         <ListGroup.Item action onDoubleClick={()=>setModalShow(true)}>
             {task.title} 
             {
-            isFinished ? <FaUndo onClick={undoFinishTask}
-            style={{float:'right', color:'black',cursor:'pointer' ,fontSize:'1rem'}}/> :
-            <FaCheck onClick={finishTask}
-            style={{float:'right', color:'green',cursor:'pointer',fontSize:'1.5rem'}}/> 
+            isFinished ?
+            <FaUndo onClick={undoFinishTask} style={{float:'right', color:'black',cursor:'pointer' ,fontSize:'1rem'}}/> 
+            :
+            <FaCheck onClick={finishTask} style={{float:'right', color:'green',cursor:'pointer',fontSize:'1.5rem'}}/> 
             }
-            <Form.Text>shared with: {task.friends}</Form.Text>
-            {isFinished ? <Form.Text>Completed: me</Form.Text>: null}
+            <Form.Text>shared with: {task.sharedWith}</Form.Text>
+            {(completedBy && completedBy.length !== 0) ? <Form.Text>Completed: {completedBy}</Form.Text>: null}
         </ListGroup.Item>
         <ShowShareTaskContent
         editContent = {editContent}
