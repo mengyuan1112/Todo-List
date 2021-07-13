@@ -11,20 +11,27 @@ const AboutUs = () => {
         <Container className="justify-content-center">
                 <Row className="justify-content-center">
                 <Col>
+                    <Image src={img} rounded style={{width:'50%'}} />
+                </Col>
+                <Col>
+                    <Image src={yuanImg} rounded style={{width:'60%'}} />
+                </Col>
+                <Col>
+                    <Image src="xxx" rounded style={{width:'34%'}} />
+                </Col>
+
+                </Row>
+                <Row className="justify-content-center">
+                <Col>
                     <br/>
                     <br/>
                         <p style={{fontSize:"2rem"}}>Chik Lam</p>
                         <p>Frontend Software developer</p>
                         <p><a href="https://github.com/lamchik1997">Github Link</a></p>
-                        <p>Contact Email: ...</p>
+                        <p>Contact Email: chiklam@buffalo.edu</p>
                 </Col>
-                <Col>
-                    <Image src={img} rounded style={{width:'34%'}} />
-                </Col>
-                </Row>
-        <hr/>
-        <br/>
-        <Row className="justify-content-center">
+                <hr/>
+                 <br/>
                 <Col>
                     <br/>
                     <br/>
@@ -33,14 +40,9 @@ const AboutUs = () => {
                         <p><a href="https://github.com/mengyuan1112">Github Link</a></p>
                         <p>Contact Email: yuanmeng@buffalo.edu</p>
                 </Col>
-                <Col>
-                    <Image src={yuanImg} rounded style={{width:'34%'}} />
-                </Col>
-                </Row>
 
                 <hr/>
-        <br/>
-        <Row className="justify-content-center">
+                <br/>
                 <Col>
                     <br/>
                     <br/>
@@ -49,10 +51,7 @@ const AboutUs = () => {
                         <p><a href="XXX">Github Link</a></p>
                         <p>Contact Email: ...</p>
                 </Col>
-                <Col>
-                    <Image src="xxx" rounded style={{width:'34%'}} />
-                </Col>
-                </Row>
+            </Row>
         </Container>
         
         </>       
