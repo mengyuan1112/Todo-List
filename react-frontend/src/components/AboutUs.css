@@ -6,3 +6,16 @@ Card {
 CardGroup {
   margin: 500px 0;
 }
+
+.abuPhoto {
+  height: 350px;
+  width: 100px; 
+  border-radius: 0%;
+}
+
+/* .abuCard {
+  height: 550px;
+  width: auto px; 
+  justify-content: center
+} */
+
