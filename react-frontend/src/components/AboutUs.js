@@ -3,7 +3,7 @@ import Card from 'react-bootstrap/Card'
 import ListGroup from 'react-bootstrap/ListGroup'
 import img from './../chiklam.JPG'
 import yuanImg from './../Yuan Meng.png'
-import Qinran from '../Qinran.jpg';
+import Qinran from '../Qinran2.jpg';
 import './AboutUs.css'
 
 const AboutUs = () => {
@@ -14,52 +14,54 @@ const AboutUs = () => {
         <br/>   
 
         <Container>
-                {/* <Row className="justify-content-center">
-                <Col>
+                <Row className="justify-content-center">
+                <Col style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
                     <Image src={img} rounded style={{width:'60%', height: '100%'}} />
-                </Col>
-                <Col>
+                </Col >
+                <Col style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
                     <Image src={yuanImg} className="yuan_img" rounded style={{width:'60%', height: '100%'}} />
                 </Col>
-                <Col>
-                    <Image src={hhh} rounded style={{width:'60%', height: '100%'}} />
+                <Col style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                    <Image src={Qinran} rounded style={{width:'60%', height: '100%'}} />
                 </Col>
 
                 </Row>
+
                 <Row className="justify-content-center">
-                <Col>
+                <Col  xs="auto" sm="4">
                     <br/>
                     <br/>
                         <p style={{fontSize:"2rem"}}>Chik Lam</p>
                         <p>Frontend Software developer</p>
                         <p><a href="https://github.com/lamchik1997">Github Link</a></p>
                         <p>Email: chiklam@buffalo.edu</p>
-                </Col>
+                </Col >
                 <hr/>
                  <br/>
-                <Col>
+                <Col  xs="auto" sm="4">
                     <br/>
                     <br/>
                         <p style={{fontSize:"2rem"}}>Yuan Meng</p>
                         <p>Backend Developer</p>
                         <p><a href="https://github.com/mengyuan1112">Github Link</a></p>
                         <p>Email: yuanmeng@buffalo.edu</p>
-                </Col>
+                </Col >
 
                 <hr/>
                 <br/>
-                <Col>
+                <Col xs="auto">
                     <br/>
                     <br/>
                         <p style={{fontSize:"2rem"}}>Qinran Wang </p>
                         <p>Frontend developer</p>
                         <p><a href="https://github.com/qinran222">Github Link</a></p>
-                        <p>Email: qinranwa@buffalo.edu, qinran6271@gmail.com</p>
+                        <p>Email: qinranwa@buffalo.edu</p>
                 </Col>
-            </Row> */}
+            </Row>
+
    
             
-            <Row>
+            {/* <Row>
             <Col   style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
             <Card style={{ width: '18rem'  }} className="abuCard">
                 <Card.Img variant="top" src={img} className="abuPhoto" />
@@ -101,7 +103,7 @@ const AboutUs = () => {
                 </Card.Body>
             </Card> 
             </Col>
-            </Row>
+            </Row> */}
 
     
         </Container>
