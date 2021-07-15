@@ -1,0 +1,45 @@
+.friendsPhoto{
+    height: 65px;
+    width: 65px; 
+    border-radius: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  
+}
+.friendsList{
+    max-height: 750px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    overflow-x: hidden;
+    
+}
+
+.background{
+    height: 150px;
+    width: 1110px; 
+    border-radius: 0%;
+}
+
+.centered {
+    position: absolute;
+    top: 60%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+
+
+.card {
+    overflow-y: auto;
+    white-space: pre-wrap;
+    overflow-x: hidden;
+}
+
+
+
+

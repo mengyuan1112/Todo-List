@@ -1,0 +1,23 @@
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400&family=Roboto&display=swap");
+body {
+  background-color: white;
+}
+
+.my-facebook-button-class {
+  font-family: "Roboto", sans-serif;
+  margin-top: 15px;
+  border: 0.5px solid rgba(155, 155, 155, 0.493);
+  padding: 10px 10px;
+  background-color: white;
+  color: rgb(121, 119, 119);
+  border-radius: 2px;
+  font-size: 13px;
+  box-shadow: 1px 1px #afaeaeab;
+}
+
+.facebookIcon {
+  color: rgb(11, 11, 207);
+  margin-right: 14px;
+  height: max-content;
+  font-size: 17px;
+}

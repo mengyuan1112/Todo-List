@@ -1,0 +1,32 @@
+@import url("https://fonts.googleapis.com/css2?family=KoHo:wght@300;400;500&display=swap");
+
+.mainDay {
+  border: 1px solid rgb(217, 234, 235);
+  display: block;
+  margin: 50px auto;
+  margin-bottom: 10px;
+  padding-bottom: 30px;
+  border-radius: 10px;
+  overflow: auto;
+  min-height: 500px;
+  min-width: 200px;
+  width: 75%;
+  background-color: rgb(217, 234, 235);
+  overflow-x: hidden;
+}
+.mainContainer {
+  height: 350px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  overflow-x: hidden;
+}
+.sortTable {
+  font-size: x-small;
+}
+
+hr {
+  display: block;
+  margin: 0;
+  border-style: inset;
+  border-width: 3px;
+}
