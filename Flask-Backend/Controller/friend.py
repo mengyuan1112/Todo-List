@@ -1,6 +1,6 @@
 from flask import request
 from flask_socketio import emit
-from .app import socketio
+from app import socketio
 from .database import FriendsDB, ImageDB, friends_clients, clients
 
 
