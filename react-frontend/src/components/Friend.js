@@ -14,7 +14,7 @@ import io from 'socket.io-client'
 import axios from 'axios';
 import Personal from './Personal';
 
-const endPoint = "http://localhost:5000/friends";
+const endPoint = "http://3.237.172.105:5000/friends";
 
 const socket = io.connect(endPoint);
 

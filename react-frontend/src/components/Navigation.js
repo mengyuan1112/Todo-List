@@ -10,7 +10,7 @@ import axios from 'axios';
 import io from "socket.io-client";
 
 
-const endPoint = "http://localhost:5000/friends";
+const endPoint = "http://3.237.172.105:5000/friends";
 
 const socket = io.connect(endPoint);
 

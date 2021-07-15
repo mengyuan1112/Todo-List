@@ -56,7 +56,7 @@ const Profile = ({name,onNameChange,changeImage,changeNickName}) => {
 
     const submitAvater =(e)=>{
       e.preventDefault();
-      axios.post( `http://localhost:5000/${name}/profile/icon`,{icon:image.src}).then(
+      axios.post( `http://3.237.172.105:5000/${name}/profile/icon`,{icon:image.src}).then(
           (response)=>{
               if (response.data.result === "Pass"){
                   setShow2(false);
@@ -136,7 +136,7 @@ const Profile = ({name,onNameChange,changeImage,changeNickName}) => {
     e.preventDefault();
     console.log("hhhhh")
     changeNickName(newnickname)
-    axios.post(`http://localhost:5000/${name}/profile/nickname`,{newName:newnickname }).then(
+    axios.post(`http://3.237.172.105:5000/${name}/profile/nickname`,{newName:newnickname }).then(
 
     (response)=>{
         if (response.data.result === "Pass"){
@@ -150,7 +150,7 @@ const Profile = ({name,onNameChange,changeImage,changeNickName}) => {
 
     const submitPassword= (e) =>{
         e.preventDefault();
-        axios.post(`http://localhost:5000/${name}/profile/password`,{newPassword:newpasswordPro,oldPassword:passwordPro}).then(
+        axios.post(`http://3.237.172.105:5000/${name}/profile/password`,{newPassword:newpasswordPro,oldPassword:passwordPro}).then(
         (response)=>{
             console.log(response);
             if (response.data.result === "Pass"){

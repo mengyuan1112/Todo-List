@@ -16,7 +16,7 @@ import ReactCardFlip from 'react-card-flip';
 import { GrSort } from "react-icons/gr";
 import SortList from './SortList';
 
-const endPoint = "http://localhost:5000/main";
+const endPoint = "http://3.237.172.105:5000/main";
 const socket = io.connect(endPoint);
 
 const Main = ({name,onNameChange}) => {

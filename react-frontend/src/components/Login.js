@@ -55,7 +55,7 @@ const Login = ({name,onNameChange,expire,changeNickName}) => {
         //given: acessesToken,id,name,userID;
         //send the acessToken to backend.
         // Send the token and name to backend.
-        axios.post('http://localhost:5000/login',{token: response.accessToken, name: response.name})
+        axios.post('http://3.237.172.105:5000/login',{token: response.accessToken, name: response.name})
         .then(res=>{
             console.log(res)
         })
