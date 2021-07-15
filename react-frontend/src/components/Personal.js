@@ -1,19 +1,11 @@
 import Card from 'react-bootstrap/Card'
-import ListGroup from 'react-bootstrap/ListGroup'
 import Nav from 'react-bootstrap/Nav'
 import Navbar from 'react-bootstrap/Navbar'
-import Button from 'react-bootstrap/Button'
-import Modal from 'react-bootstrap/Modal'
-import { AiOutlineSearch } from "react-icons/ai";
 import { Container,Col,Row,Form} from 'react-bootstrap';
 import hhh from '../2.png';
-import Alert from 'react-bootstrap/Alert'
 import React ,{useState,useRef,Component,useEffect} from "react"
 import "./Personal.css";
-import AddFriend from './Friend'
-import { CgUserAdd } from "react-icons/cg";
 import { FcConferenceCall,FcComboChart,FcCalendar} from "react-icons/fc";
-import FriendList from './FriendList'
 
 
 import io from 'socket.io-client'
