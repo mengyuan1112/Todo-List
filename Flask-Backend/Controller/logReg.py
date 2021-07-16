@@ -50,7 +50,7 @@ def register():
     salt = os.urandom(32)
     salt_password = hashlib.pbkdf2_hmac(
         'sha256', data['password'].encode('utf-8'), salt, 100000)
-    default_user_icon = base64.b64encode(open("defaultUser.jpg", "rb").read())
+    # default_user_icon = base64.b64encode(open("defaultUser.jpg", "rb").read())
 
     user_document = {"username": data['username'], "name": data['username'], "salt_password": salt_password,
                      "email": data['email'], "salt": salt}
