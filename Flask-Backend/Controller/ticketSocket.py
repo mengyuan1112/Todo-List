@@ -9,13 +9,15 @@ from .database import clients, friends_clients
 
 # Done
 
-
+'''
+    update online user when click to main page
+'''
 @socketio.on("onlineUser", namespace='/main')
 def online_user(data):
     clients[data["username"]] = request.sid
     join_room(request.sid)
-    print("The username", data["username"],
-          " has join.Their SID is : ", request.sid)
+    # print("The username", data["username"],
+    #       " has join.Their SID is : ", request.sid)
     friend_list = FriendsDB.find_one({"username": data["username"]})["friends"]
     for friend in friend_list:
         if friend in friends_clients:
@@ -29,17 +31,13 @@ def online_user(data):
     return
 
 
+'''
+    add personal ticket to current user
+'''
 @socketio.on("AddedTask", namespace='/main')
 def add_task(data):
-    print(data)
+    # print(data)
     ticket_info = TicketDB.find_one({"username": data['username']})
-
-    # test room
-    # clients[data["username"]] = request.sid
-    # print("sid is:" + str(request.sid))
-    # room = session.get('room')
-    # join_room(room)
-    # test room
 
     user, title, content, deadline_date, deadline_time, create_date, create_time = parsing_task(
         data)
@@ -57,13 +55,12 @@ def add_task(data):
         self_ticket[create_date] = [ticket]
         TicketDB.update_one({"username": data['username']},
                             {"$set": {"self_ticket": self_ticket}})
-    # database - self_ticket: {date: [{},{},{}]}
     emit('AddedTask', data, broadcast=True)
-    # emit('AddedTask', data, broadcast=True)
-
-# Done
 
 
+'''
+    delete personal ticket to user
+'''
 @socketio.on("deleteTaskFromTodo", namespace='/main')
 def delete_task(data):
     user, title, content, deadline_date, deadline_time, create_date, create_time = parsing_task(
@@ -78,9 +75,10 @@ def delete_task(data):
             break
     send(data, broadcast=False)
 
-# Done
 
-
+'''
+    delete personal ticket from finished col
+'''
 @socketio.on("deleteTaskFromFinished", namespace='/main')
 def delete_task_from_finished(data):
     user, title, content, deadline_date, deadline_time, create_date, create_time = parsing_task(
@@ -102,9 +100,10 @@ def delete_task_from_finished(data):
                         {"$set": {"complete_ticket": complete_ticket}})
     return
 
-# Done
 
-
+'''
+    move personal ticket to finished col
+'''
 @socketio.on("moveFromToDoToFinish", namespace='/main')
 def move_from_todo_to_finish(data):
 
@@ -114,7 +113,6 @@ def move_from_todo_to_finish(data):
     self_ticket = ticket_info['self_ticket']
 
     ticket_arr = self_ticket[create_date]  # current day's array
-    # entire complete ticket {}
     complete_ticket = ticket_info['complete_ticket']
 
     for i in range(0, len(ticket_arr)):
@@ -136,9 +134,10 @@ def move_from_todo_to_finish(data):
             break
     return
 
-# Done
 
-
+'''
+    undo the finished ticket to Todo col
+'''
 @socketio.on("moveFromFinishToTodo", namespace='/main')
 def move_from_finish_to_todo(data):
 
@@ -176,7 +175,6 @@ def move_from_finish_to_todo(data):
 
 @socketio.on("getData", namespace='/main')
 def get_data(data):
-
     user_info = TicketDB.find_one({"username": data['username']})
 
     data_time_arr = data['currentDate'].split("T")
@@ -188,6 +186,9 @@ def get_data(data):
     emit('getData', res, broadcast=False)
 
 
+'''
+    Edit personal ticket information
+'''
 @socketio.on("EditTaskContent", namespace='/main')
 def edit_task_content(data):
     user = data['username']
@@ -219,10 +220,9 @@ def edit_task_content(data):
     return
 
 
-# {'username': '2', 'currentDate': '2021-06-09T04:00:00.000Z',
-# 'sharedWith': ['friend 1', 'friend 2'], 'title': 'hello', 'content': '', 'date': '', 'time': ''}
-
-
+'''
+    add shared ticket to friends and send ticket to every friend
+'''
 @socketio.on("AddedSharedTask", namespace='/main')
 def add_shared_task(data):
     #clients[data["username"]] = request.sid
@@ -241,11 +241,11 @@ def add_shared_task(data):
 
     TicketDB.update_one({"username": user},
                         {"$set": {"public_ticket": user_shared_tickets}})
-    print("this is current clients", str(clients))
+    # print("this is current clients", str(clients))
     for client in friends:
         if client in clients:
-            print("Sending message to username: ", client,
-                  " and the SID is ", clients[client])
+            # print("Sending message to username: ", client,
+            #       " and the SID is ", clients[client])
             TicketDB.update_one({"username": client},
                                 {"$set": {"public_ticket": user_shared_tickets}})
             emit("receviedShareTask", ticket, to=clients[client])
@@ -257,16 +257,15 @@ def add_shared_task(data):
 
 # delete all ticket by creator / self-leave in ticket
 '''
-@:return: route = "deleteTaskFromShareList"
-@:return: {"title": title} / {"ticket": ticket}
-@:return ticket = {"creator": creator, "create_time": create_time, "title": title, "content": content,
-                  "date": deadline_date, "time": deadline_time, "sharedWith": friends}
+    delete shared task from shared list and notify friends
+    @:return: route = "deleteTaskFromShareList"
+    @:return: {"title": title} / {"ticket": ticket}
+    @:return ticket = {"creator": creator, "create_time": create_time, "title": title, "content": content,
+                      "date": deadline_date, "time": deadline_time, "sharedWith": friends}
 '''
-
-
 @socketio.on("deleteTaskFromShareList", namespace='/main')
 def delete_task_from_shared_list(data):
-    print("this is from delete: " + str(data))
+    # print("this is from delete: " + str(data))
     user, title, friends, content, deadline_date, deadline_time, create_date, create_time = parsing_shared_task(
         data)
     creator = data['creator']
@@ -297,7 +296,9 @@ def delete_task_from_shared_list(data):
     return
 
 
-# self-undo the ticket from shared ticket and
+'''
+    move shared ticket from finished col back to Shared Col
+'''
 @socketio.on("moveFromFinishToSharedList", namespace='/main')
 def move_from_finish_to_shared_list(data):
     user, title, friends, content, deadline_date, deadline_time, create_date, create_time = parsing_shared_task(
@@ -316,24 +317,19 @@ def move_from_finish_to_shared_list(data):
     update_to_finished(data['creator'], title, create_date, False)
     return
 
-# {'username': '2', 'currentDate': '2021-06-09T04:00:00.000Z', 'oldTitle': 'asd',
-# 'sharedWith': ['friend 1'], 'title': 'aegina', 'content': '', 'date': '', 'time': ''}
 
-
-# (everyone) able to edit content
 '''
-:return: route = "receviedEditTask"
-:return: {"oldTitle": data["oldTitle"], "updateTicket": ticket}
-:ticket = {'username': creator, 'currentDate': data['currentDate'], 'title': data['title'], 'content': data['content'],
-                   'create_time': data['create_time'], 'date': data['date']}
-:ticket = {'username': user, 'currentDate': data['currentDate'], 'title': data['title'], 'content': data['content'],
-              'create_time': data['create_time'], 'date': data['date']}
+    Edit shared ticket content by anyone 
+    :return: route = "receviedEditTask"
+    :return: {"oldTitle": data["oldTitle"], "updateTicket": ticket}
+    :ticket = {'username': creator, 'currentDate': data['currentDate'], 'title': data['title'], 'content': data['content'],
+                       'create_time': data['create_time'], 'date': data['date']}
+    :ticket = {'username': user, 'currentDate': data['currentDate'], 'title': data['title'], 'content': data['content'],
+                  'create_time': data['create_time'], 'date': data['date']}
 '''
-
-
 @socketio.on("EditSharedTaskContent", namespace='/main')
 def edit_shared_task_content(data):
-    print("this is edit stuff: " + str(data))
+    # print("this is edit stuff: " + str(data))
     friends = data["sharedWith"]
     creator = data["creator"]
     edit_shared_ticket(data, creator)
@@ -345,18 +341,19 @@ def edit_shared_task_content(data):
         ticket = {'username': friend,  'title': data['title'], 'content': data['content'],
                   'date': data['date']}
         if friend in clients:
-            print("send to client: " + str(clients[friend]))
+            # print("send to client: " + str(clients[friend]))
             emit("receviedEditTask", {
                  "oldTitle": data["oldTitle"], "updateTicket": ticket}, to=clients[friend])
         edit_shared_ticket(data, friend)
     return
 
-# this is from del: {'useraname': '1', 'currentDate': '2021-07-04T22:51:31.662Z', 'content': '', 'create_time': '04:00:00.000Z', 'creator': '1', 'date': '', 'sharedWith': ['friend1'], 'time': '', 'title': 'asd'}
 
-
+'''
+    Finished shared ticket and notify the friends 
+'''
 @socketio.on("finishedShareTask", namespace="/main")
 def finished_share_task(data):
-    print(data)
+    # print(data)
     user, title, friends, content, deadline_date, deadline_time, create_date, create_time = parsing_shared_task(
         data)
     date_list = TicketDB.find_one({"username": user})[
@@ -371,7 +368,9 @@ def finished_share_task(data):
     return
 
 
-# this is from undo: {'username': '1', 'currentDate': '2021-07-04T22:51:31.662Z', 'content': '', 'create_time': '04:00:00.000Z', 'creator': '1', 'date': '', 'sharedWith': ['friend1'], 'time': '', 'title': 'asd'}
+'''
+    undo the Finished share ticket and notify people
+'''
 @socketio.on("undoFinishedShareTask", namespace="/main")
 def undo_finished_share_task(data):
     user, title, friends, content, deadline_date, deadline_time, create_date, create_time = parsing_shared_task(

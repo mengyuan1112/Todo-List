@@ -31,7 +31,7 @@ const Personal = ({name,onNameChange,changeImage}) => {
               //SetAvater(res.data.avater)
           },
          err => {
-            console.log(err);
+            // console.log(err);
             Getusername('')
             Getimage('')
            

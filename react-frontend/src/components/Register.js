@@ -20,7 +20,7 @@ const Register = () => {
         e.preventDefault();
         axios.post('http://3.237.172.105:5000/register',{email:emailReg, username:usernameReg, password:passwordReg}).then(
             (response)=>{
-                console.log(response);
+                // console.log(response);
                 if (response.data.result === "Pass"){
                     history.push("/login");
                 }
@@ -41,7 +41,7 @@ const Register = () => {
                     setEmailError("")
                 }
             })
-            .catch(err=>{ console.log(err) });
+            // .catch(err=>{ console.log(err) });
     }
     const checkEmail=(e)=>{
         setEmailReg(e.target.value);

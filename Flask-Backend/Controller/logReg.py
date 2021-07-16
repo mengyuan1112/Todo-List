@@ -79,7 +79,7 @@ def login():
         return jsonify(status)
     else:
         data = request.get_json()
-        print("login cookies: " + str(request.cookies.get('login')))
+        # print("login cookies: " + str(request.cookies.get('login')))
         if request.cookies.get('login') is not None:
             user = return_user(request.cookies.get('login'))
             if user is not None:
@@ -178,7 +178,7 @@ def check_token(token):
                     "public_ticket": ticket['public_ticket'], "complete_ticket": ticket['complete_ticket']}
         return response
     except jwt.exceptions.ExpiredSignatureError:
-        print("token from except is: " + token)
+        # print("token from except is: " + token)
         return {"result": "Expired"}
 
 

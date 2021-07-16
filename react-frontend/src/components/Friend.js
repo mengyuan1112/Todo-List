@@ -43,7 +43,7 @@ const Friend =({name}) => {
                 //SetAvater(res.data.avater)
             },
             err => {
-                console.log(err);
+                // console.log(err);
 
             }
         )},[])
@@ -59,7 +59,7 @@ const Friend =({name}) => {
 
     const addFriends=(friend)=>{
     
-        socket.emit("Addedfriend",{username:name , friendName:friendName},console.log("this is socket"));
+        socket.emit("Addedfriend",{username:name , friendName:friendName});
 
     }
 
@@ -67,12 +67,12 @@ const Friend =({name}) => {
         socket.on("userStatus", data=>{
     
             const index = friends.findIndex(x=> x.friendName === data.friendName);
-            console.log(index)
-            console.log(friends)
-            console.log(data)
+            // console.log(index)
+            // console.log(friends)
+            // console.log(data)
             if (index === -1){
                 // handle error
-                console.log('no match');
+                // console.log('no match');
             }
             else{
 
@@ -84,18 +84,18 @@ const Friend =({name}) => {
 
                 }
 
-            console.log(friends);
-            console.log(index)
+            // console.log(friends);
+            // console.log(index)
      
         })
     
         socket.on('Addedfriend',data=>{
             
     
-            console.log("this is from server" + data)
+            // console.log("this is from server" + data)
             if(data.result=="pass" && data.friendName!=name){
                 friend={friendName:data.friendName,friendPhoto:data.friendPhoto,friendStatus:data.friendStatus}
-                console.log(friend)
+                // console.log(friend)
                 SetnotExistAlert(false)
                 SetalreadyAddedAlert(false)
                 SetselfAler(false)
@@ -104,7 +104,7 @@ const Friend =({name}) => {
                 SetStatus(data.friendStatus)
                 Setfriends([...friends,friend])
                 setShow(false)
-                console.log(data.result)
+                // console.log(data.result)
     
                 return true
     
@@ -117,7 +117,7 @@ const Friend =({name}) => {
             }
     
             else if(data.result=="already added"){
-                console.log(data.result)
+                // console.log(data.result)
                 SetalreadyAddedAlert(true)
                 setShow(true)
                 return false
@@ -125,7 +125,7 @@ const Friend =({name}) => {
             }
             else{
                 SetnotExistAlert(true)
-                console.log(data.result)
+                // console.log(data.result)
                 setShow(true)
                 return false
             }
