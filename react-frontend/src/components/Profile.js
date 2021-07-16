@@ -56,7 +56,7 @@ const Profile = ({name,onNameChange,changeImage,changeNickName}) => {
 
     const submitAvater =(e)=>{
       e.preventDefault();
-      axios.post( `http://localhost:5000/${name}/profile/icon`,{icon:image.src}).then(
+      axios.post( `http://3.237.172.105:5000/${name}/profile/icon`,{icon:image.src}).then(
           (response)=>{
               if (response.data.result === "Pass"){
                   setShow2(false);
@@ -75,7 +75,7 @@ const Profile = ({name,onNameChange,changeImage,changeNickName}) => {
     useEffect(() => {
       axios.get(`/${name}/profile`).then(
         res => {
-            console.log(res)
+            // console.log(res)
             setNickName(res.data.name)
             Getemail(res.data.email)
             Getusername(res.data.username)
@@ -84,11 +84,11 @@ const Profile = ({name,onNameChange,changeImage,changeNickName}) => {
             Getimage(res.data.icon)
             Setnewname(res.data.name)
             changeNickName(res.data.name)
-            console.log()
+            // console.log()
             //SetAvater(res.data.avater)
         },
        err => {
-          console.log(err);
+          // console.log(err);
           Getemail('');
           Getusername('')
           Getpassword('')
@@ -134,14 +134,14 @@ const Profile = ({name,onNameChange,changeImage,changeNickName}) => {
  
     const submitNickname= (e) =>{
     e.preventDefault();
-    console.log("hhhhh")
+    // console.log("hhhhh")
     changeNickName(newnickname)
-    axios.post(`http://localhost:5000/${name}/profile/nickname`,{newName:newnickname }).then(
+    axios.post(`http://3.237.172.105:5000/${name}/profile/nickname`,{newName:newnickname }).then(
 
     (response)=>{
         if (response.data.result === "Pass"){
             setShow(false);Setnicknamealert(true)
-            console.log(nicknamealert)
+            // console.log(nicknamealert)
         }
  
     })
@@ -150,9 +150,9 @@ const Profile = ({name,onNameChange,changeImage,changeNickName}) => {
 
     const submitPassword= (e) =>{
         e.preventDefault();
-        axios.post(`http://localhost:5000/${name}/profile/password`,{newPassword:newpasswordPro,oldPassword:passwordPro}).then(
+        axios.post(`http://3.237.172.105:5000/${name}/profile/password`,{newPassword:newpasswordPro,oldPassword:passwordPro}).then(
         (response)=>{
-            console.log(response);
+            // console.log(response);
             if (response.data.result === "Pass"){
                 setShow1(false);Setpasswordalert(true)
                
@@ -165,13 +165,13 @@ const Profile = ({name,onNameChange,changeImage,changeNickName}) => {
     
             else if (response.data.result === "Password is wrong"){
                 SetnewpasswordErr("Old password is wrong")
-                console.log(newpasswordErr)
+                // console.log(newpasswordErr)
                 setShow1(true)
     
             }
     
         })
-        .catch(err=>{ console.log(err) });
+        // .catch(err=>{ console.log(err) });
         }
 
 

@@ -10,7 +10,7 @@ import { FcConferenceCall,FcComboChart,FcCalendar} from "react-icons/fc";
 
 import io from 'socket.io-client'
 import axios from 'axios';
-const endPoint = "http://localhost:5000/main";
+const endPoint = "http://3.237.172.105:5000/main";
 
 const socket = io.connect(endPoint);
 
@@ -31,7 +31,7 @@ const Personal = ({name,onNameChange,changeImage}) => {
               //SetAvater(res.data.avater)
           },
          err => {
-            console.log(err);
+            // console.log(err);
             Getusername('')
             Getimage('')
            

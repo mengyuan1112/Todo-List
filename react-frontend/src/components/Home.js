@@ -10,7 +10,7 @@ const Home = ({name,nickName,expire,onNameChange,ticketLength,changeNickName}) =
     const history = useHistory();
 
     const handleClick =()=>{
-        console.log("clicked start planning")
+        // console.log("clicked start planning")
         if (name){
             history.push(`/${name}/main`)
         }
