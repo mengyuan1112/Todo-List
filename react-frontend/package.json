@@ -1,4 +1,5 @@
 {
+  "homepage": "http://",
   "name": "react-frontend",
   "version": "0.1.0",
   "private": true,
@@ -11,6 +12,7 @@
     "@testing-library/user-event": "^12.8.3",
     "axios": "^0.21.1",
     "bootstrap": "^4.6.0",
+    "gh-pages": "^3.2.3",
     "react": "^17.0.2",
     "react-bootstrap": "^1.6.0",
     "react-card-flip": "^1.1.1",
@@ -51,5 +53,5 @@
   "devDependencies": {
     "eslint-plugin-react-hooks": "^4.2.0"
   },
-  "proxy": "http://localhost:5000"
+  "proxy": "http://3.237.172.105:5000"
 }

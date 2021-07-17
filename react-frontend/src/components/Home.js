@@ -27,8 +27,9 @@ const Home = ({name,nickName,expire,onNameChange,ticketLength,changeNickName}) =
                 <br></br>
                 
                 <Row style={{height:"25rem"}}>
-                    <Col className="justify-content-center"> 
-                    <br></br>
+                    <Col className="justify-content-center">
+                        <p style={{ color: 'red' }}>Due to the server maintain, some feature will stop working (friends, ticket) System, anything else still working, sorry for inconvenience</p>
+                        <p style={{ color: 'red' }}>if any question, please contact email: yuanmeng@buffal.edu</p>
                     <br></br>
                     <br></br>
                     <h1 className="display-3">Welcome!</h1>

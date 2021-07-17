@@ -138,10 +138,10 @@ const Login = ({name,onNameChange,expire,changeNickName}) => {
                     callback={responseFacebook}
                     onFailure = {onFailure}
                     autoload = {false}
-                    // render={renderProps => (
-                    //   <button className="my-facebook-button-class" onClick={renderProps.onClick}>
-                    //       <span className="facebookIcon"><ImFacebook2/></span>
-                    //       Login with Facebook</button>)}
+                    render={renderProps => (
+                      <button className="my-facebook-button-class" onClick={renderProps.onClick}>
+                          <span className="facebookIcon"><ImFacebook2/></span>
+                          Login with Facebook</button>)}
                 />
             </div>
         </Col>
