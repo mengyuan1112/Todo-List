@@ -26,7 +26,7 @@ const AddSharedTask = (props) => {
           props.onHide();
         }
         else{
-          console.log("The title is duplicated.")
+          // console.log("The title is duplicated.")
           setError(true)
           setTitle("")
         }

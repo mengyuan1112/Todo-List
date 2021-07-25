@@ -10,7 +10,7 @@ import axios from 'axios';
 import io from "socket.io-client";
 
 
-const endPoint = "http://localhost:5000/friends";
+const endPoint = "http://3.237.172.105:5000/friends";
 
 const socket = io.connect(endPoint);
 
@@ -25,22 +25,23 @@ const Navigation=({name,onNameChange,img,changeNickName})=>{
 
     const logout =()=>{
         setExpanded(false);
-        console.log("Logout")
+        // console.log("Logout")
         onNameChange("")
-        console.log("This is the logout user: ",name);
-        console.log("This is the user token: ",localStorage.getItem("token"));
+        // console.log("This is the logout user: ",name);
+        // console.log("This is the user token: ",localStorage.getItem("token"));
 
-        axios.post("logout",{username:name,token:localStorage.getItem('token')})
-            .then(
-                res=>{
-                    console.log(res);
-                }
-            )
-            .catch(
-                err=>{
-                    console.error(err);
-                }
-            )
+        // axios.post("logout",{username:name,token:localStorage.getItem('token')})
+        //     .then(
+        //         res=>{
+        //             // console.log(res);
+        //         }
+        //     )
+        //     .catch(
+        //         err=>{
+        //             console.error(err);
+        //         }
+        //     )
+        socket.emit("logout",{username:name,token:localStorage.getItem('token')})
             localStorage.clear()
             history.push('/home');
         }

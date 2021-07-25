@@ -4,17 +4,17 @@ import { Dropdown } from 'react-bootstrap'
 const SortList = ({setSortBy}) => {
 
     const sortDeadline=()=>{
-        console.log("Sorted by deadline")
+        // console.log("Sorted by deadline")
         setSortBy('date')
     }
 
     const sortPrority=()=>{
-        console.log("Sorted by prority");
+        // console.log("Sorted by prority");
         setSortBy('range')
     }
 
     const sortDate=()=>{
-        console.log("Sorted by Date");
+        // console.log("Sorted by Date");
         setSortBy('default')
     }
 

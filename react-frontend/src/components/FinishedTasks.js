@@ -3,9 +3,9 @@ import {Card,ListGroup } from 'react-bootstrap'
 import { FaUndo } from 'react-icons/fa'
 import ShowTaskContent from './ShowTaskContent'
 
-const taskClicked =() =>{
-    console.log("onclicked")
-}
+// const taskClicked =() =>{
+//     console.log("onclicked")
+// }
 
 const FinishedTasks = ({editContent,task,backTodo,backShareList,deleteTask}) => {
     const [modalShow, setModalShow] = React.useState(false);

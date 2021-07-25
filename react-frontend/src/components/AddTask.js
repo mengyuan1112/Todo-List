@@ -22,7 +22,7 @@ const AddTask = (props) => {
           props.onHide();
         }
         else{
-          console.log("The title is duplicated.")
+          // console.log("The title is duplicated.")
           setError(true)
           setTitle("")
         }
@@ -104,7 +104,7 @@ const AddTask = (props) => {
                 list="tickMark"
                 onChange={(e)=>{
                 setRange(e.target.value)
-                console.log(e.target.value)
+                // console.log(e.target.value)
                 }}/>
               </Col>
             </Form.Group>

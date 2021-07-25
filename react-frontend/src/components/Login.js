@@ -23,24 +23,24 @@ const Login = ({name,onNameChange,expire,changeNickName}) => {
 
     //This function will handle login request from google.
     const onSuccess = (response) =>{
-        console.log('[Login Sucess from google] ',response)
+        // console.log('[Login Sucess from google] ',response)
         // Send the token and name to backend.
         axios.post('google/login',{token: response.tokenObj.id_token, name: response.profileObj.name})
         .then(res=>{
             onNameChange(response.profileObj.name)
             // socket.emit("onlineUser",{username:response.profileObj.name});
             localStorage.setItem('token',res.data.token);
-            console.log("this is res: " + JSON.stringify(res))
+            // console.log("this is res: " + JSON.stringify(res))
         })
         .catch(err =>{
-            console.log(err)
+            // console.log(err)
         })
         history.push(`/${response.profileObj.name}/home`)
     }
 
     //This function will handle login from facebook/google on failure.
     const onFailure = (res) => {
-        console.log('[login Failed] res: ',res)
+        // console.log('[login Failed] res: ',res)
         onNameChange('')
         //setError("google/facebook login fail")
     }
@@ -51,16 +51,16 @@ const Login = ({name,onNameChange,expire,changeNickName}) => {
         onNameChange(response.name)
         localStorage.setItem('token',response.accessToken);
         // socket.emit("onlineUser",{username:response.name})
-        console.log('[Login sucess from Facebook] ',response)
+        // console.log('[Login sucess from Facebook] ',response)
         //given: acessesToken,id,name,userID;
         //send the acessToken to backend.
         // Send the token and name to backend.
-        axios.post('http://localhost:5000/login',{token: response.accessToken, name: response.name})
+        axios.post('http://3.237.172.105:5000/login',{token: response.accessToken, name: response.name})
         .then(res=>{
-            console.log(res)
+            // console.log(res)
         })
         .catch(err =>{
-            console.log(err)
+            // console.log(err)
         })
         history.push(`/${response.name}/home`)
       }
@@ -72,9 +72,9 @@ const Login = ({name,onNameChange,expire,changeNickName}) => {
         axios
         .post('login',{username:username, password:password})
         .then(response=>{
-                console.log(response)
+                // console.log(response)
                 if (response.data.result === 'Pass'){
-                    console.log('[Regular login passed]',response);
+                    // console.log('[Regular login passed]',response);
                     localStorage.setItem('token',response.data.token);
                     onNameChange(response.data.username)
                     changeNickName(response.data.name)
@@ -84,12 +84,12 @@ const Login = ({name,onNameChange,expire,changeNickName}) => {
                     window.location.reload(false);
                 }
                 else{
-                    console.log(response.data);
+                    // console.log(response.data);
                     setError(response.data.result);
                 }
 
             })
-        .catch(error=>{ console.log(error) })
+        // .catch(error=>{ console.log(error) })
     }
     
 
@@ -141,7 +141,8 @@ const Login = ({name,onNameChange,expire,changeNickName}) => {
                     render={renderProps => (
                       <button className="my-facebook-button-class" onClick={renderProps.onClick}>
                           <span className="facebookIcon"><ImFacebook2/></span>
-                          Login with Facebook</button>)} />
+                          Login with Facebook</button>)}
+                />
             </div>
         </Col>
         </Row>
