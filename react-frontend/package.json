@@ -1,6 +1,6 @@
 {
-  "homepage": "http://mengyuan1112.github.io/Todo-List",
   "name": "react-frontend",
+  "homepage": "http://mengyuan1112.github.io/Todo-List/",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
