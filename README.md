@@ -10,3 +10,9 @@
 * React.JS
 * MongoDB
 
+### Work path
+* Decide what framework and what language will be use.
+* Designed the layout, component interface and data flow prior to the implementation
+* Build function recive the information from client and show up in the client side with great UX
+* complete basic/core feature in the app
+* optimize the code and feature in the project
