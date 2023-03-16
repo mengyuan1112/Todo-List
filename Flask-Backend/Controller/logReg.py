@@ -9,7 +9,7 @@ from google.oauth2 import id_token
 from google.auth.transport import requests
 from flask import request, jsonify
 from flask import Blueprint
-from .database import UserDB, TicketDB, GoogleDB, ImageDB, FriendsDB, friends_clients, clients
+from database import UserDB, TicketDB, GoogleDB, ImageDB, FriendsDB, friends_clients, clients
 # from .friend import update_user
 
 

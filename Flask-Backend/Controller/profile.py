@@ -3,7 +3,7 @@ import hashlib
 
 from flask import request, jsonify
 from flask import Blueprint
-from .database import UserDB, ImageDB
+from database import UserDB, ImageDB
 
 profile = Blueprint('profile', __name__)
 """

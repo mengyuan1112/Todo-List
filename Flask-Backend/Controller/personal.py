@@ -1,8 +1,8 @@
 from flask import jsonify
 from flask import Blueprint
-from .database import FriendsDB
-from .database import ImageDB
-from .database import clients, friends_clients
+from database import FriendsDB
+from database import ImageDB
+from database import clients, friends_clients
 
 
 personal = Blueprint('personal', __name__)

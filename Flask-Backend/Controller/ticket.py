@@ -2,7 +2,7 @@ from datetime import date
 from flask import Blueprint
 # from .database import db
 from flask import request, jsonify
-from .database import UserDB, TicketDB, GoogleDB, ImageDB, FriendsDB
+from database import UserDB, TicketDB, GoogleDB, ImageDB, FriendsDB
 
 ticket = Blueprint("ticket", __name__)
 # UserDB = db
